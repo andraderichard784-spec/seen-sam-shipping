@@ -87,11 +87,12 @@ input[type="file"]{padding:10px;background:#f5f8f9}
       <button class="tab" id="signup-tab" type="button" role="tab" aria-selected="false">Create vessel account</button>
     </div>
     <form id="login-form">
-      <label>Email address<input id="login-email" type="email" autocomplete="username" maxlength="254" required></label>
+      <label>Username<input id="login-username" type="text" autocomplete="username" minlength="3" maxlength="32" required></label>
       <label>Password<input id="login-password" type="password" autocomplete="current-password" required></label>
       <button class="button" type="submit">Sign in to vessel</button>
     </form>
     <form id="signup-form" hidden>
+      <label>Username<input id="signup-username" type="text" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.-]+" required></label>
       <label>Vessel
         <select id="signup-vessel" required>
           <option value="">Select your vessel</option>
@@ -103,7 +104,7 @@ input[type="file"]{padding:10px;background:#f5f8f9}
       </label>
       <label>Vessel account email<input id="signup-email" type="email" autocomplete="email" maxlength="254" required></label>
       <label>Password<input id="signup-password" type="password" autocomplete="new-password" minlength="8" required></label>
-      <p class="help">Use an email account the vessel crew can access. New vessel accounts need admin approval before reports can be submitted.</p>
+      <p class="help">Create a unique username and use an email address the crew can access. The operations administrator must approve the vessel account before reports can be submitted.</p>
       <button class="button" type="submit">Request vessel account</button>
     </form>
     <p class="notice" id="auth-notice" role="status" aria-live="polite"></p>
@@ -232,6 +233,24 @@ async function loadVesselAccount(){
     return;
   }
   showDashboard(data);
+}
+async function invokeVesselAuth(payload){
+  const {data,error}=await client.functions.invoke('vessel-auth',{body:payload});
+  if(error){
+    let message=error.message;
+    try{
+      const response=error.context;
+      if(response&&typeof response.json==='function'){
+        const body=await response.json();
+        if(body.error) message=body.error;
+      }
+    }catch(parseError){
+      console.error('Could not read vessel authentication error:',parseError);
+    }
+    throw new Error(message);
+  }
+  if(data&&data.error) throw new Error(data.error);
+  return data;
 }
 function statusLabel(status){
   if(status==='needs_correction') return 'Needs correction';
@@ -391,37 +410,50 @@ loginForm.addEventListener('submit',async event=>{
   const button=loginForm.querySelector('button[type="submit"]');
   button.disabled=true;
   notice(authNotice,'Signing in…');
-  const {error}=await client.auth.signInWithPassword({
-    email:document.getElementById('login-email').value.trim(),
-    password:document.getElementById('login-password').value
-  });
-  button.disabled=false;
-  if(error){
+  try{
+    const result=await invokeVesselAuth({
+      action:'login',
+      username:document.getElementById('login-username').value.trim(),
+      password:document.getElementById('login-password').value
+    });
+    if(!result.session?.access_token||!result.session?.refresh_token){
+      throw new Error('The sign-in service returned an incomplete session.');
+    }
+    const {error}=await client.auth.setSession({
+      access_token:result.session.access_token,
+      refresh_token:result.session.refresh_token
+    });
+    if(error) throw error;
+    await loadVesselAccount();
+  }catch(error){
     console.error('Vessel sign-in failed:',error);
-    notice(authNotice,'Sign-in failed. Check the vessel account email, password and email confirmation.',true);
-    return;
+    notice(authNotice,error.message||'Sign-in failed. Check your username and password, then try again.',true);
+  }finally{
+    button.disabled=false;
   }
-  await loadVesselAccount();
 });
 signupForm.addEventListener('submit',async event=>{
   event.preventDefault();
   const button=signupForm.querySelector('button[type="submit"]');
   button.disabled=true;
   notice(authNotice,'Creating vessel account request…');
-  const {error}=await client.auth.signUp({
-    email:document.getElementById('signup-email').value.trim(),
-    password:document.getElementById('signup-password').value,
-    options:{data:{signup_role:'vessel',vessel_name:document.getElementById('signup-vessel').value}}
-  });
-  button.disabled=false;
-  if(error){
+  try{
+    await invokeVesselAuth({
+      action:'register',
+      username:document.getElementById('signup-username').value.trim(),
+      vessel_name:document.getElementById('signup-vessel').value,
+      email:document.getElementById('signup-email').value.trim(),
+      password:document.getElementById('signup-password').value
+    });
+    signupForm.reset();
+    showTab('login');
+    notice(authNotice,'Vessel account request created. Wait for operations admin approval, then sign in with your username and password.');
+  }catch(error){
     console.error('Vessel account registration failed:',error);
-    notice(authNotice,'Could not create the vessel account request. Check the details; this email may already be registered.',true);
-    return;
+    notice(authNotice,error.message||'Could not create the vessel account request. Check the details and try again.',true);
+  }finally{
+    button.disabled=false;
   }
-  signupForm.reset();
-  showTab('login');
-  notice(authNotice,'Account request created. Verify the email if prompted, then wait for admin approval before signing in.');
 });
 reportForm.addEventListener('submit',submitReport);
 document.getElementById('refresh-reports').addEventListener('click',loadReports);

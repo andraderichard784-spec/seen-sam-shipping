@@ -1162,7 +1162,7 @@ async function reviewVesselAccount(account,button,nextStatus){
 
 async function loadVesselRequests(){
   const {data,error}=await client.from('vessel_accounts')
-    .select('user_id,email,vessel_name,status,created_at')
+    .select('user_id,email,username,vessel_name,status,created_at')
     .eq('status','pending').order('created_at',{ascending:true});
   if(error) throw error;
   vesselRequestList.replaceChildren();
@@ -1180,6 +1180,8 @@ async function loadVesselRequests(){
     title.textContent=account.vessel_name;
     const email=document.createElement('p');
     email.textContent=account.email;
+    const username=document.createElement('p');
+    username.textContent='Username: '+account.username;
     const date=document.createElement('p');
     date.textContent='Requested '+formattedDate(account.created_at);
     const actions=document.createElement('div');
@@ -1191,7 +1193,7 @@ async function loadVesselRequests(){
     reject.type='button';reject.className='reject';reject.textContent='Reject';
     reject.addEventListener('click',()=>reviewVesselAccount(account,reject,'rejected'));
     actions.append(approve,reject);
-    card.append(title,email,date,actions);
+    card.append(title,email,username,date,actions);
     vesselRequestList.append(card);
   });
 }
