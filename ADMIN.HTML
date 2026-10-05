@@ -11,10 +11,17 @@
 :root{
   --hull:#0B2540;--deep:#12395C;--sea:#1F6F8B;--foam:#EEF3F5;
   --sand:#E3D8C3;--signal:#D6452B;--ink:#10202E;--white:#fff;
+  --page:#EEF3F5;--surface:#fff;--line:#d9e2e7;--muted:#526878;
+  --soft:#e8f1f4;--row-hover:#edf4f6;
   --serif:'Fraunces',Georgia,serif;--sans:'Barlow',system-ui,sans-serif;
 }
+body[data-theme="dark"]{
+  --foam:#101827;--ink:#e5edf4;--white:#172235;--page:#101827;
+  --surface:#172235;--line:#2c3b50;--muted:#a4b4c6;--soft:#1c2c42;
+  --row-hover:#20324a;--sea:#6eb7d1;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;font:16px/1.55 var(--sans);color:var(--ink);background:var(--foam)}
+body{min-height:100vh;font:16px/1.55 var(--sans);color:var(--ink);background:var(--page);transition:background .2s,color .2s}
 a{color:inherit}
 button,input{font:inherit}
 :focus-visible{outline:3px solid var(--signal);outline-offset:3px}
@@ -28,37 +35,274 @@ button,input{font:inherit}
 h1,h2,h3{font-family:var(--serif);line-height:1.15;color:var(--hull)}
 h1{font-size:clamp(2rem,4vw,3rem);margin:6px 0}
 .subhead{color:#526878}
-.card{background:var(--white);border:1px solid #d9e2e7;border-top:4px solid var(--sea);box-shadow:0 10px 26px rgba(11,37,64,.07)}
+.card{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--sea);box-shadow:0 10px 26px rgba(11,37,64,.07)}
 .login-card{max-width:480px;margin:42px auto;padding:32px}
 .login-card h2{font-size:1.7rem;margin-bottom:8px}
-.login-card>p{color:#526878;margin-bottom:22px}
+.login-card>p{color:var(--muted);margin-bottom:22px}
 .login-card form{margin-top:18px}
 .login-card small{margin-top:-12px;color:#607482;font-size:.82rem}
-.auth-toggle{margin:18px 0 0;color:#526878;font-size:.92rem}
+.forgot-password-row{margin-top:-5px;text-align:right}
+.auth-toggle{margin:18px 0 0;color:var(--muted);font-size:.92rem}
 .text-button{padding:0;border:0;background:transparent;color:var(--sea);text-decoration:underline;cursor:pointer;font-weight:600}
 .security-warning{margin-top:18px;padding:12px;border-left:4px solid var(--signal);background:#fff0ed;color:#812818;font-size:.88rem}
 form{display:grid;gap:16px}
 label{display:grid;gap:6px;font-weight:600;color:var(--hull)}
-input{min-width:0;padding:11px 12px;border:1px solid #bdccd5;border-radius:4px;background:#fff;color:var(--ink)}
+body[data-theme="dark"] label{color:#e5edf4}
+input{min-width:0;padding:11px 12px;border:1px solid #bdccd5;border-radius:4px;background:var(--surface);color:var(--ink)}
 input:focus{border-color:var(--sea)}
 .primary,.secondary,.filter-button{border:0;border-radius:4px;cursor:pointer;font-weight:600}
 .primary{padding:12px 18px;background:var(--signal);color:var(--white)}
 .primary:hover{background:#b93820}
 .primary:disabled,.secondary:disabled{opacity:.58;cursor:wait}
+.danger-button{padding:10px 14px;border:1px solid #b93820;border-radius:4px;background:#fff;color:#a52d1c;font-weight:600;cursor:pointer}
+.danger-button:hover{background:#fff0ed}
+.danger-button:disabled{opacity:.58;cursor:wait}
+body[data-theme="dark"] .danger-button{border-color:#ff8a78;background:#321f28;color:#ffb2a5}
+body[data-theme="dark"] .danger-button:hover{background:#48242a}
 .secondary,.filter-button{padding:9px 13px;background:var(--hull);color:var(--white)}
 .secondary:hover,.filter-button:hover{background:var(--deep)}
-.notice{margin-top:16px;padding:11px 13px;border-left:4px solid var(--sea);background:#e8f1f4;color:var(--hull);border-radius:2px}
+.notice{margin-top:16px;padding:11px 13px;border-left:4px solid var(--sea);background:var(--soft);color:var(--ink);border-radius:2px}
 .notice:empty{display:none}
 .notice.error{border-color:var(--signal);background:#fff0ed;color:#812818}
 .setup-note{max-width:760px;margin:18px auto;padding:18px 20px;background:#fff7e6;border-left:4px solid #bd8122;color:#513e1e}
 .setup-note strong{display:block;margin-bottom:4px}
 .setup-note code{font-size:.88em}
 .dashboard{display:none}
-.dashboard.visible{display:block}
-.stats{display:grid;grid-template-columns:repeat(2,minmax(150px,220px));gap:14px;margin:26px 0}
-.stat{padding:16px 20px;background:var(--hull);color:var(--white);border-left:4px solid var(--signal)}
-.stat span{display:block;color:#bed0dc;font-size:.85rem}
-.stat strong{font:700 1.8rem var(--serif)}
+.dashboard.visible{display:grid;grid-template-columns:260px minmax(0,1fr);max-width:none;min-height:100vh}
+body.dashboard-active .topbar{display:none}
+body.dashboard-active .shell{max-width:none;margin:0;padding:0}
+.dashboard-sidebar{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:26px;padding:24px 16px;background:#0b1729;color:#d7e1ed}
+.sidebar-brand{display:flex;align-items:center;gap:11px;padding:0 8px 20px;border-bottom:1px solid #26364b}
+.sidebar-brand img{width:42px;height:42px;border-radius:50%;background:#fff;object-fit:contain}
+.sidebar-brand strong{display:block;color:#fff;font:700 1rem var(--serif)}
+.sidebar-brand span{color:#94a7bc;font-size:.8rem}
+.sidebar-section-title{padding:0 10px;color:#7689a0;font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.sidebar-nav{display:grid;gap:6px}
+.sidebar-link,.theme-toggle,.logout-button{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;border:0;border-radius:5px;background:transparent;color:#adbed0;text-align:left;text-decoration:none;font:600 .95rem var(--sans);cursor:pointer}
+.sidebar-link:hover,.sidebar-link.active,.theme-toggle:hover,.logout-button:hover{background:#1b2a40;color:#fff}
+.sidebar-link.active{box-shadow:inset 3px 0 var(--signal)}
+.sidebar-icon{width:22px;text-align:center;font-size:1.1rem}
+.sidebar-spacer{flex:1}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:16px 8px 4px;border-top:1px solid #26364b}
+.user-avatar{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:#1f6f8b;color:#fff;font-weight:600}
+.sidebar-user strong{display:block;max-width:170px;overflow:hidden;color:#fff;text-overflow:ellipsis;white-space:nowrap;font-size:.88rem}
+.sidebar-user span{color:#94a7bc;font-size:.78rem}
+.dashboard-main{position:relative;isolation:isolate;min-width:0;padding:34px clamp(18px,4vw,54px) 56px}
+.dashboard-main::before{
+  content:"";position:absolute;z-index:-1;top:170px;right:4%;width:clamp(240px,28vw,390px);aspect-ratio:1;
+  background:url("seem-sam-logo.png") center/contain no-repeat;
+  opacity:.3;mix-blend-mode:multiply;pointer-events:none;
+  -webkit-mask-image:radial-gradient(circle,#000 52%,transparent 75%);
+  mask-image:radial-gradient(circle,#000 52%,transparent 75%);
+  animation:background-logo-drift 18s ease-in-out infinite;
+}
+body[data-theme="dark"] .dashboard-main::before{opacity:.32;mix-blend-mode:screen}
+body.about-active .dashboard-main::before{display:none}
+body.vessels-active .dashboard-main{background-image:none}
+body.vessels-active .dashboard-main::before{display:none}
+body[data-theme="dark"] .dashboard-main .page-heading h1{color:#f1f6fa;text-shadow:0 2px 16px rgba(88,190,220,.18)}
+body[data-theme="dark"] .dashboard-main .page-heading .subhead{color:#b8c9d8}
+body[data-theme="dark"] .dashboard-main .page-heading .eyebrow{color:#79cce5}
+.dashboard-main .page-heading{align-items:center}
+.dashboard-main h1{font-size:clamp(1.8rem,3vw,2.5rem)}
+.dashboard-main .stats{grid-template-columns:repeat(5,minmax(0,1fr));margin:20px 0}
+.dashboard-hero{
+  position:relative;isolation:isolate;display:flex;align-items:center;justify-content:space-between;gap:28px;
+  min-height:230px;overflow:hidden;padding:32px clamp(24px,4vw,48px);margin:0 0 24px;
+  color:#fff;background:linear-gradient(112deg,#0b2540 0%,#12395c 55%,#1f6f8b 100%);
+  border:1px solid rgba(255,255,255,.14);border-bottom:5px solid var(--signal);border-radius:12px;
+  box-shadow:0 22px 40px rgba(11,37,64,.2);perspective:1000px;
+  animation:hero-enter .65s cubic-bezier(.2,.75,.25,1) both;
+}
+.dashboard-hero::before,.dashboard-hero::after{content:"";position:absolute;z-index:-1;pointer-events:none;border:1px solid rgba(227,216,195,.15);border-radius:50%}
+.dashboard-hero::before{width:360px;height:360px;right:7%;top:-270px;box-shadow:0 0 0 26px rgba(255,255,255,.025),0 0 0 54px rgba(255,255,255,.02)}
+.dashboard-hero::after{width:240px;height:240px;right:32%;bottom:-200px}
+.hero-logo-watermark{
+  position:absolute;z-index:1;right:7%;top:50%;width:clamp(220px,25vw,320px);aspect-ratio:1;
+  object-fit:contain;opacity:1;mix-blend-mode:normal;pointer-events:none;border:8px solid rgba(255,255,255,.9);
+  border-radius:50%;background:#fff;box-shadow:0 22px 38px rgba(2,15,28,.38),0 0 0 12px rgba(255,255,255,.12);
+  animation:watermark-drift 13s ease-in-out infinite;
+}
+.hero-vessel,.hero-waves{display:none}
+.dashboard-hero-copy{position:relative;z-index:2;max-width:570px}
+.dashboard-hero .eyebrow{display:flex;align-items:center;gap:9px;color:#e3d8c3;font-size:.72rem}
+.dashboard-hero .eyebrow::before{content:"";width:24px;height:2px;background:var(--signal)}
+.dashboard-hero h1{max-width:15ch;margin:10px 0;color:#fff;font-size:clamp(2.2rem,4vw,3.15rem);letter-spacing:-.035em}
+.dashboard-hero .subhead{max-width:48ch;color:#d5e2ec}
+.hero-status{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:7px 11px;border:1px solid rgba(255,255,255,.22);border-radius:30px;background:rgba(255,255,255,.08);color:#eef7fb;font-size:.77rem}
+.hero-status-dot{width:8px;height:8px;border-radius:50%;background:#78d6ae;box-shadow:0 0 0 4px rgba(120,214,174,.14);animation:status-pulse 2.2s ease-in-out infinite}
+.dashboard-filters{display:grid;grid-template-columns:1.15fr 1fr 1fr auto;align-items:end;gap:14px;padding:18px;margin:22px 0;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 22px rgba(11,37,64,.055);transform:perspective(1200px) rotateX(0);transition:box-shadow .25s ease,transform .25s ease}
+.dashboard-filters:focus-within{box-shadow:0 14px 28px rgba(11,37,64,.1);transform:perspective(1200px) rotateX(.5deg)}
+.dashboard-filters label{gap:5px;color:var(--muted);font-size:.8rem}
+.dashboard-filters input,.dashboard-filters select{width:100%;min-height:44px;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--page);color:var(--ink);transition:border-color .2s,box-shadow .2s}
+.dashboard-filters input:focus,.dashboard-filters select:focus{border-color:var(--sea);box-shadow:0 0 0 3px color-mix(in srgb,var(--sea) 18%,transparent);outline:0}
+.dashboard-filters .secondary{min-height:44px;padding:9px 18px}
+.filter-date-note{align-self:center;color:var(--muted);font-size:.76rem}
+.analytics-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+.analytics-card{min-width:0;padding:22px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 22px rgba(11,37,64,.055);animation:card-enter .55s both;transition:transform .25s ease,box-shadow .25s ease}
+.analytics-card:hover{transform:perspective(1100px) translateY(-4px) rotateX(.7deg);box-shadow:0 16px 30px rgba(11,37,64,.11)}
+.analytics-card h2{font:600 1rem var(--sans);color:var(--ink);margin:0 0 4px}
+.analytics-card .chart-caption{margin-bottom:16px;color:var(--muted);font-size:.82rem}
+.analytics-card-wide{grid-column:1/-1}
+.dashboard-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 22px}
+.dashboard-actions-label{margin-right:auto;color:var(--muted);font-size:.82rem;font-weight:600}
+.dashboard-action{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:9px 14px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font-weight:600;text-decoration:none;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.dashboard-action:hover{transform:translateY(-2px);border-color:var(--sea);box-shadow:0 7px 16px rgba(11,37,64,.1)}
+.dashboard-action-primary{border-color:var(--hull);background:var(--hull);color:#fff}
+.dashboard-action-primary:hover{background:var(--deep);color:#fff}
+.dashboard-content-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:18px;margin-top:18px}
+.dashboard-content-card{min-width:0;overflow:hidden;padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 22px rgba(11,37,64,.055);animation:card-enter .55s both}
+.dashboard-content-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.dashboard-content-heading h2{font:600 1rem var(--sans);color:var(--ink)}
+.dashboard-content-heading p{margin-top:3px;color:var(--muted);font-size:.8rem}
+.dashboard-text-link{flex:0 0 auto;color:var(--sea);font-size:.82rem;font-weight:600;text-decoration:none}
+.dashboard-text-link:hover{text-decoration:underline}
+.recent-inquiries{display:grid}
+.recent-inquiry{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;width:100%;padding:13px 2px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);text-align:left;cursor:pointer;transition:padding .2s ease,background .2s ease}
+.recent-inquiry:hover{padding-right:8px;padding-left:8px;background:var(--row-hover)}
+.recent-inquiry-sender{overflow:hidden;font-size:.87rem;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+.recent-inquiry-subject{grid-column:1;overflow:hidden;color:var(--muted);font-size:.8rem;text-overflow:ellipsis;white-space:nowrap}
+.recent-inquiry-date{grid-column:2;grid-row:1/3;align-self:center;color:var(--muted);font-size:.74rem;white-space:nowrap}
+.recent-empty{padding:18px 0;color:var(--muted);font-size:.86rem}
+.fleet-quick-list{display:flex;flex-wrap:wrap;gap:8px}
+.fleet-quick-link{padding:7px 10px;border:1px solid var(--line);border-radius:5px;background:var(--page);color:var(--ink);font-size:.8rem;font-weight:600;cursor:pointer;transition:transform .2s ease,border-color .2s ease,background .2s ease}
+.fleet-quick-link:hover{transform:translateY(-2px);border-color:var(--sea);background:var(--soft)}
+.fleet-quick-total{margin-top:14px;color:var(--muted);font-size:.8rem}
+.about-hero{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 210px;align-items:center;gap:36px;min-height:270px;padding:34px clamp(24px,4vw,42px);margin:20px 0 26px;background:linear-gradient(120deg,#0b2540,#12395c 66%,#1f6f8b);border:1px solid rgba(255,255,255,.13);border-bottom:4px solid var(--signal);border-radius:10px;color:#fff;box-shadow:0 16px 30px rgba(11,37,64,.16)}
+.about-hero::after{content:"";position:absolute;z-index:-1;right:115px;top:-155px;width:310px;height:310px;border:1px solid rgba(255,255,255,.13);border-radius:50%;box-shadow:0 0 0 24px rgba(255,255,255,.025),0 0 0 50px rgba(255,255,255,.02)}
+.about-hero-copy{max-width:680px}
+.about-hero .eyebrow{color:var(--sand)}
+.about-hero h2{margin:10px 0 12px;color:#fff;font:700 clamp(1.7rem,3vw,2.45rem)/1.15 var(--serif)}
+.about-hero p{max-width:65ch;color:#e0eaf0}
+.about-logo-frame{position:relative;z-index:1;justify-self:center;width:clamp(150px,17vw,190px);aspect-ratio:1;padding:7px;border:1px solid rgba(255,255,255,.85);border-radius:50%;background:#fff;box-shadow:0 16px 34px rgba(0,0,0,.25),0 0 0 8px rgba(255,255,255,.1);animation:about-logo-float 6s ease-in-out infinite}
+.about-logo-frame img{display:block;width:100%;height:100%;border-radius:50%;object-fit:contain}
+.about-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:18px 0 26px}
+.about-overview-card{padding:20px;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--sea);border-radius:8px;box-shadow:0 7px 18px rgba(11,37,64,.05)}
+.about-overview-card span{display:block;margin-bottom:7px;color:var(--muted);font-size:.79rem}
+.about-overview-card strong{color:var(--hull);font:600 1.12rem var(--sans)}
+body[data-theme="dark"] .about-overview-card strong{color:var(--ink)}
+.about-section-heading{margin:30px 0 14px;color:var(--hull);font:700 1.35rem var(--serif)}
+body[data-theme="dark"] .about-section-heading{color:var(--ink)}
+.about-values-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.about-value-card{min-height:145px;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 16px rgba(11,37,64,.045);transition:transform .22s ease,box-shadow .22s ease}
+.about-value-card:hover{transform:translateY(-4px);box-shadow:0 13px 25px rgba(11,37,64,.1)}
+.about-value-icon{display:grid;place-items:center;width:34px;height:34px;margin-bottom:12px;border-radius:50%;background:var(--soft);color:var(--sea);font-size:1rem}
+.about-value-card h3{margin-bottom:6px;color:var(--hull);font:600 .98rem var(--sans)}
+.about-value-card p{color:var(--muted);font-size:.83rem}
+body[data-theme="dark"] .about-value-card h3{color:var(--ink)}
+.about-admin-note{display:flex;align-items:flex-start;gap:12px;margin-top:24px;padding:16px 18px;border:1px solid var(--line);border-radius:8px;background:var(--soft);color:var(--muted);font-size:.86rem}
+.about-admin-note strong{display:block;margin-bottom:3px;color:var(--ink)}
+.chart{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font:11px var(--sans);fill:var(--muted)}
+.chart-grid{stroke:var(--line);stroke-dasharray:3 5}
+.chart-axis{stroke:var(--line)}
+.chart-line{fill:none;stroke:var(--sea);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.chart-area{fill:url(#inquiry-area-gradient);opacity:.23}
+.chart-point{fill:var(--sea);stroke:var(--surface);stroke-width:2}
+.chart-empty{display:grid;min-height:190px;place-items:center;text-align:center;color:var(--muted)}
+.status-bars{display:grid;gap:18px;padding-top:8px}
+.status-bar-heading{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px;color:var(--ink);font-size:.85rem}
+.status-bar-track{display:flex;height:22px;overflow:hidden;border-radius:5px;background:var(--soft)}
+.status-segment{height:100%;min-width:0;transition:width .45s ease}
+.status-segment-unread{background:var(--signal)}
+.status-segment-read{background:var(--sea)}
+.status-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:20px;color:var(--muted);font-size:.78rem}
+.legend-item{display:inline-flex;align-items:center;gap:6px}
+.legend-dot{width:9px;height:9px;border-radius:50%}
+.legend-dot-unread{background:var(--signal)}
+.legend-dot-read{background:#1f6f8b}
+.stat{
+  position:relative;isolation:isolate;overflow:hidden;min-height:116px;padding:19px 20px;
+  background:var(--surface);color:var(--ink);
+  border:1px solid var(--line);border-left:4px solid var(--sea);border-radius:7px;
+  box-shadow:0 7px 20px rgba(11,37,64,.06);
+  transform:perspective(900px) translateZ(0);transform-style:preserve-3d;
+  transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;
+  animation:card-enter .55s both;
+}
+.stat:nth-child(2){animation-delay:.08s}
+.stat:nth-child(3){animation-delay:.16s}
+.stat:nth-child(4){animation-delay:.24s}
+.stat::after{content:"";position:absolute;z-index:-1;width:96px;height:96px;right:-32px;bottom:-50px;border:1px solid color-mix(in srgb,var(--sea) 25%,transparent);border-radius:50%;box-shadow:0 0 0 12px color-mix(in srgb,var(--sea) 6%,transparent),0 0 0 25px color-mix(in srgb,var(--sea) 4%,transparent);transition:transform .35s ease}
+.stat:hover{transform:perspective(900px) translateY(-6px) rotateX(3deg) rotateY(-2deg);box-shadow:0 18px 30px rgba(11,37,64,.13);border-left-color:var(--signal)}
+.stat:hover::after{transform:scale(1.16)}
+.stat span{position:relative;display:block;color:var(--muted);font-size:.88rem}
+ .stat strong{position:relative;display:block;margin-top:5px;color:var(--hull);font:700 2rem var(--serif);transform:translateZ(14px)}
+@keyframes card-enter{from{opacity:0;transform:perspective(800px) translateY(18px) rotateX(-6deg)}to{opacity:1;transform:perspective(800px) translateY(0) rotateX(0)}}
+@keyframes hero-enter{from{opacity:0;transform:perspective(1100px) translateY(14px) rotateX(-2deg)}to{opacity:1;transform:perspective(1100px) translateY(0) rotateX(0)}}
+@keyframes status-pulse{50%{box-shadow:0 0 0 7px rgba(120,214,174,.07)}}
+@keyframes watermark-drift{0%,100%{transform:translate3d(0,-50%,0) rotate(-5deg)}50%{transform:translate3d(0,calc(-50% - 16px),0) rotate(4deg)}}
+@keyframes background-logo-drift{0%,100%{transform:translate3d(0,0,0) rotate(-5deg)}50%{transform:translate3d(0,-16px,0) rotate(4deg)}}
+@keyframes about-logo-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+body[data-theme="dark"] .stat strong{color:var(--ink)}
+.fleet-name{transition:transform .22s ease,box-shadow .22s ease}
+.fleet-name:hover{transform:perspective(700px) translateY(-4px) rotateX(2deg);box-shadow:0 14px 24px rgba(11,37,64,.12)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+.dashboard-view[hidden]{display:none}
+.dashboard-view{animation:view-in .18s ease-out}
+@keyframes view-in{from{opacity:.65;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.dashboard-intro{margin:0 0 22px;color:var(--muted)}
+.fleet-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:22px}
+.vessels-view{position:relative;isolation:isolate}
+.fleet-watermark{
+  position:absolute;z-index:0;top:56%;left:50%;display:block;width:min(92vw,1000px);max-width:calc(100% - 12px);height:auto;
+  object-fit:contain;opacity:.25;pointer-events:none;user-select:none;
+  filter:contrast(1.08) saturate(1.18);
+  transform:translate(-50%,-50%);
+  -webkit-mask-image:radial-gradient(circle,#000 0 46%,transparent 48%);
+  mask-image:radial-gradient(circle,#000 0 46%,transparent 48%)
+}
+body[data-theme="dark"] .fleet-watermark{opacity:.2;filter:brightness(1.14) contrast(1.08) drop-shadow(0 0 24px rgba(88,190,220,.22))}
+.vessels-view>.page-heading,.vessels-view>.fleet-list{position:relative;z-index:1}
+.fleet-list{position:relative;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:18px;margin-top:28px;perspective:1200px}
+.fleet-name{
+  position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;gap:14px;min-height:104px;padding:20px;
+  background:linear-gradient(135deg,#0b2540 0%,#12496a 62%,#1f6f8b 100%);
+  border:1px solid rgba(255,255,255,.22);border-left:5px solid var(--signal);border-bottom:3px solid #48a8c5;border-radius:10px;
+  box-shadow:0 9px 0 #092038,0 15px 24px rgba(11,37,64,.2),inset 0 1px rgba(255,255,255,.18);
+  color:#fff;transform-style:preserve-3d;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+  animation:fleet-card-enter .55s cubic-bezier(.2,.75,.25,1) both;animation-delay:calc(var(--fleet-index,0) * 45ms)
+}
+.fleet-name::before{content:"";position:absolute;z-index:-1;top:-48px;right:-42px;width:130px;height:130px;border:1px solid rgba(255,255,255,.14);border-radius:50%;box-shadow:0 0 0 14px rgba(255,255,255,.035),0 0 0 29px rgba(255,255,255,.025);transition:transform .35s ease}
+.fleet-name::after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.09) 48%,transparent 70%);transform:translateX(-120%);transition:transform .5s ease}
+.fleet-name:nth-child(3n+2){background:linear-gradient(135deg,#12395c 0%,#145c78 66%,#247f91 100%);border-bottom-color:#e3d8c3}
+.fleet-name:nth-child(3n){background:linear-gradient(135deg,#102e4d 0%,#174a68 62%,#287a83 100%);border-left-color:#e3d8c3}
+.fleet-name:hover{z-index:2;transform:perspective(800px) translateY(-7px) rotateX(4deg) rotateY(-2deg);box-shadow:0 12px 0 #092038,0 22px 32px rgba(11,37,64,.28),inset 0 1px rgba(255,255,255,.24);border-left-color:#ff765f}
+.fleet-name:hover::before{transform:scale(1.12) rotate(12deg)}
+.fleet-name:hover::after{transform:translateX(120%)}
+.fleet-name-icon{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.42);border-radius:50%;background:rgba(255,255,255,.12);color:#8be2f1;font-size:1.25rem;box-shadow:inset 0 1px rgba(255,255,255,.2),0 5px 12px rgba(0,0,0,.15);transform:translateZ(18px)}
+.fleet-name-info{display:grid;gap:2px;transform:translateZ(14px)}
+.fleet-name-info small{color:#b8d6e2;font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.fleet-name-info strong{color:#fff;font:700 1.12rem var(--sans);letter-spacing:.035em;text-shadow:0 2px 5px rgba(0,0,0,.2)}
+@keyframes fleet-card-enter{from{opacity:0;transform:perspective(800px) translateY(20px) rotateX(-8deg)}to{opacity:1;transform:perspective(800px) translateY(0) rotateX(0)}}
+@media(max-width:760px){
+  .fleet-watermark{top:54%;width:min(92vw,640px)}
+  .fleet-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .fleet-name{min-height:96px;padding:15px}
+  .fleet-name-icon{width:42px;height:42px;flex-basis:42px}
+}
+@media(max-width:430px){
+  .fleet-watermark{top:54%;width:min(100%,460px)}
+  .fleet-list{grid-template-columns:1fr;gap:13px}
+}
+.dashboard-main .inbox{border-radius:0 0 6px 6px;overflow:hidden}
+.dashboard-main .toolbar{border-radius:6px 6px 0 0}
+.dashboard-main .card{border-top:0}
+.dashboard-main .detail{background:var(--surface)}
+.message-row{border-bottom:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.message-row:hover,.message-row.selected{background:var(--row-hover)}
+.sender{color:var(--ink)}
+.row-date,.row-preview,.detail-meta,.empty-list{color:var(--muted)}
+.detail-head{border-bottom:1px solid var(--line)}
+.detail-empty strong{color:var(--ink)}
+.detail-meta a{color:var(--sea)}
+.empty-list{padding:30px 18px;text-align:center}
+.error-text{padding:20px;color:#b93820}
+.theme-toggle[aria-pressed="true"]{color:#f3d17a}
+.auth-hidden{display:none!important}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,220px));gap:14px;margin:26px 0}
 .toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:14px;background:var(--hull);color:var(--white)}
 .toolbar input{flex:1;min-width:210px;background:#0f2f4e;border-color:#3b5d7d;color:var(--white)}
 .toolbar input::placeholder{color:#a9bdcc}
@@ -73,17 +317,59 @@ input:focus{border-color:var(--sea)}
 .row-date{font-size:.78rem;color:#607482;white-space:nowrap}
 .row-subject{display:block;margin-top:4px;font-weight:600}
 .row-preview{display:block;margin-top:3px;color:#607482;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.unread-label{display:inline-block;margin-top:8px;padding:2px 8px;border-radius:20px;background:#fbe4df;color:#8d2d1d;font-size:.72rem;font-weight:600}
+.message-status{display:inline-flex;align-items:center;gap:6px;width:max-content;margin-top:9px;padding:3px 9px;border:1px solid #b9cbd5;border-radius:20px;background:#eaf1f4;color:#365567;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.message-status::before{content:"";width:7px;height:7px;border-radius:50%;background:#738996}
+.message-status.unread{border-color:#e5a295;background:#fff0ed;color:#8d2d1d}
+.message-status.unread::before{background:#d6452b;box-shadow:0 0 0 3px rgba(214,69,43,.12)}
+.message-status.read{border-color:#9bceb5;background:#eaf7f0;color:#216642}
+.message-status.read::before{background:#329765}
+body[data-theme="dark"] .message-row{background:#172235;color:#e5edf4;border-bottom-color:#2c3b50}
+body[data-theme="dark"] .message-row:hover,body[data-theme="dark"] .message-row.selected{background:#20324a}
+body[data-theme="dark"] .sender,body[data-theme="dark"] .row-subject{color:#edf4f8}
+body[data-theme="dark"] .row-date,body[data-theme="dark"] .row-preview{color:#adbed0}
+body[data-theme="dark"] .message-status{border-color:#526579;background:#26384d;color:#d4e2ed}
+body[data-theme="dark"] .message-status.unread{border-color:#a94b3d;background:#492b32;color:#ffc0b4}
+body[data-theme="dark"] .message-status.read{border-color:#39775a;background:#1d3b30;color:#a9e2c0}
+.vessel-review-layout{display:grid;grid-template-columns:minmax(240px,.72fr) minmax(0,1.6fr);gap:16px;align-items:start}
+.vessel-review-panel{padding:20px;border:1px solid var(--line);border-radius:7px;background:var(--surface);box-shadow:0 7px 20px rgba(11,37,64,.06)}
+.vessel-review-panel h2{margin-bottom:12px;font-size:1.2rem}
+.vessel-request-list,.fuel-report-list{display:grid;gap:10px}
+.vessel-request,.fuel-report-button{padding:13px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);text-align:left}
+.vessel-request strong,.fuel-report-button strong{display:block;color:var(--hull)}
+.vessel-request p,.fuel-report-button p{margin-top:3px;color:var(--muted);font-size:.86rem}
+.vessel-request-actions{display:flex;gap:7px;margin-top:10px}
+.vessel-request-actions button,.review-form button{padding:8px 11px;border:0;border-radius:4px;background:var(--hull);color:#fff;font-weight:600;cursor:pointer}
+.vessel-request-actions button.approve{background:#26764d}
+.vessel-request-actions button.reject{background:#a93526}
+.vessel-request-actions button:disabled,.review-form button:disabled{opacity:.6;cursor:wait}
+.fuel-report-button{cursor:pointer}
+.fuel-report-button[aria-pressed="true"]{border-color:var(--sea);box-shadow:inset 3px 0 var(--sea)}
+.fuel-report-detail{min-height:180px;margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.fuel-report-detail h3{margin-bottom:8px;font:700 1.1rem var(--sans)}
+.fuel-report-detail p{margin:5px 0;color:var(--muted)}
+.fuel-report-photos{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.fuel-report-photos img{width:130px;height:100px;border:1px solid var(--line);border-radius:5px;object-fit:cover}
+.review-form{display:grid;gap:10px;margin-top:15px;padding-top:14px;border-top:1px solid var(--line)}
+.review-form label{display:grid;gap:5px}
+.review-form select,.review-form textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)}
+.review-form textarea{min-height:80px;resize:vertical}
+body[data-theme="dark"] .vessel-request strong,body[data-theme="dark"] .fuel-report-button strong{color:#edf4f8}
+body[data-theme="dark"] .vessel-request,body[data-theme="dark"] .fuel-report-button,body[data-theme="dark"] .fuel-report-detail{background:var(--surface);color:var(--ink)}
+@media(max-width:900px){.vessel-review-layout{grid-template-columns:1fr}}
 .detail{padding:28px;min-width:0}
 .detail-empty{height:100%;min-height:300px;display:grid;place-items:center;text-align:center;color:#607482}
 .detail-empty strong{display:block;color:var(--hull);font:700 1.3rem var(--serif);margin-bottom:6px}
 .detail-head{padding-bottom:18px;border-bottom:1px solid #d9e2e7}
+.detail-status{margin:2px 0 10px}
 .detail-head h2{font-size:1.6rem;margin:8px 0 14px;overflow-wrap:anywhere}
 .detail-meta{display:grid;gap:4px;color:#526878;font-size:.92rem}
 .detail-meta a{color:var(--sea);font-weight:600}
 .message-body{white-space:pre-wrap;overflow-wrap:anywhere;margin:24px 0;line-height:1.7}
 .detail-actions{display:flex;flex-wrap:wrap;gap:10px}
 .detail-actions a{display:inline-block;text-decoration:none}
+.reply-hint{align-self:center;color:var(--muted);font-size:.82rem}
+.recipient-warning{margin:14px 0 0;padding:11px 13px;border-left:4px solid var(--signal);background:#fff0ed;color:#812818;font-size:.88rem}
+body[data-theme="dark"] .recipient-warning{border-color:#ff8a78;background:#3d252b;color:#ffc0b4}
 .empty-list{padding:30px 18px;text-align:center;color:#607482}
 .error-text{padding:20px;color:#812818}
 @media(max-width:760px){
@@ -94,12 +380,46 @@ input:focus{border-color:var(--sea)}
   .inbox{grid-template-columns:1fr}
   .message-list{border-right:0;border-bottom:1px solid #d9e2e7;max-height:320px}
   .detail{padding:22px 18px}
+  .dashboard.visible{grid-template-columns:1fr}
+  .dashboard-sidebar{position:relative;top:auto;height:auto;gap:14px;padding:14px}
+  .sidebar-brand{padding:0 4px 12px}
+  .sidebar-section-title{display:none}
+  .sidebar-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sidebar-link{padding:9px;font-size:.86rem}
+  .sidebar-spacer{display:none}
+  .sidebar-user{padding:10px 4px 0}
+  .dashboard-main{padding:24px 14px 40px}
+  .dashboard-sidebar-footer{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .dashboard-hero{min-height:350px;padding:26px 24px 148px}
+  .hero-logo-watermark{right:18px;top:auto;bottom:12px;width:150px;border-width:5px;box-shadow:0 12px 22px rgba(2,15,28,.35),0 0 0 7px rgba(255,255,255,.12)}
+  .dashboard-filters{grid-template-columns:1fr 1fr}
+  .filter-date-note{grid-column:1/-1}
+  .analytics-grid{grid-template-columns:1fr}
+  .analytics-card-wide{grid-column:auto}
+  .dashboard-main .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dashboard-content-grid{grid-template-columns:1fr}
+  .about-hero{grid-template-columns:minmax(0,1fr) 155px;min-height:230px;padding:24px;gap:14px}
+  .about-overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .about-values-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:430px){
-  .stats{grid-template-columns:1fr 1fr}
+  .stats,.dashboard-main .stats{grid-template-columns:1fr 1fr}
   .stat{padding:12px}
   .toolbar input{flex-basis:100%}
   .login-card{padding:24px 18px}
+  .dashboard-filters{grid-template-columns:1fr}
+  .dashboard-filters .secondary,.filter-date-note{grid-column:auto}
+  .dashboard-hero{min-height:350px;padding:25px 20px 148px}
+  .hero-logo-watermark{right:18px;top:auto;bottom:12px;width:150px;border-width:5px;box-shadow:0 12px 22px rgba(2,15,28,.35),0 0 0 7px rgba(255,255,255,.12)}
+  .dashboard-hero-copy{max-width:100%}
+  .dashboard-hero h1{max-width:12ch;font-size:2.15rem}
+  .about-hero{grid-template-columns:1fr;padding:22px 20px 154px;min-height:0;align-content:start}
+  .about-logo-frame{position:absolute;right:18px;bottom:18px;width:120px}
+  .about-hero-copy{position:relative;z-index:2}
+  .about-hero-copy p{max-width:34ch}
+  .about-overview-grid,.about-values-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .about-overview-card,.about-value-card{padding:14px}
+  .about-value-card{min-height:150px}
 }
 </style>
 </head>
@@ -113,14 +433,6 @@ input:focus{border-color:var(--sea)}
   </div>
 </header>
 <main class="shell">
-  <div class="page-heading">
-    <div>
-      <p class="eyebrow">Operations · Communications</p>
-      <h1>Inquiry inbox</h1>
-      <p class="subhead">Website messages from clients, principals and seafarers.</p>
-    </div>
-  </div>
-
   <div class="setup-note" id="setup-note" hidden>
     <strong>Admin inbox setup is not complete.</strong>
     Configure the Supabase Project URL and anon key in <code>SUPABASE-CONFIG.JS</code>,
@@ -138,8 +450,29 @@ input:focus{border-color:var(--sea)}
         <label>Password<input id="login-password" type="password" autocomplete="current-password" required></label>
         <button class="primary" type="submit">Sign in securely</button>
       </form>
+      <p class="forgot-password-row"><button class="text-button" id="forgot-password" type="button">Forgot password?</button></p>
       <p class="notice" id="login-notice" role="status" aria-live="polite"></p>
       <p class="auth-toggle">Need an account? <button class="text-button" id="show-register" type="button">Register as admin</button></p>
+    </div>
+    <div id="reset-request-panel" hidden>
+      <h2 id="reset-request-title">Forgot password?</h2>
+      <p id="reset-request-description">Enter your administrator email address and we’ll send a password reset link.</p>
+      <form id="reset-request-form">
+        <label>Email address<input id="reset-email" type="email" autocomplete="email" maxlength="254" required></label>
+        <button class="primary" type="submit">Send reset link</button>
+      </form>
+      <p class="notice" id="reset-request-notice" role="status" aria-live="polite"></p>
+    </div>
+    <div id="recovery-panel" hidden>
+      <h2 id="recovery-title">Reset your password</h2>
+      <p>Choose a new password for your administrator account.</p>
+      <form id="recovery-form">
+        <label>New password<input id="recovery-password" type="password" autocomplete="new-password" minlength="8" required></label>
+        <label>Confirm new password<input id="recovery-password-confirm" type="password" autocomplete="new-password" minlength="8" required></label>
+        <button class="primary" type="submit">Save new password</button>
+      </form>
+      <p class="notice" id="recovery-notice" role="status" aria-live="polite"></p>
+      <p class="auth-toggle"><button class="text-button" id="recovery-back" type="button">Back to sign in</button></p>
     </div>
     <div id="register-panel" hidden>
       <h2 id="register-title">Admin registration</h2>
@@ -158,29 +491,246 @@ input:focus{border-color:var(--sea)}
   </section>
 
   <section class="dashboard" id="dashboard" aria-label="Inquiry dashboard">
-    <div class="page-heading">
-      <div>
-        <p class="eyebrow">Seem Sam Shipping Inc.</p>
-        <h1>Message center</h1>
+    <aside class="dashboard-sidebar" aria-label="Admin navigation">
+      <div class="sidebar-brand">
+        <img src="seem-sam-logo.png" alt="">
+        <div><strong>Seem Sam Shipping</strong><span>Admin Dashboard</span></div>
       </div>
-      <button class="secondary" id="signout" type="button">Sign out</button>
-    </div>
-    <div class="stats" aria-label="Inbox totals">
-      <div class="stat"><span>Total inquiries</span><strong id="total-count">0</strong></div>
-      <div class="stat"><span>Unread</span><strong id="unread-count">0</strong></div>
-    </div>
-    <div class="toolbar" aria-label="Filter messages">
-      <input id="search" type="search" placeholder="Search sender, email, subject…" aria-label="Search messages">
-      <button class="filter-button" id="all-filter" type="button" aria-pressed="true">All messages</button>
-      <button class="filter-button" id="unread-filter" type="button" aria-pressed="false">Unread</button>
-      <button class="secondary" id="refresh" type="button">Refresh</button>
-    </div>
-    <p class="notice" id="inbox-notice" role="status" aria-live="polite"></p>
-    <div class="card inbox">
-      <div class="message-list" id="message-list" aria-label="Messages"></div>
-      <article class="detail" id="message-detail" aria-live="polite">
-        <div class="detail-empty"><div><strong>Your inbox is ready</strong>Select a message to read the full inquiry.</div></div>
-      </article>
+      <div class="sidebar-section-title">Operations</div>
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" href="#dashboard-view" id="nav-dashboard"><span class="sidebar-icon" aria-hidden="true">▦</span>Dashboard</a>
+        <a class="sidebar-link" href="#inquiries-view" id="nav-inbox"><span class="sidebar-icon" aria-hidden="true">✉</span>Inquiries <span class="unread-label" id="sidebar-unread" hidden>0</span></a>
+        <a class="sidebar-link" href="#vessel-reports-view" id="nav-reports"><span class="sidebar-icon" aria-hidden="true">▤</span>Vessel Reports <span class="unread-label" id="pending-vessel-count" hidden>0</span></a>
+        <a class="sidebar-link" href="#vessels-view" id="nav-vessels"><span class="sidebar-icon" aria-hidden="true">⚓</span>Vessel Names</a>
+        <a class="sidebar-link" href="#about-view" id="nav-about"><span class="sidebar-icon" aria-hidden="true">ⓘ</span>About</a>
+      </nav>
+      <div class="sidebar-spacer"></div>
+      <div class="dashboard-sidebar-footer">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false">
+          <span class="sidebar-icon" id="theme-icon" aria-hidden="true">☾</span>
+          <span id="theme-label">Dark mode</span>
+        </button>
+        <button class="logout-button" id="signout" type="button"><span class="sidebar-icon" aria-hidden="true">↪</span>Log out</button>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar" aria-hidden="true">S</div>
+        <div><strong id="sidebar-user-email">Admin</strong><span>Authorized administrator</span></div>
+      </div>
+    </aside>
+    <div class="dashboard-main">
+      <section class="dashboard-view" id="dashboard-view" aria-labelledby="dashboard-title">
+        <div class="dashboard-hero">
+          <div class="dashboard-hero-copy">
+            <p class="eyebrow">Seem Sam Shipping · Operations</p>
+            <h1 id="dashboard-title" tabindex="-1">Maritime operations, at a glance.</h1>
+            <p class="subhead">A clear view of your inquiries, client communications and fleet activity.</p>
+            <span class="hero-status"><span class="hero-status-dot" aria-hidden="true"></span>Admin operations overview</span>
+          </div>
+          <img class="hero-logo-watermark" src="seem-sam-logo.png" alt="" aria-hidden="true">
+          <div class="hero-vessel" aria-hidden="true">
+            <svg viewBox="0 0 420 220">
+              <defs>
+                <linearGradient id="ship-hull" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0" stop-color="#18334d"/>
+                  <stop offset="1" stop-color="#071827"/>
+                </linearGradient>
+                <linearGradient id="ship-deck" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stop-color="#f3ead9"/>
+                  <stop offset="1" stop-color="#c8d7db"/>
+                </linearGradient>
+              </defs>
+              <ellipse cx="219" cy="188" rx="150" ry="13" fill="#061a2b" opacity=".28"/>
+              <path d="M45 143h330l-34 39H93z" fill="url(#ship-hull)"/>
+              <path d="M59 155h302l-11 13H69z" fill="#d6452b"/>
+              <path d="M130 104h137v39H130z" fill="url(#ship-deck)"/>
+              <path d="M267 115h64v28h-64z" fill="#fff"/>
+              <path d="M278 122h15v11h-15zm25 0h15v11h-15z" fill="#174565"/>
+              <path d="M125 97h147v8H125z" fill="#d6452b"/>
+              <path d="M101 87h135v10H101z" fill="#49a2bd"/>
+              <path d="M316 74v41m-8-29h16" fill="none" stroke="#dfd2b6" stroke-width="3" stroke-linecap="round"/>
+              <circle class="ship-light" cx="316" cy="69" r="6" fill="#f08b56"/>
+              <path d="M70 188c24-9 48-9 72 0s48 9 72 0 48-9 72 0 48 9 72 0 48-9 72 0" fill="none" stroke="#b5e1eb" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+              <path d="M105 199c18-6 36-6 54 0s36 6 54 0 36-6 54 0 36 6 54 0 36-6 54 0" fill="none" stroke="#7db8c9" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+            </svg>
+          </div>
+          <svg class="hero-waves" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 28c100-18 200-18 300 0s200 18 300 0 200-18 300 0 200 18 300 0v32H0z"/></svg>
+        </div>
+        <div class="stats" aria-label="Inquiry and fleet summaries">
+          <div class="stat"><span>Inquiries matching filters</span><strong id="analytics-total">0</strong></div>
+          <div class="stat"><span>Unread inquiries</span><strong id="analytics-unread">0</strong></div>
+          <div class="stat"><span>Read inquiries</span><strong id="analytics-read">0</strong></div>
+          <div class="stat"><span>Inquiries this month</span><strong id="analytics-month">0</strong></div>
+          <div class="stat"><span>Vessels in fleet</span><strong id="vessel-count">13</strong></div>
+        </div>
+        <div class="dashboard-actions" aria-label="Quick actions">
+          <span class="dashboard-actions-label">Quick actions</span>
+          <button class="dashboard-action dashboard-action-primary" id="action-inquiries" type="button">Open inquiries <span aria-hidden="true">→</span></button>
+          <button class="dashboard-action" id="action-vessels" type="button">View fleet <span aria-hidden="true">⚓</span></button>
+          <button class="dashboard-action" id="action-refresh" type="button">Refresh dashboard <span aria-hidden="true">↻</span></button>
+        </div>
+        <form class="dashboard-filters" id="analytics-filters" aria-label="Dashboard filters">
+          <label>Inquiry status
+            <select id="analytics-status">
+              <option value="all">All inquiries</option>
+              <option value="unread">Unread</option>
+              <option value="read">Read</option>
+            </select>
+          </label>
+          <label>From date<input id="analytics-from" type="date" required></label>
+          <label>To date<input id="analytics-to" type="date" required></label>
+          <button class="secondary" id="analytics-apply" type="submit">Apply filters</button>
+          <p class="filter-date-note">The selected end date is included in your report.</p>
+        </form>
+        <p class="notice" id="dashboard-notice" role="status" aria-live="polite"></p>
+        <div class="analytics-grid">
+          <article class="analytics-card">
+            <h2>Inquiry activity</h2>
+            <p class="chart-caption" id="activity-caption">Inquiries received during the selected period.</p>
+            <div id="activity-chart"></div>
+          </article>
+          <article class="analytics-card">
+            <h2>Read and unread status</h2>
+            <p class="chart-caption">Message status for the selected date range.</p>
+            <div id="status-chart" class="status-bars"></div>
+            <div class="status-legend" aria-label="Chart legend">
+              <span class="legend-item"><span class="legend-dot legend-dot-unread"></span>Unread</span>
+              <span class="legend-item"><span class="legend-dot legend-dot-read"></span>Read</span>
+            </div>
+          </article>
+          <p class="filter-date-note analytics-card-wide" id="analytics-limit" hidden></p>
+        </div>
+        <div class="dashboard-content-grid">
+          <section class="dashboard-content-card" aria-labelledby="recent-inquiries-title">
+            <div class="dashboard-content-heading">
+              <div>
+                <h2 id="recent-inquiries-title">Recent inquiries</h2>
+                <p>Your latest messages from clients and partners.</p>
+              </div>
+              <a class="dashboard-text-link" href="#inquiries-view" id="recent-view-all">View all</a>
+            </div>
+            <div class="recent-inquiries" id="recent-inquiries" aria-live="polite"></div>
+          </section>
+          <section class="dashboard-content-card" aria-labelledby="fleet-overview-title">
+            <div class="dashboard-content-heading">
+              <div>
+                <h2 id="fleet-overview-title">Fleet at a glance</h2>
+                <p>Quick access to the company vessel list.</p>
+              </div>
+              <a class="dashboard-text-link" href="#vessels-view" id="fleet-view-all">View all</a>
+            </div>
+            <div class="fleet-quick-list" id="fleet-quick-list" aria-label="Fleet vessel shortcuts"></div>
+            <p class="fleet-quick-total" id="fleet-quick-total"></p>
+          </section>
+        </div>
+      </section>
+      <section class="dashboard-view" id="inquiries-view" aria-labelledby="inquiries-title" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Operations · Communications</p>
+            <h1 id="inquiries-title" tabindex="-1">Inquiries</h1>
+            <p class="subhead">Messages sent through the public website.</p>
+          </div>
+        </div>
+        <div class="toolbar" aria-label="Filter messages">
+          <input id="search" type="search" placeholder="Search sender, email, subject…" aria-label="Search messages">
+          <button class="filter-button" id="all-filter" type="button" aria-pressed="true">All messages</button>
+          <button class="filter-button" id="unread-filter" type="button" aria-pressed="false">Unread</button>
+          <button class="secondary" id="refresh" type="button">Refresh</button>
+        </div>
+        <p class="notice" id="inbox-notice" role="status" aria-live="polite"></p>
+        <div class="card inbox">
+          <div class="message-list" id="message-list" aria-label="Messages"></div>
+          <article class="detail" id="message-detail" aria-live="polite">
+            <div class="detail-empty"><div><strong>Your inbox is ready</strong>Select a message to read the full inquiry.</div></div>
+          </article>
+        </div>
+      </section>
+      <section class="dashboard-view vessels-view" id="vessels-view" aria-labelledby="vessels-title" hidden>
+        <img class="fleet-watermark" src="seem-sam-logo.png" alt="" aria-hidden="true">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Fleet · Operations</p>
+            <h1 id="vessels-title" tabindex="-1">Company Fleet</h1>
+            <p class="subhead">Explore the Landing Craft Transport vessels in the Seem Sam Shipping fleet.</p>
+          </div>
+        </div>
+        <div class="fleet-list" id="fleet-list" aria-label="Company vessel names"></div>
+      </section>
+      <section class="dashboard-view" id="vessel-reports-view" aria-labelledby="vessel-reports-title" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Fleet · Fuel Monitoring</p>
+            <h1 id="vessel-reports-title" tabindex="-1">Vessel Reports</h1>
+            <p class="subhead">Approve vessel account requests and review submitted fuel reports and photos.</p>
+          </div>
+          <button class="secondary" id="refresh-vessel-reports" type="button">Refresh reports</button>
+        </div>
+        <p class="notice" id="vessel-reports-notice" role="status" aria-live="polite"></p>
+        <div class="vessel-review-layout">
+          <section class="vessel-review-panel" aria-labelledby="vessel-requests-title">
+            <h2 id="vessel-requests-title">Account requests</h2>
+            <div class="vessel-request-list" id="vessel-request-list"></div>
+          </section>
+          <section class="vessel-review-panel" aria-labelledby="fuel-reports-list-title">
+            <h2 id="fuel-reports-list-title">Fuel reports</h2>
+            <div class="fuel-report-list" id="fuel-report-list"></div>
+            <article class="fuel-report-detail" id="fuel-report-detail" aria-live="polite">
+              <p class="empty-list">Select a report to review its fuel details and photos.</p>
+            </article>
+          </section>
+        </div>
+      </section>
+      <section class="dashboard-view" id="about-view" aria-labelledby="about-title" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Company · Profile</p>
+            <h1 id="about-title" tabindex="-1">About Seem Sam Shipping</h1>
+            <p class="subhead">A company overview for the people who keep maritime operations moving.</p>
+          </div>
+        </div>
+        <section class="about-hero" aria-labelledby="about-company-heading">
+          <div class="about-hero-copy">
+            <p class="eyebrow">Philippine-based · Maritime</p>
+            <h2 id="about-company-heading">Steady hands on every voyage.</h2>
+            <p>Seem Sam Shipping Inc. is a Philippine-based maritime company committed to safe operations, honest dealings and the welfare of every seafarer and client it serves.</p>
+          </div>
+          <div class="about-logo-frame">
+            <img src="seem-sam-logo.png" alt="Seem Sam Shipping Inc. logo">
+          </div>
+        </section>
+        <div class="about-overview-grid" aria-label="Company overview">
+          <article class="about-overview-card"><span>Registered name</span><strong>Seem Sam Shipping Inc.</strong></article>
+          <article class="about-overview-card"><span>Company base</span><strong>Philippines</strong></article>
+          <article class="about-overview-card"><span>Fleet type</span><strong>Landing Craft Transport</strong></article>
+        </div>
+        <h2 class="about-section-heading">Our standards</h2>
+        <div class="about-values-grid">
+          <article class="about-value-card">
+            <span class="about-value-icon" aria-hidden="true">⚓</span>
+            <h3>Safety first</h3>
+            <p>Every decision starts with the safety of crew, cargo and the environment.</p>
+          </article>
+          <article class="about-value-card">
+            <span class="about-value-icon" aria-hidden="true">✓</span>
+            <h3>Integrity</h3>
+            <p>Clear communication, fair dealings and honest reporting with partners and seafarers.</p>
+          </article>
+          <article class="about-value-card">
+            <span class="about-value-icon" aria-hidden="true">♡</span>
+            <h3>Seafarer welfare</h3>
+            <p>Respectful care for seafarers and the families waiting for them at home.</p>
+          </article>
+          <article class="about-value-card">
+            <span class="about-value-icon" aria-hidden="true">→</span>
+            <h3>Reliability</h3>
+            <p>Stay responsive, meet commitments and support each voyage through to completion.</p>
+          </article>
+        </div>
+        <aside class="about-admin-note">
+          <span class="about-value-icon" aria-hidden="true">i</span>
+          <p><strong>About this admin portal</strong>This private workspace helps authorized administrators review website inquiries and access the company vessel list. Company details shown here follow the public website profile.</p>
+        </aside>
+      </section>
     </div>
   </section>
 </main>
@@ -192,27 +742,64 @@ const setupNote=document.getElementById('setup-note');
 const loginCard=document.getElementById('login-card');
 const loginPanel=document.getElementById('login-panel');
 const registerPanel=document.getElementById('register-panel');
+const resetRequestPanel=document.getElementById('reset-request-panel');
+const recoveryPanel=document.getElementById('recovery-panel');
 const dashboard=document.getElementById('dashboard');
 const loginNotice=document.getElementById('login-notice');
 const registerNotice=document.getElementById('register-notice');
+const recoveryNotice=document.getElementById('recovery-notice');
+const resetRequestNotice=document.getElementById('reset-request-notice');
 const inboxNotice=document.getElementById('inbox-notice');
 const loginForm=document.getElementById('login-form');
 const registerForm=document.getElementById('register-form');
+const recoveryForm=document.getElementById('recovery-form');
+const resetRequestForm=document.getElementById('reset-request-form');
 const loginButton=loginForm.querySelector('button[type="submit"]');
 const registerButton=registerForm.querySelector('button[type="submit"]');
+const recoveryButton=recoveryForm.querySelector('button[type="submit"]');
 const messageList=document.getElementById('message-list');
 const detail=document.getElementById('message-detail');
 const searchInput=document.getElementById('search');
 const allFilter=document.getElementById('all-filter');
 const unreadFilter=document.getElementById('unread-filter');
+const dashboardNav=document.getElementById('nav-dashboard');
+const inboxNav=document.getElementById('nav-inbox');
+const vesselsNav=document.getElementById('nav-vessels');
+const reportsNav=document.getElementById('nav-reports');
+const aboutNav=document.getElementById('nav-about');
+const dashboardNavLinks=[dashboardNav,inboxNav,reportsNav,vesselsNav,aboutNav];
+const analyticsForm=document.getElementById('analytics-filters');
+const analyticsStatus=document.getElementById('analytics-status');
+const analyticsFrom=document.getElementById('analytics-from');
+const analyticsTo=document.getElementById('analytics-to');
+const analyticsApply=document.getElementById('analytics-apply');
+const dashboardNotice=document.getElementById('dashboard-notice');
+const dashboardViews=[...document.querySelectorAll('.dashboard-view')];
 const configured=Boolean(window.supabase && config && config.url && config.anonKey &&
   !config.url.includes('YOUR-PROJECT') && !config.anonKey.includes('YOUR_SUPABASE'));
+const themeToggle=document.getElementById('theme-toggle');
+const themeLabel=document.getElementById('theme-label');
+const themeIcon=document.getElementById('theme-icon');
 let client=null;
 let inquiries=[];
 let selectedId=null;
+let adminEmail='';
+let adminUserId='';
+let passwordRecoveryActive=new URLSearchParams(window.location.hash.slice(1)).get('type')==='recovery';
 let unreadOnly=false;
 let totalInquiryCount=0;
 let unreadInquiryCount=0;
+let analyticsRequest=0;
+const savedTheme=localStorage.getItem('seem-sam-admin-theme');
+document.body.dataset.theme=savedTheme==='dark'?'dark':'light';
+
+function updateThemeButton(){
+  const darkMode=document.body.dataset.theme==='dark';
+  themeToggle.setAttribute('aria-pressed',String(darkMode));
+  themeLabel.textContent=darkMode?'Light mode':'Dark mode';
+  themeIcon.textContent=darkMode?'☀':'☾';
+}
+updateThemeButton();
 
 function setNotice(element,message,isError=false){
   element.textContent=message;
@@ -220,6 +807,7 @@ function setNotice(element,message,isError=false){
 }
 
 function showLogin(message='',isError=false){
+  document.body.classList.remove('dashboard-active');
   loginCard.hidden=false;
   dashboard.classList.remove('visible');
   showAuthPanel('login');
@@ -228,15 +816,44 @@ function showLogin(message='',isError=false){
 
 function showAuthPanel(panel='login'){
   const registering=panel==='register';
+  resetRequestPanel.hidden=true;
+  recoveryPanel.hidden=true;
   loginPanel.hidden=registering;
   registerPanel.hidden=!registering;
   setNotice(loginNotice,'');
   setNotice(registerNotice,'');
 }
 
+function showResetRequest(){
+  document.body.classList.remove('dashboard-active');
+  loginCard.hidden=false;
+  dashboard.classList.remove('visible');
+  loginPanel.hidden=true;
+  registerPanel.hidden=true;
+  recoveryPanel.hidden=true;
+  resetRequestPanel.hidden=false;
+  document.getElementById('reset-request-title').textContent='Forgot password?';
+  document.getElementById('reset-request-description').textContent='Enter your administrator email address and we’ll send a password reset link.';
+  resetRequestForm.hidden=false;
+  setNotice(resetRequestNotice,'');
+}
+
+function showRecovery(message='',isError=false){
+  document.body.classList.remove('dashboard-active');
+  loginCard.hidden=false;
+  dashboard.classList.remove('visible');
+  loginPanel.hidden=true;
+  registerPanel.hidden=true;
+  resetRequestPanel.hidden=true;
+  recoveryPanel.hidden=false;
+  setNotice(recoveryNotice,message,isError);
+}
+
 function showDashboard(){
+  document.body.classList.add('dashboard-active');
   loginCard.hidden=true;
   dashboard.classList.add('visible');
+  showDashboardView('dashboard-view');
 }
 
 function formattedDate(value){
@@ -246,8 +863,469 @@ function formattedDate(value){
 }
 
 function updateStats(){
-  document.getElementById('total-count').textContent=String(totalInquiryCount);
-  document.getElementById('unread-count').textContent=String(unreadInquiryCount);
+  const badge=document.getElementById('sidebar-unread');
+  badge.hidden=unreadInquiryCount===0;
+  badge.textContent=unreadInquiryCount>99?'99+':String(unreadInquiryCount);
+}
+
+function localDateInputValue(date){
+  const year=date.getFullYear();
+  const month=String(date.getMonth()+1).padStart(2,'0');
+  const day=String(date.getDate()).padStart(2,'0');
+  return `${year}-${month}-${day}`;
+}
+
+const today=new Date();
+const defaultFrom=new Date(today);
+defaultFrom.setDate(defaultFrom.getDate()-29);
+analyticsFrom.value=localDateInputValue(defaultFrom);
+analyticsTo.value=localDateInputValue(today);
+
+function createSvgElement(name,attributes={}){
+  const element=document.createElementNS('http://www.w3.org/2000/svg',name);
+  Object.entries(attributes).forEach(([key,value])=>element.setAttribute(key,String(value)));
+  return element;
+}
+
+function renderActivityChart(records,fromValue,toValue,totalCount){
+  const container=document.getElementById('activity-chart');
+  container.replaceChildren();
+  const caption=document.getElementById('activity-caption');
+  if(totalCount>records.length){
+    caption.textContent='Showing the latest '+records.length+' of '+totalCount+' matching inquiries in the selected period.';
+  }else{
+    caption.textContent='Inquiries received during the selected period.';
+  }
+  if(!records.length){
+    const empty=document.createElement('div');
+    empty.className='chart-empty';
+    empty.textContent='No inquiries were received during this period.';
+    container.append(empty);
+    return;
+  }
+
+  const fromParts=fromValue.split('-').map(Number);
+  const toParts=toValue.split('-').map(Number);
+  const fromUtc=Date.UTC(fromParts[0],fromParts[1]-1,fromParts[2]);
+  const toUtc=Date.UTC(toParts[0],toParts[1]-1,toParts[2]);
+  const dayCount=Math.floor((toUtc-fromUtc)/86400000)+1;
+  const bucketDays=Math.max(1,Math.ceil(dayCount/180));
+  const bucketCount=Math.ceil(dayCount/bucketDays);
+  const counts=new Array(bucketCount).fill(0);
+  records.forEach(record=>{
+    const date=new Date(record.created_at);
+    const recordUtc=Date.UTC(date.getFullYear(),date.getMonth(),date.getDate());
+    const bucket=Math.floor((recordUtc-fromUtc)/86400000/bucketDays);
+    if(bucket>=0 && bucket<counts.length) counts[bucket]++;
+  });
+
+  const width=700,height=230,left=42,right=14,top=18,bottom=34;
+  const plotWidth=width-left-right,plotHeight=height-top-bottom;
+  const maximum=Math.max(1,counts.reduce((largest,count)=>Math.max(largest,count),0));
+  const points=counts.map((count,index)=>{
+    const x=left+(counts.length===1?plotWidth/2:index*plotWidth/(counts.length-1));
+    const y=top+plotHeight-(count/maximum)*plotHeight;
+    return {x,y,count,index};
+  });
+  const svg=createSvgElement('svg',{class:'chart',viewBox:`0 0 ${width} ${height}`,role:'img','aria-label':'Inquiry activity chart'});
+  const title=createSvgElement('title');
+  title.textContent='Inquiry activity during the selected date range';
+  const definitions=createSvgElement('defs');
+  const gradient=createSvgElement('linearGradient',{id:'inquiry-area-gradient',x1:'0',x2:'0',y1:'0',y2:'1'});
+  gradient.append(
+    createSvgElement('stop',{offset:'0%','stop-color':'#1f6f8b','stop-opacity':'.6'}),
+    createSvgElement('stop',{offset:'100%','stop-color':'#1f6f8b','stop-opacity':'0'})
+  );
+  definitions.append(gradient);
+  svg.append(title,definitions);
+  [0,.5,1].forEach(ratio=>{
+    const y=top+plotHeight*(1-ratio);
+    svg.append(createSvgElement('line',{x1:left,y1:y,x2:width-right,y2:y,class:'chart-grid'}));
+    const label=createSvgElement('text',{x:left-8,y:y+4,'text-anchor':'end'});
+    label.textContent=String(Math.round(maximum*ratio));
+    svg.append(label);
+  });
+  const pointsString=points.map(point=>`${point.x},${point.y}`).join(' ');
+  const area=createSvgElement('polygon',{points:`${left},${top+plotHeight} ${pointsString} ${width-right},${top+plotHeight}`,class:'chart-area'});
+  svg.append(area,createSvgElement('polyline',{points:pointsString,class:'chart-line'}));
+  points.forEach(point=>svg.append(createSvgElement('circle',{cx:point.x,cy:point.y,r:3.5,class:'chart-point'})));
+  const labelIndexes=[...new Set([0,Math.floor((bucketCount-1)/4),Math.floor((bucketCount-1)/2),Math.floor(3*(bucketCount-1)/4),bucketCount-1])];
+  labelIndexes.forEach(index=>{
+    const bucketUtc=fromUtc+index*bucketDays*86400000;
+    const labelDate=new Date(bucketUtc);
+    const labelText=new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',timeZone:'UTC'}).format(labelDate);
+    const label=createSvgElement('text',{x:points[index].x,y:height-8,'text-anchor':index===0?'start':index===bucketCount-1?'end':'middle'});
+    label.textContent=labelText;
+    svg.append(label);
+  });
+  container.append(svg);
+}
+
+function renderStatusChart(unreadCount,readCount){
+  const container=document.getElementById('status-chart');
+  container.replaceChildren();
+  const total=unreadCount+readCount;
+  [['Unread',unreadCount,'status-segment-unread'],['Read',readCount,'status-segment-read']].forEach(([label,count,className])=>{
+    const row=document.createElement('div');
+    const heading=document.createElement('div');
+    heading.className='status-bar-heading';
+    const name=document.createElement('span');
+    name.textContent=label;
+    const value=document.createElement('strong');
+    value.textContent=String(count);
+    heading.append(name,value);
+    const track=document.createElement('div');
+    track.className='status-bar-track';
+    track.setAttribute('role','img');
+    track.setAttribute('aria-label',`${label}: ${count}`);
+    const segment=document.createElement('span');
+    segment.className='status-segment '+className;
+    segment.style.width=(total?count/total*100:0)+'%';
+    track.append(segment);
+    row.append(heading,track);
+    container.append(row);
+  });
+}
+
+function renderRecentInquiries(emptyMessage='No inquiries to show yet. New website messages will appear here.'){
+  const container=document.getElementById('recent-inquiries');
+  container.replaceChildren();
+  const recent=inquiries.slice(0,5);
+  if(!recent.length){
+    const empty=document.createElement('p');
+    empty.className='recent-empty';
+    empty.textContent=emptyMessage;
+    container.append(empty);
+    return;
+  }
+  recent.forEach(item=>{
+    const button=document.createElement('button');
+    button.className='recent-inquiry';
+    button.type='button';
+    const sender=document.createElement('span');
+    sender.className='recent-inquiry-sender';
+    sender.textContent=item.name+(item.is_read?'':' · Unread');
+    const subject=document.createElement('span');
+    subject.className='recent-inquiry-subject';
+    subject.textContent=item.subject;
+    const date=document.createElement('time');
+    date.className='recent-inquiry-date';
+    date.dateTime=item.created_at;
+    date.textContent=new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(item.created_at));
+    button.append(sender,subject,date);
+    button.addEventListener('click',()=>{
+      showDashboardView('inquiries-view');
+      selectMessage(item.id);
+    });
+    container.append(button);
+  });
+}
+
+async function loadDashboardAnalytics(){
+  if(!client) return;
+  const request=++analyticsRequest;
+  const fromValue=analyticsFrom.value;
+  const toValue=analyticsTo.value;
+  if(!fromValue || !toValue || fromValue>toValue){
+    analyticsApply.disabled=false;
+    setNotice(dashboardNotice,'Choose a valid date range. The start date must not be after the end date.',true);
+    return;
+  }
+  analyticsApply.disabled=true;
+  setNotice(dashboardNotice,'Loading dashboard data…');
+  const fromDate=new Date(`${fromValue}T00:00:00`);
+  const endDate=new Date(`${toValue}T00:00:00`);
+  endDate.setDate(endDate.getDate()+1);
+  const rangeStart=fromDate.toISOString();
+  const rangeEnd=endDate.toISOString();
+  const now=new Date();
+  const monthStart=new Date(now.getFullYear(),now.getMonth(),1).toISOString();
+  const nextMonthStart=new Date(now.getFullYear(),now.getMonth()+1,1).toISOString();
+  const status=analyticsStatus.value;
+  const rangeQuery=query=>query.gte('created_at',rangeStart).lt('created_at',rangeEnd);
+  let activityQuery=rangeQuery(client.from('inquiries')
+    .select('created_at,is_read',{count:'exact'})
+    .order('created_at',{ascending:false})
+    .limit(1000));
+  if(status==='unread') activityQuery=activityQuery.eq('is_read',false);
+  if(status==='read') activityQuery=activityQuery.eq('is_read',true);
+  const [activityResult,unreadResult,readResult,monthResult]=await Promise.all([
+    activityQuery,
+    rangeQuery(client.from('inquiries').select('id',{count:'exact',head:true})).eq('is_read',false),
+    rangeQuery(client.from('inquiries').select('id',{count:'exact',head:true})).eq('is_read',true),
+    client.from('inquiries').select('id',{count:'exact',head:true})
+      .gte('created_at',monthStart).lt('created_at',nextMonthStart)
+  ]);
+  if(request!==analyticsRequest) return;
+  analyticsApply.disabled=false;
+  if(activityResult.error || unreadResult.error || readResult.error || monthResult.error){
+    const error=activityResult.error || unreadResult.error || readResult.error || monthResult.error;
+    console.error('Could not load dashboard analytics:',error);
+    setNotice(dashboardNotice,'Dashboard analytics could not be loaded. Check your connection and try again.',true);
+    return;
+  }
+  const unreadCount=unreadResult.count || 0;
+  const readCount=readResult.count || 0;
+  const totalCount=activityResult.count || 0;
+  document.getElementById('analytics-total').textContent=String(totalCount);
+  document.getElementById('analytics-unread').textContent=String(unreadCount);
+  document.getElementById('analytics-read').textContent=String(readCount);
+  document.getElementById('analytics-month').textContent=String(monthResult.count || 0);
+  renderActivityChart(activityResult.data || [],fromValue,toValue,totalCount);
+  renderStatusChart(unreadCount,readCount);
+  const limitNotice=document.getElementById('analytics-limit');
+  limitNotice.hidden=totalCount<=1000;
+  limitNotice.textContent=totalCount>1000
+    ?'The summary counts are exact. The activity chart uses only the latest 1,000 matching inquiries in this date range.'
+    :'';
+  setNotice(dashboardNotice,'');
+}
+
+const vesselNames=[
+  'LCT 668','LCT 868','LCT 888','LCT 1018','LCT 1020','LCT 1030',
+  'LCT 1035','LCT 1060','LCT 1070','LCT 1078','LCT 1080','LCT 1090','LCT 1098'
+];
+document.getElementById('vessel-count').textContent=String(vesselNames.length);
+const fleetList=document.getElementById('fleet-list');
+const fleetQuickList=document.getElementById('fleet-quick-list');
+vesselNames.forEach((name,index)=>{
+  const item=document.createElement('article');
+  item.className='fleet-name';
+  item.style.setProperty('--fleet-index',String(index));
+  const icon=document.createElement('span');
+  icon.className='fleet-name-icon';
+  icon.setAttribute('aria-hidden','true');
+  icon.textContent='⚓';
+  const info=document.createElement('span');
+  info.className='fleet-name-info';
+  const type=document.createElement('small');
+  type.textContent='Landing Craft Transport';
+  const label=document.createElement('strong');
+  label.textContent=name;
+  info.append(type,label);
+  item.append(icon,info);
+  fleetList.append(item);
+
+  const shortcut=document.createElement('button');
+  shortcut.type='button';
+  shortcut.className='fleet-quick-link';
+  shortcut.textContent=name;
+  shortcut.addEventListener('click',()=>showDashboardView('vessels-view'));
+  fleetQuickList.append(shortcut);
+});
+document.getElementById('fleet-quick-total').textContent=`${vesselNames.length} vessels registered in the fleet.`;
+
+function showDashboardView(viewId){
+  document.body.classList.toggle('about-active',viewId==='about-view');
+  document.body.classList.toggle('vessels-active',viewId==='vessels-view');
+  dashboardViews.forEach(view=>{view.hidden=view.id!==viewId;});
+  dashboardNavLinks.forEach(link=>{
+    link.classList.toggle('active',link.getAttribute('href')==='#'+viewId);
+  });
+  if(viewId==='inquiries-view') document.getElementById('inquiries-title').focus({preventScroll:true});
+  else if(viewId==='vessel-reports-view') document.getElementById('vessel-reports-title').focus({preventScroll:true});
+  else if(viewId==='vessels-view') document.getElementById('vessels-title').focus({preventScroll:true});
+  else if(viewId==='about-view') document.getElementById('about-title').focus({preventScroll:true});
+  else document.getElementById('dashboard-title').focus({preventScroll:true});
+}
+
+const vesselRequestList=document.getElementById('vessel-request-list');
+const fuelReportList=document.getElementById('fuel-report-list');
+const fuelReportDetail=document.getElementById('fuel-report-detail');
+const vesselReportsNotice=document.getElementById('vessel-reports-notice');
+let fuelReports=[];
+let selectedFuelReportId=null;
+
+function setListMessage(container,message){
+  const item=document.createElement('p');
+  item.className='empty-list';
+  item.textContent=message;
+  container.replaceChildren(item);
+}
+
+async function reviewVesselAccount(account,button,nextStatus){
+  button.disabled=true;
+  const {data,error}=await client.from('vessel_accounts')
+    .update({status:nextStatus,reviewed_at:new Date().toISOString(),reviewed_by:adminUserId})
+    .eq('user_id',account.user_id).eq('status','pending').select('user_id');
+  if(error||!data||data.length!==1){
+    console.error('Could not review vessel account request:',error);
+    button.disabled=false;
+    setNotice(vesselReportsNotice,'Could not update the vessel account request. Check database policies and try again.',true);
+    return;
+  }
+  setNotice(vesselReportsNotice,nextStatus==='approved'
+    ?`${account.vessel_name} account approved. The vessel can now sign in and submit reports.`
+    :`${account.vessel_name} account request rejected.`);
+  await loadVesselAdminData();
+}
+
+async function loadVesselRequests(){
+  const {data,error}=await client.from('vessel_accounts')
+    .select('user_id,email,vessel_name,status,created_at')
+    .eq('status','pending').order('created_at',{ascending:true});
+  if(error) throw error;
+  vesselRequestList.replaceChildren();
+  const badge=document.getElementById('pending-vessel-count');
+  badge.hidden=!data.length;
+  badge.textContent=data.length>99?'99+':String(data.length);
+  if(!data.length){
+    setListMessage(vesselRequestList,'No vessel account requests are waiting for approval.');
+    return;
+  }
+  data.forEach(account=>{
+    const card=document.createElement('article');
+    card.className='vessel-request';
+    const title=document.createElement('strong');
+    title.textContent=account.vessel_name;
+    const email=document.createElement('p');
+    email.textContent=account.email;
+    const date=document.createElement('p');
+    date.textContent='Requested '+formattedDate(account.created_at);
+    const actions=document.createElement('div');
+    actions.className='vessel-request-actions';
+    const approve=document.createElement('button');
+    approve.type='button';approve.className='approve';approve.textContent='Approve';
+    approve.addEventListener('click',()=>reviewVesselAccount(account,approve,'approved'));
+    const reject=document.createElement('button');
+    reject.type='button';reject.className='reject';reject.textContent='Reject';
+    reject.addEventListener('click',()=>reviewVesselAccount(account,reject,'rejected'));
+    actions.append(approve,reject);
+    card.append(title,email,date,actions);
+    vesselRequestList.append(card);
+  });
+}
+
+async function renderFuelReportDetail(report){
+  fuelReportDetail.replaceChildren();
+  const title=document.createElement('h3');
+  title.textContent=`${report.vessel_name} · ${formattedDate(report.report_date)}`;
+  const details=document.createElement('div');
+  details.className='report-values';
+  [
+    ['Submitted',formattedDate(report.created_at)],
+    ['Location',report.location],
+    ['Fuel remaining',`${report.fuel_remaining} L`],
+    ['Fuel received',`${report.fuel_received} L`],
+    ['Fuel consumed',`${report.fuel_consumed} L`],
+    ['Engine hours',String(report.engine_hours)]
+  ].forEach(([label,value])=>{
+    const entry=document.createElement('div');
+    entry.className='report-value';
+    const strong=document.createElement('strong');
+    strong.textContent=label;
+    entry.append(strong,document.createTextNode(value));
+    details.append(entry);
+  });
+  fuelReportDetail.append(title,details);
+  if(report.remarks){
+    const remarks=document.createElement('p');
+    remarks.textContent='Vessel remarks: '+report.remarks;
+    fuelReportDetail.append(remarks);
+  }
+  if(report.photo_paths.length){
+    const photos=document.createElement('div');
+    photos.className='fuel-report-photos';
+    for(const path of report.photo_paths){
+      const {data,error}=await client.storage.from('vessel-report-photos').createSignedUrl(path,300);
+      if(error){
+        console.error('Could not create signed URL for report photo:',error);
+        const message=document.createElement('p');
+        message.className='error-text';
+        message.textContent='An attached photo could not be loaded.';
+        fuelReportDetail.append(message);
+        continue;
+      }
+      const link=document.createElement('a');
+      link.href=data.signedUrl;link.target='_blank';link.rel='noopener noreferrer';
+      const image=document.createElement('img');
+      image.src=data.signedUrl;image.alt=`${report.vessel_name} fuel report attachment`;
+      link.append(image);photos.append(link);
+    }
+    fuelReportDetail.append(photos);
+  }
+  const form=document.createElement('form');
+  form.className='review-form';
+  const statusLabel=document.createElement('label');
+  statusLabel.textContent='Review outcome';
+  const status=document.createElement('select');
+  status.innerHTML='<option value="reviewed">Reviewed</option><option value="needs_correction">Needs correction</option>';
+  status.value=report.status==='needs_correction'?'needs_correction':'reviewed';
+  statusLabel.append(status);
+  const noteLabel=document.createElement('label');
+  noteLabel.textContent='Note to vessel (optional)';
+  const note=document.createElement('textarea');
+  note.maxLength=2000;note.value=report.review_note||'';
+  noteLabel.append(note);
+  const save=document.createElement('button');
+  save.type='submit';save.textContent='Save review';
+  form.append(statusLabel,noteLabel,save);
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();save.disabled=true;
+    const {data,error}=await client.from('vessel_fuel_reports')
+      .update({status:status.value,review_note:note.value.trim(),reviewed_at:new Date().toISOString(),reviewed_by:adminUserId})
+      .eq('id',report.id).select('id');
+    if(error||!data||data.length!==1){
+      console.error('Could not save vessel report review:',error);
+      save.disabled=false;
+      setNotice(vesselReportsNotice,'Could not save the review. Please check permissions and try again.',true);
+      return;
+    }
+    report.status=status.value;report.review_note=note.value.trim();
+    setNotice(vesselReportsNotice,'Report review saved.');
+    await loadVesselAdminData();
+    const refreshed=fuelReports.find(item=>item.id===report.id);
+    if(refreshed) await renderFuelReportDetail(refreshed);
+  });
+  fuelReportDetail.append(form);
+}
+
+async function loadFuelReports(){
+  const {data,error}=await client.from('vessel_fuel_reports')
+    .select('id,vessel_user_id,vessel_name,report_date,location,fuel_remaining,fuel_received,fuel_consumed,engine_hours,remarks,photo_paths,status,review_note,created_at')
+    .order('created_at',{ascending:false}).limit(500);
+  if(error) throw error;
+  fuelReports=data;
+  fuelReportList.replaceChildren();
+  if(!data.length){
+    setListMessage(fuelReportList,'No vessel fuel reports have been submitted yet.');
+    fuelReportDetail.innerHTML='<p class="empty-list">No reports to review yet.</p>';
+    selectedFuelReportId=null;
+    return;
+  }
+  if(!data.some(report=>report.id===selectedFuelReportId)) selectedFuelReportId=data[0].id;
+  data.forEach(report=>{
+    const button=document.createElement('button');
+    button.type='button';button.className='fuel-report-button';
+    button.setAttribute('aria-pressed',String(report.id===selectedFuelReportId));
+    const title=document.createElement('strong');
+    title.textContent=`${report.vessel_name} · ${formattedDate(report.report_date)}`;
+    const description=document.createElement('p');
+    description.textContent=`${report.location} · ${report.fuel_remaining} L remaining · ${report.status.replace('_',' ')}`;
+    button.append(title,description);
+    button.addEventListener('click',async()=>{
+      selectedFuelReportId=report.id;
+      fuelReportList.querySelectorAll('.fuel-report-button').forEach(row=>row.setAttribute('aria-pressed',String(row===button)));
+      await renderFuelReportDetail(report);
+    });
+    fuelReportList.append(button);
+  });
+  await renderFuelReportDetail(data.find(report=>report.id===selectedFuelReportId));
+}
+
+async function loadVesselAdminData(){
+  const refresh=document.getElementById('refresh-vessel-reports');
+  refresh.disabled=true;
+  setNotice(vesselReportsNotice,'Loading vessel accounts and reports…');
+  try{
+    await Promise.all([loadVesselRequests(),loadFuelReports()]);
+    setNotice(vesselReportsNotice,'');
+  }catch(error){
+    console.error('Could not load vessel account requests and reports:',error);
+    setNotice(vesselReportsNotice,'Vessel reports are not ready. Run the latest SUPABASE-SETUP.SQL in the project SQL Editor, then refresh.',true);
+  }finally{
+    refresh.disabled=false;
+  }
 }
 
 function renderDetail(item){
@@ -268,6 +1346,9 @@ function renderDetail(item){
   const date=document.createElement('p');
   date.className='eyebrow';
   date.textContent=formattedDate(item.created_at);
+  const status=document.createElement('span');
+  status.className='message-status detail-status '+(item.is_read?'read':'unread');
+  status.textContent=item.is_read?'Read':'New · Unread';
   const subject=document.createElement('h2');
   subject.textContent=item.subject;
   const meta=document.createElement('div');
@@ -278,7 +1359,7 @@ function renderDetail(item){
   email.href='mailto:'+encodeURIComponent(item.email);
   email.textContent=item.email;
   meta.append(sender,email);
-  head.append(date,subject,meta);
+  head.append(date,status,subject,meta);
   const body=document.createElement('p');
   body.className='message-body';
   body.textContent=item.message;
@@ -286,15 +1367,60 @@ function renderDetail(item){
   actions.className='detail-actions';
   const reply=document.createElement('a');
   reply.className='primary';
-  reply.href='mailto:'+encodeURIComponent(item.email)+'?subject='+encodeURIComponent('Re: '+item.subject);
-  reply.textContent='Reply by email';
+  const replyBody=`Hello ${item.name},\n\n\n\n--- Original inquiry ---\n${item.message}`;
+  const recipientMatchesAdmin=Boolean(adminEmail)&&item.email.trim().toLowerCase()===adminEmail.trim().toLowerCase();
+  const gmailComposeUrl=recipient=>{
+    const compose=new URL('https://mail.google.com/mail/');
+    compose.searchParams.set('view','cm');
+    compose.searchParams.set('fs','1');
+    compose.searchParams.set('to',recipient);
+    compose.searchParams.set('su','Re: '+item.subject);
+    compose.searchParams.set('body',replyBody);
+    return compose.toString();
+  };
+  reply.href=recipientMatchesAdmin?'#':gmailComposeUrl(item.email);
+  reply.target='_blank';
+  reply.rel='noopener noreferrer';
+  reply.setAttribute('aria-label','Reply to '+item.name+' by email');
+  reply.textContent=recipientMatchesAdmin?'Enter client email to reply':'Reply by email';
+  if(recipientMatchesAdmin){
+    reply.addEventListener('click',event=>{
+      event.preventDefault();
+      const recipient=window.prompt('This inquiry was submitted with the administrator email. Enter the client’s correct email address to prepare a reply:');
+      if(recipient===null) return;
+      const correctedEmail=recipient.trim();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correctedEmail)||correctedEmail.toLowerCase()===adminEmail.trim().toLowerCase()){
+        setNotice(inboxNotice,'Enter a valid client email address that is different from the administrator email.',true);
+        return;
+      }
+      setNotice(inboxNotice,'');
+      window.open(gmailComposeUrl(correctedEmail),'_blank','noopener,noreferrer');
+    });
+  }
+  const replyHint=document.createElement('span');
+  replyHint.className='reply-hint';
+  replyHint.textContent=recipientMatchesAdmin
+    ?'The saved recipient matches your admin email. Confirm the client’s address before replying.'
+    :'Opens a Gmail draft to '+item.email;
   const mark=document.createElement('button');
   mark.className='secondary';
   mark.type='button';
   mark.textContent=item.is_read?'Mark as unread':'Mark as read';
   mark.addEventListener('click',()=>toggleRead(item));
-  actions.append(reply,mark);
+  const remove=document.createElement('button');
+  remove.className='danger-button';
+  remove.type='button';
+  remove.textContent='Delete inquiry';
+  remove.addEventListener('click',()=>deleteInquiry(item,remove));
+  actions.append(reply,replyHint,mark,remove);
   detail.append(head,body,actions);
+  if(recipientMatchesAdmin){
+    const warning=document.createElement('p');
+    warning.className='recipient-warning';
+    warning.setAttribute('role','alert');
+    warning.textContent='This inquiry was submitted using the administrator email address. It may have been autofilled; confirm the client’s actual address before replying.';
+    detail.append(warning);
+  }
 }
 
 function renderList(){
@@ -333,12 +1459,10 @@ function renderList(){
     preview.className='row-preview';
     preview.textContent=item.message;
     button.append(top,subject,preview);
-    if(!item.is_read){
-      const badge=document.createElement('span');
-      badge.className='unread-label';
-      badge.textContent='Unread';
-      button.append(badge);
-    }
+    const badge=document.createElement('span');
+    badge.className='message-status '+(item.is_read?'read':'unread');
+    badge.textContent=item.is_read?'Read':'New · Unread';
+    button.append(badge);
     button.addEventListener('click',()=>selectMessage(item.id));
     messageList.append(button);
   });
@@ -373,12 +1497,14 @@ async function loadInquiries(){
     failure.className='error-text';
     failure.textContent='Inbox unavailable.';
     messageList.append(failure);
+    renderRecentInquiries('Recent inquiries could not be loaded. Please refresh the dashboard.');
     return;
   }
   inquiries=data;
   totalInquiryCount=count || 0;
   unreadInquiryCount=unreadCount || 0;
   updateStats();
+  renderRecentInquiries();
   if(!inquiries.some(item=>item.id===selectedId)) selectedId=null;
   renderList();
   renderDetail(inquiries.find(item=>item.id===selectedId));
@@ -396,6 +1522,7 @@ async function selectMessage(id){
     }else{
       item.is_read=true;
       unreadInquiryCount=Math.max(0,unreadInquiryCount-1);
+      renderRecentInquiries();
       setNotice(inboxNotice,'');
     }
   }
@@ -416,13 +1543,39 @@ async function toggleRead(item){
     unreadInquiryCount=Math.max(0,unreadInquiryCount+(nextValue?1:-1));
   }
   item.is_read=nextValue;
+  renderRecentInquiries();
   updateStats();
   renderList();
   renderDetail(item);
   setNotice(inboxNotice,'');
 }
 
+async function deleteInquiry(item,button){
+  if(!window.confirm(`Delete this inquiry from ${item.name}?\n\n"${item.subject}"\n\nThis cannot be undone.`)) return;
+  button.disabled=true;
+  button.textContent='Deleting…';
+  const {data,error}=await client.from('inquiries').delete().eq('id',item.id).select('id');
+  if(error || !data || data.length!==1){
+    console.error('Could not delete inquiry:',error);
+    button.disabled=false;
+    button.textContent='Delete inquiry';
+    setNotice(inboxNotice,'This inquiry could not be deleted. Check the admin delete permission in Supabase, then try again.',true);
+    return;
+  }
+  inquiries=inquiries.filter(inquiry=>inquiry.id!==item.id);
+  totalInquiryCount=Math.max(0,totalInquiryCount-1);
+  if(!item.is_read) unreadInquiryCount=Math.max(0,unreadInquiryCount-1);
+  selectedId=null;
+  updateStats();
+  renderList();
+  renderDetail(null);
+  renderRecentInquiries();
+  setNotice(inboxNotice,'Inquiry deleted.');
+  await loadDashboardAnalytics();
+}
+
 async function checkAdminAndLoad(){
+  if(passwordRecoveryActive) return;
   const {data,error}=await client.rpc('is_admin');
   if(error){
     console.error('Could not verify administrator access:',error);
@@ -435,10 +1588,21 @@ async function checkAdminAndLoad(){
     showLogin('Your email is verified, but the project owner must approve your admin access before you can view inquiries.',true);
     return;
   }
+  const {data:userResult,error:userError}=await client.auth.getUser();
+  if(userError){
+    console.error('Could not load administrator profile:',userError);
+    await client.auth.signOut();
+    showLogin('Could not load your administrator profile. Please sign in again.',true);
+    return;
+  }
+  adminEmail=(userResult.user.email || '').trim();
+  adminUserId=userResult.user.id;
+  if(passwordRecoveryActive) return;
+  document.getElementById('sidebar-user-email').textContent=userResult.user.email || 'Administrator';
   setNotice(loginNotice,'');
   setNotice(registerNotice,'');
   showDashboard();
-  await loadInquiries();
+  await Promise.all([loadInquiries(),loadDashboardAnalytics()]);
 }
 
 if(!configured){
@@ -448,6 +1612,12 @@ if(!configured){
   setNotice(loginNotice,'Add the Supabase project settings before signing in.',true);
 }else{
   client=window.supabase.createClient(config.url,config.anonKey);
+  client.auth.onAuthStateChange(event=>{
+    if(event==='PASSWORD_RECOVERY'){
+      passwordRecoveryActive=true;
+      showRecovery();
+    }
+  });
   loginForm.addEventListener('submit',async event=>{
     event.preventDefault();
     loginButton.disabled=true;
@@ -464,6 +1634,60 @@ if(!configured){
       return;
     }
     await checkAdminAndLoad();
+  });
+  document.getElementById('forgot-password').addEventListener('click',()=>{
+    document.getElementById('reset-email').value=document.getElementById('login-email').value.trim();
+    showResetRequest();
+    document.getElementById('reset-email').focus();
+  });
+  resetRequestForm.addEventListener('submit',async event=>{
+    event.preventDefault();
+    const emailInput=document.getElementById('reset-email');
+    const email=emailInput.value.trim();
+    if(!emailInput.validity.valid){
+      emailInput.reportValidity();
+      return;
+    }
+    const button=resetRequestForm.querySelector('button[type="submit"]');
+    button.disabled=true;
+    setNotice(resetRequestNotice,'Sending password reset email…');
+    const redirectTo='https://andraderichard784-spec.github.io/seen-sam-shipping/ADMIN.HTML';
+    const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo});
+    button.disabled=false;
+    if(error){
+      console.error('Could not send administrator password reset email:',error);
+      setNotice(resetRequestNotice,'Could not send the reset email. Check your connection and Supabase email settings, then try again.',true);
+      return;
+    }
+    resetRequestForm.hidden=true;
+    document.getElementById('reset-request-title').textContent='Check your email';
+    document.getElementById('reset-request-description').textContent='If an administrator account is registered with this email, a secure password reset link has been sent. Open the email and follow the instructions to create your new password. If it does not arrive soon, check your spam or junk folder.';
+    setNotice(resetRequestNotice,'Password reset instructions requested.');
+  });
+  recoveryForm.addEventListener('submit',async event=>{
+    event.preventDefault();
+    const password=document.getElementById('recovery-password').value;
+    const confirmation=document.getElementById('recovery-password-confirm').value;
+    if(password!==confirmation){
+      setNotice(recoveryNotice,'The passwords do not match. Please try again.',true);
+      return;
+    }
+    recoveryButton.disabled=true;
+    setNotice(recoveryNotice,'Updating your password…');
+    const {error}=await client.auth.updateUser({password});
+    recoveryButton.disabled=false;
+    if(error){
+      console.error('Could not update administrator password:',error);
+      setNotice(recoveryNotice,'Could not update the password. The reset link may have expired; request a new one and try again.',true);
+      return;
+    }
+    recoveryForm.reset();
+    const {error:signOutError}=await client.auth.signOut();
+    if(signOutError) console.error('Password changed, but could not end recovery session:',signOutError);
+    showLogin('Your password has been changed. Sign in with your new password.');
+  });
+  document.getElementById('recovery-back').addEventListener('click',()=>{
+    showLogin();
   });
   registerForm.addEventListener('submit',async event=>{
     event.preventDefault();
@@ -493,7 +1717,15 @@ if(!configured){
   client.auth.getSession().then(async({data,error})=>{
     if(error){
       console.error('Could not restore administrator session:',error);
+      if(passwordRecoveryActive){
+        showRecovery('The password reset link is invalid or expired. Request a new reset email.',true);
+        return;
+      }
       setNotice(loginNotice,'Could not restore your session. Please sign in again.',true);
+      return;
+    }
+    if(passwordRecoveryActive){
+      showRecovery();
       return;
     }
     if(data.session) await checkAdminAndLoad();
@@ -502,6 +1734,33 @@ if(!configured){
 
 document.getElementById('show-register').addEventListener('click',()=>showAuthPanel('register'));
 document.getElementById('show-login').addEventListener('click',()=>showAuthPanel('login'));
+themeToggle.addEventListener('click',()=>{
+  document.body.dataset.theme=document.body.dataset.theme==='dark'?'light':'dark';
+  localStorage.setItem('seem-sam-admin-theme',document.body.dataset.theme);
+  updateThemeButton();
+});
+dashboardNav.addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('dashboard-view');
+  loadDashboardAnalytics();
+});
+inboxNav.addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('inquiries-view');
+});
+vesselsNav.addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('vessels-view');
+});
+reportsNav.addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('vessel-reports-view');
+  loadVesselAdminData();
+});
+aboutNav.addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('about-view');
+});
 document.getElementById('signout').addEventListener('click',async()=>{
   const {error}=await client.auth.signOut();
   if(error){
@@ -513,12 +1772,38 @@ document.getElementById('signout').addEventListener('click',async()=>{
   selectedId=null;
   totalInquiryCount=0;
   unreadInquiryCount=0;
+  document.getElementById('sidebar-user-email').textContent='Admin';
   updateStats();
   messageList.replaceChildren();
   renderDetail(null);
   showLogin('You have signed out.');
 });
 document.getElementById('refresh').addEventListener('click',loadInquiries);
+document.getElementById('refresh-vessel-reports').addEventListener('click',loadVesselAdminData);
+document.getElementById('action-inquiries').addEventListener('click',()=>{
+  showDashboardView('inquiries-view');
+});
+document.getElementById('action-vessels').addEventListener('click',()=>{
+  showDashboardView('vessels-view');
+});
+document.getElementById('recent-view-all').addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('inquiries-view');
+});
+document.getElementById('fleet-view-all').addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('vessels-view');
+});
+document.getElementById('action-refresh').addEventListener('click',async event=>{
+  const button=event.currentTarget;
+  button.disabled=true;
+  await Promise.all([loadInquiries(),loadDashboardAnalytics()]);
+  button.disabled=false;
+});
+analyticsForm.addEventListener('submit',event=>{
+  event.preventDefault();
+  loadDashboardAnalytics();
+});
 searchInput.addEventListener('input',renderList);
 allFilter.addEventListener('click',()=>{
   unreadOnly=false;
