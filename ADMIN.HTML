@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Secure inquiry inbox for Seem Sam Shipping Inc.">
+<title>Admin Inbox | Seem Sam Shipping Inc.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --hull:#0B2540;--deep:#12395C;--sea:#1F6F8B;--foam:#EEF3F5;
+  --sand:#E3D8C3;--signal:#D6452B;--ink:#10202E;--white:#fff;
+  --serif:'Fraunces',Georgia,serif;--sans:'Barlow',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;font:16px/1.55 var(--sans);color:var(--ink);background:var(--foam)}
+a{color:inherit}
+button,input{font:inherit}
+:focus-visible{outline:3px solid var(--signal);outline-offset:3px}
+.topbar{background:var(--hull);color:var(--white);border-bottom:4px solid var(--signal)}
+.topbar-inner{max-width:1240px;margin:auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font:700 1.15rem var(--serif)}
+.brand img{width:42px;height:42px;display:block;object-fit:contain;border-radius:50%;background:#fff}
+.shell{max-width:1240px;margin:0 auto;padding:38px 24px 64px}
+.page-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:28px}
+.eyebrow{color:var(--sea);font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+h1,h2,h3{font-family:var(--serif);line-height:1.15;color:var(--hull)}
+h1{font-size:clamp(2rem,4vw,3rem);margin:6px 0}
+.subhead{color:#526878}
+.card{background:var(--white);border:1px solid #d9e2e7;border-top:4px solid var(--sea);box-shadow:0 10px 26px rgba(11,37,64,.07)}
+.login-card{max-width:480px;margin:42px auto;padding:32px}
+.login-card h2{font-size:1.7rem;margin-bottom:8px}
+.login-card>p{color:#526878;margin-bottom:22px}
+.login-card form{margin-top:18px}
+.login-card small{margin-top:-12px;color:#607482;font-size:.82rem}
+.auth-toggle{margin:18px 0 0;color:#526878;font-size:.92rem}
+.text-button{padding:0;border:0;background:transparent;color:var(--sea);text-decoration:underline;cursor:pointer;font-weight:600}
+.security-warning{margin-top:18px;padding:12px;border-left:4px solid var(--signal);background:#fff0ed;color:#812818;font-size:.88rem}
+form{display:grid;gap:16px}
+label{display:grid;gap:6px;font-weight:600;color:var(--hull)}
+input{min-width:0;padding:11px 12px;border:1px solid #bdccd5;border-radius:4px;background:#fff;color:var(--ink)}
+input:focus{border-color:var(--sea)}
+.primary,.secondary,.filter-button{border:0;border-radius:4px;cursor:pointer;font-weight:600}
+.primary{padding:12px 18px;background:var(--signal);color:var(--white)}
+.primary:hover{background:#b93820}
+.primary:disabled,.secondary:disabled{opacity:.58;cursor:wait}
+.secondary,.filter-button{padding:9px 13px;background:var(--hull);color:var(--white)}
+.secondary:hover,.filter-button:hover{background:var(--deep)}
+.notice{margin-top:16px;padding:11px 13px;border-left:4px solid var(--sea);background:#e8f1f4;color:var(--hull);border-radius:2px}
+.notice:empty{display:none}
+.notice.error{border-color:var(--signal);background:#fff0ed;color:#812818}
+.setup-note{max-width:760px;margin:18px auto;padding:18px 20px;background:#fff7e6;border-left:4px solid #bd8122;color:#513e1e}
+.setup-note strong{display:block;margin-bottom:4px}
+.setup-note code{font-size:.88em}
+.dashboard{display:none}
+.dashboard.visible{display:block}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(150px,220px));gap:14px;margin:26px 0}
+.stat{padding:16px 20px;background:var(--hull);color:var(--white);border-left:4px solid var(--signal)}
+.stat span{display:block;color:#bed0dc;font-size:.85rem}
+.stat strong{font:700 1.8rem var(--serif)}
+.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:14px;background:var(--hull);color:var(--white)}
+.toolbar input{flex:1;min-width:210px;background:#0f2f4e;border-color:#3b5d7d;color:var(--white)}
+.toolbar input::placeholder{color:#a9bdcc}
+.filter-button[aria-pressed="true"]{background:var(--sand);color:var(--hull)}
+.inbox{display:grid;grid-template-columns:minmax(310px,.85fr) minmax(0,1.5fr);min-height:440px}
+.message-list{border-right:1px solid #d9e2e7;max-height:650px;overflow:auto}
+.message-row{display:block;width:100%;padding:17px 18px;text-align:left;border:0;border-bottom:1px solid #e1e8ec;background:var(--white);color:var(--ink);cursor:pointer}
+.message-row:hover,.message-row.selected{background:#edf4f6}
+.message-row.unread{border-left:4px solid var(--signal);padding-left:14px}
+.row-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sender{font-weight:600;color:var(--hull);overflow-wrap:anywhere}
+.row-date{font-size:.78rem;color:#607482;white-space:nowrap}
+.row-subject{display:block;margin-top:4px;font-weight:600}
+.row-preview{display:block;margin-top:3px;color:#607482;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.unread-label{display:inline-block;margin-top:8px;padding:2px 8px;border-radius:20px;background:#fbe4df;color:#8d2d1d;font-size:.72rem;font-weight:600}
+.detail{padding:28px;min-width:0}
+.detail-empty{height:100%;min-height:300px;display:grid;place-items:center;text-align:center;color:#607482}
+.detail-empty strong{display:block;color:var(--hull);font:700 1.3rem var(--serif);margin-bottom:6px}
+.detail-head{padding-bottom:18px;border-bottom:1px solid #d9e2e7}
+.detail-head h2{font-size:1.6rem;margin:8px 0 14px;overflow-wrap:anywhere}
+.detail-meta{display:grid;gap:4px;color:#526878;font-size:.92rem}
+.detail-meta a{color:var(--sea);font-weight:600}
+.message-body{white-space:pre-wrap;overflow-wrap:anywhere;margin:24px 0;line-height:1.7}
+.detail-actions{display:flex;flex-wrap:wrap;gap:10px}
+.detail-actions a{display:inline-block;text-decoration:none}
+.empty-list{padding:30px 18px;text-align:center;color:#607482}
+.error-text{padding:20px;color:#812818}
+@media(max-width:760px){
+  .shell{padding:26px 16px 44px}
+  .topbar-inner{padding:12px 16px}
+  .brand{font-size:1rem}
+  .page-heading{align-items:flex-start;flex-direction:column}
+  .inbox{grid-template-columns:1fr}
+  .message-list{border-right:0;border-bottom:1px solid #d9e2e7;max-height:320px}
+  .detail{padding:22px 18px}
+}
+@media(max-width:430px){
+  .stats{grid-template-columns:1fr 1fr}
+  .stat{padding:12px}
+  .toolbar input{flex-basis:100%}
+  .login-card{padding:24px 18px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand" aria-label="Seem Sam Shipping Inc.">
+      <img src="seem-sam-logo.png" alt="">
+      Seem Sam Shipping Inc.
+    </div>
+  </div>
+</header>
+<main class="shell">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">Operations · Communications</p>
+      <h1>Inquiry inbox</h1>
+      <p class="subhead">Website messages from clients, principals and seafarers.</p>
+    </div>
+  </div>
+
+  <div class="setup-note" id="setup-note" hidden>
+    <strong>Admin inbox setup is not complete.</strong>
+    Configure the Supabase Project URL and anon key in <code>SUPABASE-CONFIG.JS</code>,
+    Run <code>SUPABASE-SETUP.SQL</code> in Supabase, enable email/password sign-ups and email confirmations,
+    and configure SMTP in Supabase for reliable confirmation email delivery. The first admin account is
+    approved automatically only when there are no admin accounts yet.
+  </div>
+
+  <section class="card login-card" id="login-card" aria-labelledby="login-title">
+    <div id="login-panel">
+      <h2 id="login-title">Administrator sign in</h2>
+      <p>Sign in with your administrator email and password to view website inquiries.</p>
+      <form id="login-form">
+        <label>Email address<input id="login-email" type="email" autocomplete="username" maxlength="254" required></label>
+        <label>Password<input id="login-password" type="password" autocomplete="current-password" required></label>
+        <button class="primary" type="submit">Sign in securely</button>
+      </form>
+      <p class="notice" id="login-notice" role="status" aria-live="polite"></p>
+      <p class="auth-toggle">Need an account? <button class="text-button" id="show-register" type="button">Register as admin</button></p>
+    </div>
+    <div id="register-panel" hidden>
+      <h2 id="register-title">Admin registration</h2>
+      <p>Register with your work email. The first account is approved automatically; verify your email before signing in.</p>
+      <form id="register-form">
+        <label>Username<input id="register-username" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.\-]+" aria-describedby="username-help" required></label>
+        <small id="username-help">3–32 characters: letters, numbers, period, underscore or hyphen.</small>
+        <label>Email address<input id="register-email" type="email" autocomplete="email" maxlength="254" required></label>
+        <label>Password<input id="register-password" type="password" autocomplete="new-password" minlength="8" required></label>
+        <button class="primary" type="submit">Create admin account</button>
+      </form>
+      <p class="notice" id="register-notice" role="status" aria-live="polite"></p>
+      <p class="auth-toggle">Already registered? <button class="text-button" id="show-login" type="button">Sign in</button></p>
+      <p class="security-warning"><strong>Access control:</strong> Only the first registration is auto-approved, and only when no admin account exists. Later accounts need owner approval.</p>
+    </div>
+  </section>
+
+  <section class="dashboard" id="dashboard" aria-label="Inquiry dashboard">
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">Seem Sam Shipping Inc.</p>
+        <h1>Message center</h1>
+      </div>
+      <button class="secondary" id="signout" type="button">Sign out</button>
+    </div>
+    <div class="stats" aria-label="Inbox totals">
+      <div class="stat"><span>Total inquiries</span><strong id="total-count">0</strong></div>
+      <div class="stat"><span>Unread</span><strong id="unread-count">0</strong></div>
+    </div>
+    <div class="toolbar" aria-label="Filter messages">
+      <input id="search" type="search" placeholder="Search sender, email, subject…" aria-label="Search messages">
+      <button class="filter-button" id="all-filter" type="button" aria-pressed="true">All messages</button>
+      <button class="filter-button" id="unread-filter" type="button" aria-pressed="false">Unread</button>
+      <button class="secondary" id="refresh" type="button">Refresh</button>
+    </div>
+    <p class="notice" id="inbox-notice" role="status" aria-live="polite"></p>
+    <div class="card inbox">
+      <div class="message-list" id="message-list" aria-label="Messages"></div>
+      <article class="detail" id="message-detail" aria-live="polite">
+        <div class="detail-empty"><div><strong>Your inbox is ready</strong>Select a message to read the full inquiry.</div></div>
+      </article>
+    </div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="SUPABASE-CONFIG.JS"></script>
+<script>
+const config=window.SUPABASE_CONFIG;
+const setupNote=document.getElementById('setup-note');
+const loginCard=document.getElementById('login-card');
+const loginPanel=document.getElementById('login-panel');
+const registerPanel=document.getElementById('register-panel');
+const dashboard=document.getElementById('dashboard');
+const loginNotice=document.getElementById('login-notice');
+const registerNotice=document.getElementById('register-notice');
+const inboxNotice=document.getElementById('inbox-notice');
+const loginForm=document.getElementById('login-form');
+const registerForm=document.getElementById('register-form');
+const loginButton=loginForm.querySelector('button[type="submit"]');
+const registerButton=registerForm.querySelector('button[type="submit"]');
+const messageList=document.getElementById('message-list');
+const detail=document.getElementById('message-detail');
+const searchInput=document.getElementById('search');
+const allFilter=document.getElementById('all-filter');
+const unreadFilter=document.getElementById('unread-filter');
+const configured=Boolean(window.supabase && config && config.url && config.anonKey &&
+  !config.url.includes('YOUR-PROJECT') && !config.anonKey.includes('YOUR_SUPABASE'));
+let client=null;
+let inquiries=[];
+let selectedId=null;
+let unreadOnly=false;
+let totalInquiryCount=0;
+let unreadInquiryCount=0;
+
+function setNotice(element,message,isError=false){
+  element.textContent=message;
+  element.classList.toggle('error',isError);
+}
+
+function showLogin(message='',isError=false){
+  loginCard.hidden=false;
+  dashboard.classList.remove('visible');
+  showAuthPanel('login');
+  setNotice(loginNotice,message,isError);
+}
+
+function showAuthPanel(panel='login'){
+  const registering=panel==='register';
+  loginPanel.hidden=registering;
+  registerPanel.hidden=!registering;
+  setNotice(loginNotice,'');
+  setNotice(registerNotice,'');
+}
+
+function showDashboard(){
+  loginCard.hidden=true;
+  dashboard.classList.add('visible');
+}
+
+function formattedDate(value){
+  const date=new Date(value);
+  if(Number.isNaN(date.getTime())) return 'Date unavailable';
+  return new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(date);
+}
+
+function updateStats(){
+  document.getElementById('total-count').textContent=String(totalInquiryCount);
+  document.getElementById('unread-count').textContent=String(unreadInquiryCount);
+}
+
+function renderDetail(item){
+  detail.replaceChildren();
+  if(!item){
+    const empty=document.createElement('div');
+    empty.className='detail-empty';
+    const content=document.createElement('div');
+    const title=document.createElement('strong');
+    title.textContent='Your inbox is ready';
+    content.append(title,document.createTextNode('Select a message to read the full inquiry.'));
+    empty.append(content);
+    detail.append(empty);
+    return;
+  }
+  const head=document.createElement('header');
+  head.className='detail-head';
+  const date=document.createElement('p');
+  date.className='eyebrow';
+  date.textContent=formattedDate(item.created_at);
+  const subject=document.createElement('h2');
+  subject.textContent=item.subject;
+  const meta=document.createElement('div');
+  meta.className='detail-meta';
+  const sender=document.createElement('span');
+  sender.textContent='From: '+item.name;
+  const email=document.createElement('a');
+  email.href='mailto:'+encodeURIComponent(item.email);
+  email.textContent=item.email;
+  meta.append(sender,email);
+  head.append(date,subject,meta);
+  const body=document.createElement('p');
+  body.className='message-body';
+  body.textContent=item.message;
+  const actions=document.createElement('div');
+  actions.className='detail-actions';
+  const reply=document.createElement('a');
+  reply.className='primary';
+  reply.href='mailto:'+encodeURIComponent(item.email)+'?subject='+encodeURIComponent('Re: '+item.subject);
+  reply.textContent='Reply by email';
+  const mark=document.createElement('button');
+  mark.className='secondary';
+  mark.type='button';
+  mark.textContent=item.is_read?'Mark as unread':'Mark as read';
+  mark.addEventListener('click',()=>toggleRead(item));
+  actions.append(reply,mark);
+  detail.append(head,body,actions);
+}
+
+function renderList(){
+  messageList.replaceChildren();
+  const query=searchInput.value.trim().toLowerCase();
+  const visible=inquiries.filter(item=>{
+    if(unreadOnly && item.is_read) return false;
+    return [item.name,item.email,item.subject,item.message].some(value=>value.toLowerCase().includes(query));
+  });
+  if(!visible.length){
+    const empty=document.createElement('p');
+    empty.className='empty-list';
+    empty.textContent=totalInquiryCount?'No messages match this filter.':'No inquiries yet. New website messages will appear here.';
+    messageList.append(empty);
+    return;
+  }
+  visible.forEach(item=>{
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='message-row'+(!item.is_read?' unread':'')+(item.id===selectedId?' selected':'');
+    button.setAttribute('aria-pressed',String(item.id===selectedId));
+    const top=document.createElement('span');
+    top.className='row-top';
+    const sender=document.createElement('span');
+    sender.className='sender';
+    sender.textContent=item.name;
+    const date=document.createElement('time');
+    date.className='row-date';
+    date.dateTime=item.created_at;
+    date.textContent=formattedDate(item.created_at);
+    top.append(sender,date);
+    const subject=document.createElement('span');
+    subject.className='row-subject';
+    subject.textContent=item.subject;
+    const preview=document.createElement('span');
+    preview.className='row-preview';
+    preview.textContent=item.message;
+    button.append(top,subject,preview);
+    if(!item.is_read){
+      const badge=document.createElement('span');
+      badge.className='unread-label';
+      badge.textContent='Unread';
+      button.append(badge);
+    }
+    button.addEventListener('click',()=>selectMessage(item.id));
+    messageList.append(button);
+  });
+  if(totalInquiryCount>inquiries.length){
+    const more=document.createElement('p');
+    more.className='empty-list';
+    more.textContent='Showing the latest '+inquiries.length+' of '+totalInquiryCount+' inquiries.';
+    messageList.append(more);
+  }
+}
+
+async function loadInquiries(){
+  setNotice(inboxNotice,'Loading inquiries…');
+  document.getElementById('refresh').disabled=true;
+  const [messagesResult,unreadResult]=await Promise.all([
+    client.from('inquiries')
+      .select('id,created_at,name,email,subject,message,is_read',{count:'exact'})
+      .order('created_at',{ascending:false})
+      .limit(1000),
+    client.from('inquiries')
+      .select('id',{count:'exact',head:true})
+      .eq('is_read',false)
+  ]);
+  document.getElementById('refresh').disabled=false;
+  const {data,error,count}=messagesResult;
+  const {count:unreadCount,error:unreadError}=unreadResult;
+  if(error || unreadError){
+    console.error('Could not load inquiry counts:',error || unreadError);
+    setNotice(inboxNotice,'Could not load the inbox. Check your Supabase setup and connection, then refresh.',true);
+    messageList.replaceChildren();
+    const failure=document.createElement('p');
+    failure.className='error-text';
+    failure.textContent='Inbox unavailable.';
+    messageList.append(failure);
+    return;
+  }
+  inquiries=data;
+  totalInquiryCount=count || 0;
+  unreadInquiryCount=unreadCount || 0;
+  updateStats();
+  if(!inquiries.some(item=>item.id===selectedId)) selectedId=null;
+  renderList();
+  renderDetail(inquiries.find(item=>item.id===selectedId));
+  setNotice(inboxNotice,'');
+}
+
+async function selectMessage(id){
+  selectedId=id;
+  const item=inquiries.find(entry=>entry.id===id);
+  if(item && !item.is_read){
+    const {data,error}=await client.from('inquiries').update({is_read:true}).eq('id',id).select('id');
+    if(error || !data || data.length!==1){
+      console.error('Could not mark inquiry as read:',error);
+      setNotice(inboxNotice,'This message could not be marked as read. Please try again.',true);
+    }else{
+      item.is_read=true;
+      unreadInquiryCount=Math.max(0,unreadInquiryCount-1);
+      setNotice(inboxNotice,'');
+    }
+  }
+  updateStats();
+  renderList();
+  renderDetail(item);
+}
+
+async function toggleRead(item){
+  const nextValue=!item.is_read;
+  const {data,error}=await client.from('inquiries').update({is_read:nextValue}).eq('id',item.id).select('id');
+  if(error || !data || data.length!==1){
+    console.error('Could not update inquiry status:',error);
+    setNotice(inboxNotice,'Message status could not be updated. Please try again.',true);
+    return;
+  }
+  if(item.is_read!==nextValue){
+    unreadInquiryCount=Math.max(0,unreadInquiryCount+(nextValue?1:-1));
+  }
+  item.is_read=nextValue;
+  updateStats();
+  renderList();
+  renderDetail(item);
+  setNotice(inboxNotice,'');
+}
+
+async function checkAdminAndLoad(){
+  const {data,error}=await client.rpc('is_admin');
+  if(error){
+    console.error('Could not verify administrator access:',error);
+    await client.auth.signOut();
+    showLogin('Could not verify admin access. Check the Supabase setup and try again.',true);
+    return;
+  }
+  if(data!==true){
+    await client.auth.signOut();
+    showLogin('Your email is verified, but the project owner must approve your admin access before you can view inquiries.',true);
+    return;
+  }
+  setNotice(loginNotice,'');
+  setNotice(registerNotice,'');
+  showDashboard();
+  await loadInquiries();
+}
+
+if(!configured){
+  setupNote.hidden=false;
+  loginButton.disabled=true;
+  registerButton.disabled=true;
+  setNotice(loginNotice,'Add the Supabase project settings before signing in.',true);
+}else{
+  client=window.supabase.createClient(config.url,config.anonKey);
+  loginForm.addEventListener('submit',async event=>{
+    event.preventDefault();
+    loginButton.disabled=true;
+    setNotice(loginNotice,'Signing in…');
+    const email=document.getElementById('login-email').value.trim();
+    const {error}=await client.auth.signInWithPassword({
+      email,
+      password:document.getElementById('login-password').value
+    });
+    loginButton.disabled=false;
+    if(error){
+      console.error('Administrator sign-in failed:',error);
+      setNotice(loginNotice,'Sign-in failed. Check your email, password and email confirmation, then try again.',true);
+      return;
+    }
+    await checkAdminAndLoad();
+  });
+  registerForm.addEventListener('submit',async event=>{
+    event.preventDefault();
+    registerButton.disabled=true;
+    setNotice(registerNotice,'Creating your account…');
+    const username=document.getElementById('register-username').value.trim().toLowerCase();
+    const email=document.getElementById('register-email').value.trim();
+    const password=document.getElementById('register-password').value;
+    const {data,error}=await client.auth.signUp({
+      email,
+      password,
+      options:{data:{admin_username:username}}
+    });
+    registerButton.disabled=false;
+    if(error){
+      console.error('Admin registration failed:',error);
+      setNotice(registerNotice,'Registration failed. Check the details; the username or email may already be registered.',true);
+      return;
+    }
+    registerForm.reset();
+    if(data.session){
+      await checkAdminAndLoad();
+      return;
+    }
+    setNotice(registerNotice,'Registration submitted. Confirm your email, then sign in. If this is not the first admin account, the project owner must approve it.');
+  });
+  client.auth.getSession().then(async({data,error})=>{
+    if(error){
+      console.error('Could not restore administrator session:',error);
+      setNotice(loginNotice,'Could not restore your session. Please sign in again.',true);
+      return;
+    }
+    if(data.session) await checkAdminAndLoad();
+  });
+}
+
+document.getElementById('show-register').addEventListener('click',()=>showAuthPanel('register'));
+document.getElementById('show-login').addEventListener('click',()=>showAuthPanel('login'));
+document.getElementById('signout').addEventListener('click',async()=>{
+  const {error}=await client.auth.signOut();
+  if(error){
+    console.error('Could not sign out:',error);
+    setNotice(inboxNotice,'Sign out failed. Please try again.',true);
+    return;
+  }
+  inquiries=[];
+  selectedId=null;
+  totalInquiryCount=0;
+  unreadInquiryCount=0;
+  updateStats();
+  messageList.replaceChildren();
+  renderDetail(null);
+  showLogin('You have signed out.');
+});
+document.getElementById('refresh').addEventListener('click',loadInquiries);
+searchInput.addEventListener('input',renderList);
+allFilter.addEventListener('click',()=>{
+  unreadOnly=false;
+  allFilter.setAttribute('aria-pressed','true');
+  unreadFilter.setAttribute('aria-pressed','false');
+  renderList();
+});
+unreadFilter.addEventListener('click',()=>{
+  unreadOnly=true;
+  allFilter.setAttribute('aria-pressed','false');
+  unreadFilter.setAttribute('aria-pressed','true');
+  renderList();
+});
+</script>
+</body>
+</html>
