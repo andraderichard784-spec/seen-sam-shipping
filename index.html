@@ -29,6 +29,7 @@ header{position:sticky;top:0;z-index:10;background:var(--hull);color:var(--white
 nav ul{display:flex;gap:28px;list-style:none}
 nav a{text-decoration:none;font-weight:500;font-size:.98rem;padding:6px 0;border-bottom:2px solid transparent}
 nav a:hover{border-color:var(--sand)}
+.crew-portal-link{color:var(--sand);font-weight:600}
 .menu-btn{display:none;background:none;border:1px solid var(--sand);color:var(--white);padding:8px 14px;font:inherit;border-radius:4px;cursor:pointer}
 
 /* hero */
@@ -122,6 +123,13 @@ h2{font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:18px;color:var(--hull)}
 .vals h3{font-size:1.15rem;color:var(--hull);margin-bottom:6px;padding-bottom:8px;border-bottom:2px solid var(--hull)}
 .vals p{font-size:.98rem}
 
+/* vessel reporting access */
+.portal-access{padding:54px 0;background:var(--deep);color:var(--white)}
+.portal-access-inner{display:flex;align-items:center;justify-content:space-between;gap:28px}
+.portal-access h2{margin-bottom:9px;color:var(--white)}
+.portal-access p{max-width:62ch;color:#CBD9E3}
+.portal-access .btn{flex:0 0 auto}
+
 /* contact */
 .contact{background:var(--hull);color:var(--white)}
 .contact h2{color:var(--white)}
@@ -139,6 +147,7 @@ textarea{min-height:120px;resize:vertical}
 footer{background:#071A2E;color:#9FB6C6;font-size:.9rem;padding:22px 0;text-align:center}
 
 @media (max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:700px){.portal-access-inner{align-items:flex-start;flex-direction:column}}
 @media (max-width:820px){
   .about,.cgrid{grid-template-columns:1fr}
   .ship{display:none}
@@ -181,6 +190,7 @@ footer{background:#071A2E;color:#9FB6C6;font-size:.9rem;padding:22px 0;text-alig
         <li><a href="#about">About</a></li>
         <li><a href="#services">Services</a></li>
         <li><a href="#values">Our standards</a></li>
+        <li><a class="crew-portal-link" href="VESSEL-PORTAL.HTML">Vessel portal</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
@@ -263,6 +273,16 @@ footer{background:#071A2E;color:#9FB6C6;font-size:.9rem;padding:22px 0;text-alig
   </div>
 </section>
 
+<section class="portal-access" aria-labelledby="portal-access-title">
+  <div class="wrap portal-access-inner">
+    <div>
+      <h2 id="portal-access-title">Vessel fuel reporting</h2>
+      <p>Vessel crews can request a secure portal account to submit fuel reports and photos. New accounts are reviewed by the operations administrator before reporting access is approved.</p>
+    </div>
+    <a class="btn" href="VESSEL-PORTAL.HTML">Open vessel portal</a>
+  </div>
+</section>
+
 <section id="values" class="values">
   <div class="wrap">
     <h2>Our standards</h2>
@@ -339,18 +359,29 @@ contactForm.addEventListener('submit',async e=>{
   const formData=new FormData(contactForm);
   submitButton.disabled=true;
   contactStatus.textContent='Sending your message…';
-  const client=window.supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.anonKey);
-  const {error}=await client.from('inquiries').insert({
-    name:formData.get('name').trim(),
-    email:formData.get('email').trim(),
-    subject:formData.get('subject').trim(),
-    message:formData.get('msg').trim()
-  });
-  submitButton.disabled=false;
-  if (error) {
-    console.error('Could not submit contact inquiry:',error);
-    contactStatus.textContent='We could not send your message. Please try again or email us directly.';
+  try {
+    const client=window.supabase.createClient(
+      window.SUPABASE_CONFIG.url,
+      window.SUPABASE_CONFIG.anonKey,
+      {auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}
+    );
+    const {error}=await client.from('inquiries').insert({
+      name:formData.get('name').trim(),
+      email:formData.get('email').trim(),
+      subject:formData.get('subject').trim(),
+      message:formData.get('msg').trim()
+    });
+    if (error) {
+      console.error('Could not submit contact inquiry:',error);
+      contactStatus.textContent='We could not send your message. '+error.message;
+      return;
+    }
+  } catch (error) {
+    console.error('Contact inquiry request failed:',error);
+    contactStatus.textContent='We could not reach the message service. '+(error.message || 'Check your connection and try again.');
     return;
+  } finally {
+    submitButton.disabled=false;
   }
   contactForm.reset();
   contactStatus.textContent='Thank you. Your message has been sent to our maritime team.';
