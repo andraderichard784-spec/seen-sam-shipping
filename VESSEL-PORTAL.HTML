@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Private vessel portal for Seem Sam Shipping fuel reports.">
+<title>Vessel Portal | Seem Sam Shipping Inc.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--hull:#0b2540;--deep:#12395c;--sea:#1f6f8b;--signal:#d6452b;--page:#eef3f5;--surface:#fff;--ink:#10202e;--muted:#526878;--line:#d9e2e7;--serif:'Fraunces',Georgia,serif;--sans:'Barlow',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:var(--page);color:var(--ink);font:16px/1.55 var(--sans)}
+button,input,select,textarea{font:inherit}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--signal);outline-offset:3px}
+.topbar{background:var(--hull);color:#fff;border-bottom:4px solid var(--signal)}
+.topbar-inner{max-width:1100px;margin:auto;padding:13px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;font:700 1.05rem var(--serif)}
+.brand img{width:42px;height:42px;object-fit:contain;border-radius:50%;background:#fff}
+.admin-link{color:#e1edf4;font-size:.9rem}
+.shell{width:min(100% - 32px,1040px);margin:34px auto 60px}
+.auth-card,.panel,.report-card{background:var(--surface);border:1px solid var(--line);border-radius:9px;box-shadow:0 10px 30px rgba(11,37,64,.07)}
+.auth-card{max-width:500px;margin:7vh auto 0;padding:30px}
+.eyebrow{color:var(--sea);font-size:.74rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase}
+h1,h2,h3{color:var(--hull);font-family:var(--serif);line-height:1.18}
+h1{margin:7px 0 8px;font-size:clamp(1.8rem,4vw,2.5rem)}
+h2{font-size:1.35rem}
+.intro{margin-bottom:21px;color:var(--muted)}
+.tabs{display:flex;gap:8px;margin:20px 0}
+.tab,.button{border:0;border-radius:5px;cursor:pointer;font-weight:700}
+.tab{padding:9px 14px;background:#eaf1f4;color:var(--hull)}
+.tab[aria-selected="true"]{background:var(--hull);color:#fff}
+form{display:grid;gap:14px}
+label{display:grid;gap:5px;color:var(--hull);font-weight:600}
+input,select,textarea{width:100%;min-width:0;padding:11px 12px;border:1px solid #bdccd5;border-radius:5px;background:#fff;color:var(--ink)}
+textarea{min-height:100px;resize:vertical}
+input[type="file"]{padding:10px;background:#f5f8f9}
+.help{color:var(--muted);font-size:.84rem}
+.button{padding:11px 16px;background:var(--signal);color:#fff}
+.button:hover{background:#b93820}
+.button:disabled{opacity:.6;cursor:wait}
+.button.secondary{background:var(--hull)}
+.button.secondary:hover{background:var(--deep)}
+.notice{margin:14px 0;padding:11px 13px;border-left:4px solid var(--sea);border-radius:3px;background:#e8f1f4;color:var(--ink)}
+.notice:empty{display:none}
+.notice.error{border-color:var(--signal);background:#fff0ed;color:#812818}
+.dashboard[hidden],.auth-card[hidden]{display:none}
+.dashboard-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:22px}
+.dashboard-head .intro{margin:0}
+.dashboard-actions{display:flex;gap:9px;flex-wrap:wrap}
+.dashboard-grid{display:grid;grid-template-columns:minmax(280px,.9fr) minmax(0,1.1fr);gap:18px;align-items:start}
+.panel{padding:22px}
+.panel h2{margin-bottom:14px}
+.report-list{display:grid;gap:11px}
+.report-card{padding:15px;box-shadow:none}
+.report-card-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.report-card h3{font:700 1rem var(--sans)}
+.report-card p{margin-top:5px;color:var(--muted);font-size:.9rem}
+.status{display:inline-flex;align-items:center;padding:4px 9px;border-radius:20px;background:#fff2dc;color:#77531e;font-size:.72rem;font-weight:700;text-transform:uppercase}
+.status.reviewed{background:#e7f5ed;color:#216642}
+.status.needs_correction{background:#fff0ed;color:#8d2d1d}
+.report-photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.report-photos a{display:block}
+.report-photos img{width:78px;height:65px;border:1px solid var(--line);border-radius:5px;object-fit:cover}
+.report-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:11px}
+.report-value{padding:8px;border-radius:5px;background:#f2f6f7;font-size:.84rem}
+.report-value strong{display:block;color:var(--hull)}
+.empty{padding:20px;text-align:center;color:var(--muted)}
+@media(max-width:760px){.shell{margin-top:23px}.dashboard-head{align-items:flex-start;flex-direction:column}.dashboard-grid{grid-template-columns:1fr}.auth-card{padding:23px 19px}.panel{padding:17px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="VESSEL-PORTAL.HTML"><img src="seem-sam-logo.png" alt="">Seem Sam Shipping · Vessel Portal</a>
+    <a class="admin-link" href="ADMIN.HTML">Admin sign in</a>
+  </div>
+</header>
+<main class="shell">
+  <section class="auth-card" id="auth-card" aria-labelledby="auth-title">
+    <p class="eyebrow">Fleet operations</p>
+    <h1 id="auth-title">Vessel crew portal</h1>
+    <p class="intro">Sign in to submit fuel reports and attach clear photos for the operations team.</p>
+    <div class="tabs" role="tablist" aria-label="Vessel account access">
+      <button class="tab" id="login-tab" type="button" role="tab" aria-selected="true">Sign in</button>
+      <button class="tab" id="signup-tab" type="button" role="tab" aria-selected="false">Create vessel account</button>
+    </div>
+    <form id="login-form">
+      <label>Email address<input id="login-email" type="email" autocomplete="username" maxlength="254" required></label>
+      <label>Password<input id="login-password" type="password" autocomplete="current-password" required></label>
+      <button class="button" type="submit">Sign in to vessel</button>
+    </form>
+    <form id="signup-form" hidden>
+      <label>Vessel
+        <select id="signup-vessel" required>
+          <option value="">Select your vessel</option>
+          <option>LCT 668</option><option>LCT 868</option><option>LCT 888</option>
+          <option>LCT 1018</option><option>LCT 1020</option><option>LCT 1030</option>
+          <option>LCT 1035</option><option>LCT 1060</option><option>LCT 1070</option>
+          <option>LCT 1078</option><option>LCT 1080</option><option>LCT 1090</option><option>LCT 1098</option>
+        </select>
+      </label>
+      <label>Vessel account email<input id="signup-email" type="email" autocomplete="email" maxlength="254" required></label>
+      <label>Password<input id="signup-password" type="password" autocomplete="new-password" minlength="8" required></label>
+      <p class="help">Use an email account the vessel crew can access. New vessel accounts need admin approval before reports can be submitted.</p>
+      <button class="button" type="submit">Request vessel account</button>
+    </form>
+    <p class="notice" id="auth-notice" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="dashboard" id="vessel-dashboard" hidden aria-labelledby="vessel-heading">
+    <div class="dashboard-head">
+      <div>
+        <p class="eyebrow">Vessel fuel monitoring</p>
+        <h1 id="vessel-heading">Fuel reports</h1>
+        <p class="intro">Submitting as <strong id="vessel-name-label"></strong></p>
+      </div>
+      <div class="dashboard-actions">
+        <button class="button secondary" id="refresh-reports" type="button">Refresh</button>
+        <button class="button secondary" id="signout" type="button">Sign out</button>
+      </div>
+    </div>
+    <p class="notice" id="dashboard-notice" role="status" aria-live="polite"></p>
+    <div class="dashboard-grid">
+      <section class="panel" aria-labelledby="new-report-heading">
+        <h2 id="new-report-heading">Submit fuel report</h2>
+        <form id="fuel-report-form">
+          <label>Report date<input id="report-date" type="date" required></label>
+          <label>Current location<input id="report-location" maxlength="160" placeholder="Port, terminal or coordinates" required></label>
+          <label>Fuel remaining (liters)<input id="fuel-remaining" type="number" min="0" step="0.01" inputmode="decimal" required></label>
+          <label>Fuel received since last report (liters)<input id="fuel-received" type="number" min="0" step="0.01" value="0" inputmode="decimal" required></label>
+          <label>Fuel consumed since last report (liters)<input id="fuel-consumed" type="number" min="0" step="0.01" value="0" inputmode="decimal" required></label>
+          <label>Engine hours<input id="engine-hours" type="number" min="0" step="0.01" inputmode="decimal" required></label>
+          <label>Remarks<textarea id="report-remarks" maxlength="2000" placeholder="Optional operational notes"></textarea></label>
+          <label>Attach photos<input id="report-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+          <p class="help">Up to 5 photos, JPG/PNG/WebP, max 5 MB each. Add a fuel gauge or delivery receipt if available.</p>
+          <button class="button" id="submit-report" type="submit">Submit fuel report</button>
+        </form>
+      </section>
+      <section class="panel" aria-labelledby="history-heading">
+        <h2 id="history-heading">Your vessel reports</h2>
+        <div class="report-list" id="report-list" aria-live="polite"></div>
+      </section>
+    </div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="SUPABASE-CONFIG.JS"></script>
+<script>
+const config=window.SUPABASE_CONFIG;
+const ready=Boolean(window.supabase&&config&&config.url&&config.anonKey);
+const authCard=document.getElementById('auth-card');
+const vesselDashboard=document.getElementById('vessel-dashboard');
+const authNotice=document.getElementById('auth-notice');
+const dashboardNotice=document.getElementById('dashboard-notice');
+const loginForm=document.getElementById('login-form');
+const signupForm=document.getElementById('signup-form');
+const reportForm=document.getElementById('fuel-report-form');
+const reportList=document.getElementById('report-list');
+const loginTab=document.getElementById('login-tab');
+const signupTab=document.getElementById('signup-tab');
+const submitReportButton=document.getElementById('submit-report');
+let client=null;
+let vesselAccount=null;
+
+function notice(element,message,isError=false){
+  element.textContent=message;
+  element.classList.toggle('error',isError);
+}
+function showTab(tab){
+  const isSignup=tab==='signup';
+  loginForm.hidden=isSignup;
+  signupForm.hidden=!isSignup;
+  loginTab.setAttribute('aria-selected',String(!isSignup));
+  signupTab.setAttribute('aria-selected',String(isSignup));
+  notice(authNotice,'');
+}
+function showDashboard(account){
+  vesselAccount=account;
+  authCard.hidden=true;
+  vesselDashboard.hidden=false;
+  document.getElementById('vessel-name-label').textContent=account.vessel_name;
+  document.getElementById('report-date').value=new Date().toISOString().slice(0,10);
+  loadReports();
+}
+function showAuth(message='',isError=false){
+  vesselAccount=null;
+  vesselDashboard.hidden=true;
+  authCard.hidden=false;
+  notice(authNotice,message,isError);
+}
+function formatDate(value){
+  const date=new Date(value);
+  return Number.isNaN(date.getTime())?'Date unavailable':new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(date);
+}
+async function checkVesselSession(){
+  const {data:{session},error}=await client.auth.getSession();
+  if(error){
+    console.error('Could not restore vessel session:',error);
+    showAuth('Could not restore your sign-in. Please sign in again.',true);
+    return;
+  }
+  if(session) await loadVesselAccount();
+}
+async function loadVesselAccount(){
+  const {data:{user},error:userError}=await client.auth.getUser();
+  if(userError||!user){
+    console.error('Could not verify vessel account:',userError);
+    showAuth('Could not verify your sign-in. Please sign in again.',true);
+    return;
+  }
+  const {data,error}=await client.from('vessel_accounts').select('user_id,vessel_name,status').eq('user_id',user.id).maybeSingle();
+  if(error){
+    console.error('Could not load vessel account:',error);
+    showAuth('Could not load your vessel account. Check the portal database setup, then try again.',true);
+    return;
+  }
+  if(!data){
+    await client.auth.signOut();
+    showAuth('This login is not registered as a vessel account. Please use the administrator portal if this is an admin account.',true);
+    return;
+  }
+  if(data.status==='pending'){
+    await client.auth.signOut();
+    showAuth(`Your ${data.vessel_name} account is waiting for admin approval. You can sign in after it is approved.`);
+    return;
+  }
+  if(data.status==='rejected'){
+    await client.auth.signOut();
+    showAuth(`The account request for ${data.vessel_name} was not approved. Contact the operations administrator.`,true);
+    return;
+  }
+  showDashboard(data);
+}
+function statusLabel(status){
+  if(status==='needs_correction') return 'Needs correction';
+  if(status==='reviewed') return 'Reviewed';
+  return 'Submitted';
+}
+async function renderReport(report){
+  const card=document.createElement('article');
+  card.className='report-card';
+  const head=document.createElement('div');
+  head.className='report-card-head';
+  const title=document.createElement('h3');
+  title.textContent=formatDate(report.report_date);
+  const status=document.createElement('span');
+  status.className='status '+report.status;
+  status.textContent=statusLabel(report.status);
+  head.append(title,status);
+  const location=document.createElement('p');
+  location.textContent=report.location+' · Submitted '+formatDate(report.created_at);
+  const values=document.createElement('div');
+  values.className='report-values';
+  [
+    ['Fuel remaining',report.fuel_remaining+' L'],
+    ['Fuel received',report.fuel_received+' L'],
+    ['Fuel consumed',report.fuel_consumed+' L'],
+    ['Engine hours',report.engine_hours]
+  ].forEach(([label,value])=>{
+    const entry=document.createElement('div');
+    entry.className='report-value';
+    const strong=document.createElement('strong');
+    strong.textContent=label;
+    entry.append(strong,document.createTextNode(value));
+    values.append(entry);
+  });
+  card.append(head,location,values);
+  if(report.remarks){
+    const remarks=document.createElement('p');
+    remarks.textContent='Remarks: '+report.remarks;
+    card.append(remarks);
+  }
+  if(report.review_note){
+    const review=document.createElement('p');
+    review.textContent='Admin note: '+report.review_note;
+    card.append(review);
+  }
+  if(report.photo_paths.length){
+    const photos=document.createElement('div');
+    photos.className='report-photos';
+    for(const path of report.photo_paths){
+      const {data,error}=await client.storage.from('vessel-report-photos').createSignedUrl(path,300);
+      if(error){
+        console.error('Could not load report photo:',error);
+        continue;
+      }
+      const link=document.createElement('a');
+      link.href=data.signedUrl;
+      link.target='_blank';
+      link.rel='noopener noreferrer';
+      link.setAttribute('aria-label','Open attached report photo');
+      const image=document.createElement('img');
+      image.src=data.signedUrl;
+      image.alt='Fuel report attachment';
+      link.append(image);
+      photos.append(link);
+    }
+    card.append(photos);
+  }
+  return card;
+}
+async function loadReports(){
+  reportList.replaceChildren();
+  const loading=document.createElement('p');
+  loading.className='empty';
+  loading.textContent='Loading reports…';
+  reportList.append(loading);
+  const {data,error}=await client.from('vessel_fuel_reports')
+    .select('id,report_date,location,fuel_remaining,fuel_received,fuel_consumed,engine_hours,remarks,photo_paths,status,review_note,created_at')
+    .eq('vessel_user_id',vesselAccount.user_id).order('created_at',{ascending:false}).limit(100);
+  if(error){
+    console.error('Could not load vessel fuel reports:',error);
+    notice(dashboardNotice,'Could not load reports. Check your connection and refresh.',true);
+    return;
+  }
+  reportList.replaceChildren();
+  notice(dashboardNotice,'');
+  if(!data.length){
+    const empty=document.createElement('p');
+    empty.className='empty';
+    empty.textContent='No reports yet. Your submitted fuel reports will appear here.';
+    reportList.append(empty);
+    return;
+  }
+  for(const report of data) reportList.append(await renderReport(report));
+}
+async function submitReport(event){
+  event.preventDefault();
+  notice(dashboardNotice,'');
+  const files=[...document.getElementById('report-photos').files];
+  if(files.length>5){
+    notice(dashboardNotice,'Choose no more than 5 photos per report.',true);
+    return;
+  }
+  if(files.some(file=>!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024)){
+    notice(dashboardNotice,'Each attachment must be a JPG, PNG or WebP image no larger than 5 MB.',true);
+    return;
+  }
+  submitReportButton.disabled=true;
+  submitReportButton.textContent='Uploading report…';
+  const reportId=crypto.randomUUID();
+  const uploadedPaths=[];
+  try{
+    for(const file of files){
+      const extension={ 'image/jpeg':'jpg','image/png':'png','image/webp':'webp' }[file.type];
+      const path=`${vesselAccount.user_id}/${reportId}/${crypto.randomUUID()}.${extension}`;
+      const {error}=await client.storage.from('vessel-report-photos').upload(path,file,{contentType:file.type,upsert:false});
+      if(error) throw error;
+      uploadedPaths.push(path);
+    }
+    const payload={
+      id:reportId,
+      vessel_user_id:vesselAccount.user_id,
+      vessel_name:vesselAccount.vessel_name,
+      report_date:document.getElementById('report-date').value,
+      location:document.getElementById('report-location').value.trim(),
+      fuel_remaining:Number(document.getElementById('fuel-remaining').value),
+      fuel_received:Number(document.getElementById('fuel-received').value),
+      fuel_consumed:Number(document.getElementById('fuel-consumed').value),
+      engine_hours:Number(document.getElementById('engine-hours').value),
+      remarks:document.getElementById('report-remarks').value.trim(),
+      photo_paths:uploadedPaths
+    };
+    const {error}=await client.from('vessel_fuel_reports').insert(payload);
+    if(error) throw error;
+    reportForm.reset();
+    document.getElementById('report-date').value=new Date().toISOString().slice(0,10);
+    document.getElementById('fuel-received').value='0';
+    document.getElementById('fuel-consumed').value='0';
+    notice(dashboardNotice,'Fuel report submitted to the admin team.');
+    await loadReports();
+  }catch(error){
+    console.error('Could not submit vessel fuel report:',error);
+    if(uploadedPaths.length){
+      const {error:cleanupError}=await client.storage.from('vessel-report-photos').remove(uploadedPaths);
+      if(cleanupError) console.error('Could not clean up uploaded report photos:',cleanupError);
+    }
+    notice(dashboardNotice,'Report was not submitted. Check your connection, attachment requirements, and vessel account approval, then try again.',true);
+  }finally{
+    submitReportButton.disabled=false;
+    submitReportButton.textContent='Submit fuel report';
+  }
+}
+
+document.getElementById('login-tab').addEventListener('click',()=>showTab('login'));
+document.getElementById('signup-tab').addEventListener('click',()=>showTab('signup'));
+loginForm.addEventListener('submit',async event=>{
+  event.preventDefault();
+  const button=loginForm.querySelector('button[type="submit"]');
+  button.disabled=true;
+  notice(authNotice,'Signing in…');
+  const {error}=await client.auth.signInWithPassword({
+    email:document.getElementById('login-email').value.trim(),
+    password:document.getElementById('login-password').value
+  });
+  button.disabled=false;
+  if(error){
+    console.error('Vessel sign-in failed:',error);
+    notice(authNotice,'Sign-in failed. Check the vessel account email, password and email confirmation.',true);
+    return;
+  }
+  await loadVesselAccount();
+});
+signupForm.addEventListener('submit',async event=>{
+  event.preventDefault();
+  const button=signupForm.querySelector('button[type="submit"]');
+  button.disabled=true;
+  notice(authNotice,'Creating vessel account request…');
+  const {error}=await client.auth.signUp({
+    email:document.getElementById('signup-email').value.trim(),
+    password:document.getElementById('signup-password').value,
+    options:{data:{signup_role:'vessel',vessel_name:document.getElementById('signup-vessel').value}}
+  });
+  button.disabled=false;
+  if(error){
+    console.error('Vessel account registration failed:',error);
+    notice(authNotice,'Could not create the vessel account request. Check the details; this email may already be registered.',true);
+    return;
+  }
+  signupForm.reset();
+  showTab('login');
+  notice(authNotice,'Account request created. Verify the email if prompted, then wait for admin approval before signing in.');
+});
+reportForm.addEventListener('submit',submitReport);
+document.getElementById('refresh-reports').addEventListener('click',loadReports);
+document.getElementById('signout').addEventListener('click',async()=>{
+  const {error}=await client.auth.signOut();
+  if(error){
+    console.error('Could not sign out vessel account:',error);
+    notice(dashboardNotice,'Sign out failed. Please try again.',true);
+    return;
+  }
+  reportList.replaceChildren();
+  showAuth('You have signed out.');
+});
+if(!ready){
+  notice(authNotice,'Vessel portal setup is incomplete. Configure SUPABASE-CONFIG.JS first.',true);
+  loginForm.querySelector('button').disabled=true;
+  signupForm.querySelector('button').disabled=true;
+}else{
+  client=window.supabase.createClient(config.url,config.anonKey);
+  checkVesselSession();
+}
+</script>
+</body>
+</html>
