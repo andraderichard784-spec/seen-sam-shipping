@@ -41,10 +41,59 @@ h1{font-size:clamp(2rem,4vw,3rem);margin:6px 0}
 .login-card>p{color:var(--muted);margin-bottom:22px}
 .login-card form{margin-top:18px}
 .login-card small{margin-top:-12px;color:#607482;font-size:.82rem}
+.auth-hint{margin:-13px 0 12px!important;color:#91a9b6!important;font-size:.78rem;text-align:center}
 .forgot-password-row{margin-top:-5px;text-align:right}
 .auth-toggle{margin:18px 0 0;color:var(--muted);font-size:.92rem}
 .text-button{padding:0;border:0;background:transparent;color:var(--sea);text-decoration:underline;cursor:pointer;font-weight:600}
 .security-warning{margin-top:18px;padding:12px;border-left:4px solid var(--signal);background:#fff0ed;color:#812818;font-size:.88rem}
+body:not(.dashboard-active){background:#020a12;color:#e6f5fb}
+body:not(.dashboard-active) .topbar{display:none}
+body:not(.dashboard-active) .shell{position:relative;isolation:isolate;display:grid;place-items:center;width:100%;max-width:none;min-height:100vh;margin:0;padding:36px 20px 104px;overflow:hidden;background:radial-gradient(ellipse at 50% 108%,rgba(0,105,140,.2),transparent 50%),linear-gradient(180deg,#020911 0%,#061522 56%,#03101a 100%)}
+.login-atmosphere{position:absolute;z-index:-1;inset:0;overflow:hidden;pointer-events:none;color:#36c9e8}
+.login-chart-grid{position:absolute;inset:0;opacity:.18;background-image:linear-gradient(rgba(43,166,198,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(43,166,198,.16) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(transparent,#000 16%,#000 88%,transparent)}
+.login-chart-grid::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 116px,rgba(31,149,180,.17) 117px,transparent 118px),repeating-linear-gradient(90deg,transparent 0 116px,rgba(31,149,180,.13) 117px,transparent 118px)}
+.login-radar{position:absolute;top:50%;right:4%;width:min(76vh,720px);aspect-ratio:1;transform:translateY(-53%);border:1px solid rgba(42,195,222,.2);border-radius:50%;opacity:.55;background:repeating-radial-gradient(circle,transparent 0 75px,rgba(36,184,212,.18) 76px,transparent 77px),linear-gradient(90deg,transparent calc(50% - .5px),rgba(36,184,212,.2) 50%,transparent calc(50% + .5px)),linear-gradient(0deg,transparent calc(50% - .5px),rgba(36,184,212,.2) 50%,transparent calc(50% + .5px))}
+.login-radar::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0deg 300deg,rgba(25,208,240,.02) 312deg,rgba(25,208,240,.27) 359deg,transparent 360deg);animation:radar-sweep 9s linear infinite;mask-image:radial-gradient(circle,transparent 0 8%,#000 9% 100%)}
+.login-radar::after{content:"";position:absolute;inset:50% auto auto 50%;width:9px;height:9px;border:1px solid #8df1ff;border-radius:50%;background:#14bad5;box-shadow:0 0 18px 5px rgba(20,186,213,.55);transform:translate(-50%,-50%)}
+.radar-contact{position:absolute;width:7px;height:7px;border-radius:50%;background:#75efff;box-shadow:0 0 12px 3px rgba(68,220,246,.65);animation:contact-pulse 2.8s ease-in-out infinite}
+.radar-contact-one{left:31%;top:28%}.radar-contact-two{left:72%;top:61%;animation-delay:.7s}.radar-contact-three{left:44%;top:79%;animation-delay:1.4s}
+.login-route{position:absolute;height:1px;transform-origin:left center;background:linear-gradient(90deg,transparent,rgba(33,191,220,.48),transparent);opacity:.6}
+.login-route-one{width:45%;left:6%;top:25%;transform:rotate(19deg)}.login-route-two{width:38%;right:2%;bottom:24%;transform:rotate(-16deg)}
+.ais-marker{position:absolute;padding:4px 7px;border:1px solid rgba(80,207,229,.22);border-radius:3px;background:rgba(2,16,26,.72);color:#6ed9ef;font:500 .58rem/1.2 var(--sans);letter-spacing:.1em;animation:marker-drift 8s ease-in-out infinite}
+.ais-marker-one{top:25%;left:10%}.ais-marker-two{top:31%;right:12%;animation-delay:1.8s}.ais-marker-three{bottom:23%;left:17%;animation-delay:3.1s}
+.ship-silhouette{position:absolute;right:13%;bottom:9%;width:220px;height:70px;opacity:.45;filter:drop-shadow(0 0 18px rgba(18,177,211,.35));animation:ship-drift 7s ease-in-out infinite}
+.ship-hull{position:absolute;right:0;bottom:8px;width:220px;height:25px;background:linear-gradient(180deg,#123849,#020a10);clip-path:polygon(0 0,100% 0,87% 100%,14% 100%)}
+.ship-deck{position:absolute;right:55px;bottom:31px;width:100px;height:18px;background:#0d2937;clip-path:polygon(0 100%,8% 30%,67% 30%,67% 0,100% 0,100% 100%)}
+.ship-bridge{position:absolute;right:118px;bottom:49px;width:38px;height:19px;border-top:2px solid #39bad5;background:linear-gradient(90deg,transparent 13%,#123544 14% 84%,transparent 85%)}
+.login-card{position:relative;z-index:10;width:min(100%,430px);max-width:430px;margin:0;padding:32px 30px 28px;border:1px solid rgba(35,190,220,.5);border-radius:22px;background:rgba(3,17,28,.91);box-shadow:0 24px 90px rgba(0,0,0,.5),inset 0 1px rgba(157,241,255,.07);backdrop-filter:blur(16px);color:#e6f5fb;pointer-events:auto}
+.login-card h2{margin:0;color:#f0f8fb;text-align:center;font:500 1.65rem/1.2 var(--sans);letter-spacing:.05em;text-transform:uppercase}
+.login-card>div>p:not(.notice):not(.auth-toggle):not(.forgot-password-row){margin:7px 0 20px;color:#91aab8;text-align:center;font-size:.77rem;letter-spacing:.11em;text-transform:uppercase}
+.login-kicker{margin:0 0 12px!important;color:#54d8ed!important;font-size:.72rem!important;font-weight:700;letter-spacing:.22em!important;text-align:center;text-transform:uppercase}
+.login-card form{margin-top:16px;gap:14px}
+.login-card label{color:#a8bfcb;font-size:.68rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase}
+.login-card input{padding:13px 14px;border:1px solid #294252;border-radius:9px;background:#030d18;color:#eefaff}
+.login-card input:focus{border-color:#23bbd8;outline-color:#23bbd8}
+.login-card input::placeholder{color:#728895}
+.login-card .primary{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:3px;padding:13px 16px;border-radius:9px;background:#0797b2;color:#fff;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.login-card .primary:hover{background:#0aabc8}
+.login-card .text-button{color:#47c8df}
+.login-card .auth-toggle{margin-top:15px;color:#91aab8;text-align:center}
+#register-panel:target{display:block!important}
+.login-card:has(#register-panel:target) #login-panel{display:none!important}
+.login-card .notice{border-color:#168fa9;background:rgba(12,48,64,.86);color:#d8edf4}
+.login-card .notice.error{border-color:#ff8170;background:rgba(83,34,33,.92);color:#ffd2ca}
+.login-system-status{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;color:#64d9e9;font-size:.68rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.login-system-dot{width:7px;height:7px;border-radius:50%;background:#22d18a;box-shadow:0 0 11px rgba(34,209,138,.75);animation:status-blink 1.8s ease-in-out infinite}
+.login-module-list{position:absolute;z-index:1;right:20px;bottom:24px;left:20px;display:flex;justify-content:center;flex-wrap:wrap;gap:9px}
+.login-module-list span{padding:7px 11px;border:1px solid rgba(50,166,190,.22);border-radius:4px;background:rgba(4,19,29,.65);color:#7299a8;font-size:.61rem;font-weight:600;letter-spacing:.13em}
+.dashboard-active .login-atmosphere,.dashboard-active .login-module-list{display:none}
+@keyframes radar-sweep{to{transform:rotate(360deg)}}
+@keyframes contact-pulse{50%{opacity:.35;box-shadow:0 0 5px 1px rgba(68,220,246,.4)}}
+@keyframes marker-drift{50%{translate:6px -4px;opacity:.6}}
+@keyframes ship-drift{50%{translate:-9px 0}}
+@keyframes status-blink{50%{opacity:.45}}
+@media(prefers-reduced-motion:reduce){.login-radar::before,.radar-contact,.ais-marker,.ship-silhouette,.login-system-dot{animation:none}}
+@media(max-width:600px){body:not(.dashboard-active) .shell{padding:24px 14px 112px}.login-card{padding:27px 21px 24px}.login-radar{right:-48%;width:min(104vw,600px);opacity:.4}.ship-silhouette{right:4%;bottom:9%;scale:.78}.login-module-list{right:12px;left:12px;gap:6px}.login-module-list span{padding:6px 7px;font-size:.53rem}}
 form{display:grid;gap:16px}
 label{display:grid;gap:6px;font-weight:600;color:var(--hull)}
 body[data-theme="dark"] label{color:#e5edf4}
@@ -88,6 +137,114 @@ body.dashboard-active .shell{max-width:none;margin:0;padding:0}
 .sidebar-user strong{display:block;max-width:170px;overflow:hidden;color:#fff;text-overflow:ellipsis;white-space:nowrap;font-size:.88rem}
 .sidebar-user span{color:#94a7bc;font-size:.78rem}
 .dashboard-main{position:relative;isolation:isolate;min-width:0;padding:34px clamp(18px,4vw,54px) 56px}
+.dashboard-topbar{position:sticky;z-index:20;top:0;display:flex;align-items:center;gap:14px;min-height:68px;padding:10px clamp(16px,3vw,34px);margin:-34px max(-54px,-4vw) 24px;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-shadow:0 6px 18px rgba(11,37,64,.06);backdrop-filter:blur(14px)}
+.topbar-menu-button,.topbar-icon-button{position:relative;display:grid;place-items:center;width:40px;height:40px;flex:0 0 auto;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--hull);font-size:1.15rem;cursor:pointer}
+.global-search{display:flex;align-items:center;gap:9px;width:min(100%,390px);margin:0;padding:0 12px;border:1px solid var(--line);border-radius:9px;background:#f6f9fb}
+.global-search span{color:var(--muted)}
+.global-search input{width:100%;padding:10px 0;border:0;background:transparent;outline:0;color:var(--ink);font-size:.84rem}
+.global-search input:focus{box-shadow:none}
+.topbar-system{display:flex;align-items:center;gap:9px;margin-left:auto;color:#087b67;font-size:.77rem;font-weight:700;white-space:nowrap}
+.topbar-system-dot{width:8px;height:8px;border-radius:50%;background:#18bd8c;box-shadow:0 0 0 4px rgba(24,189,140,.12)}
+.topbar-clock{min-width:100px;color:var(--muted);font-size:.74rem;line-height:1.35;text-align:right;white-space:nowrap}
+.topbar-alert-count{position:absolute;top:-5px;right:-5px;display:grid;place-items:center;min-width:18px;height:18px;padding:0 4px;border-radius:20px;background:#d6452b;color:white;font-size:.65rem;font-weight:700}
+.profile-menu{position:relative;flex:0 0 auto}
+.profile-menu summary{display:flex;align-items:center;gap:9px;list-style:none;cursor:pointer}
+.profile-menu summary::-webkit-details-marker{display:none}
+.profile-avatar{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#dceaf3;color:#0b4774;font-weight:700}
+.profile-name{display:grid;color:var(--ink);font-size:.78rem;font-weight:700;line-height:1.2;white-space:nowrap}
+.profile-name small{margin-top:3px;color:var(--muted);font-size:.68rem;font-weight:400}
+.profile-menu[open] .profile-popover{position:absolute;top:calc(100% + 12px);right:0;z-index:30;min-width:230px;padding:15px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:0 15px 38px rgba(11,37,64,.18)}
+.profile-popover strong,.profile-popover span{display:block;overflow:hidden;text-overflow:ellipsis}
+.profile-popover span{margin-top:4px;color:var(--muted);font-size:.8rem}
+.overview-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 20px}
+.overview-kpi{position:relative;display:flex;min-width:0;min-height:104px;align-items:center;gap:13px;overflow:hidden;padding:15px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:linear-gradient(135deg,var(--kpi-a),var(--kpi-b));box-shadow:0 8px 20px rgba(11,37,64,.12);color:#fff}
+.overview-kpi::after{content:"";position:absolute;right:-22px;bottom:-42px;width:112px;height:112px;border:1px solid rgba(255,255,255,.13);border-radius:50%;box-shadow:0 0 0 13px rgba(255,255,255,.035),0 0 0 27px rgba(255,255,255,.025)}
+.overview-kpi-icon{position:relative;z-index:1;display:grid;place-items:center;width:42px;height:42px;flex:0 0 auto;border-radius:10px;background:rgba(255,255,255,.16);font-size:1.2rem}
+.overview-kpi-copy{position:relative;z-index:1;min-width:0}
+.overview-kpi-copy span{display:block;color:rgba(255,255,255,.8);font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.overview-kpi-copy strong{display:block;margin:3px 0;font-size:1.55rem;line-height:1.05}
+.overview-kpi-copy small{display:block;overflow:hidden;color:rgba(255,255,255,.78);font-size:.66rem;text-overflow:ellipsis;white-space:nowrap}
+.kpi-blue{--kpi-a:#0754a0;--kpi-b:#07366e}.kpi-green{--kpi-a:#068660;--kpi-b:#075642}.kpi-orange{--kpi-a:#d66a10;--kpi-b:#a64808}.kpi-red{--kpi-a:#a82235;--kpi-b:#6e182b}.kpi-purple{--kpi-a:#7134bd;--kpi-b:#452080}.kpi-cyan{--kpi-a:#078ca7;--kpi-b:#075c78}.kpi-slate{--kpi-a:#294f76;--kpi-b:#142e4e}.kpi-navy{--kpi-a:#134c89;--kpi-b:#0b2e57}
+.overview-panels{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.5fr) minmax(230px,.9fr);gap:14px;margin:0 0 18px}
+.overview-panel{min-width:0;overflow:hidden;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 22px rgba(11,37,64,.055)}
+.overview-panel h2{margin:0 0 4px;color:var(--ink);font:700 .98rem var(--sans)}
+.overview-panel>p{margin:0 0 14px;color:var(--muted);font-size:.74rem}
+.account-status-chart{display:grid;grid-template-columns:118px 1fr;align-items:center;gap:12px}
+.account-donut{position:relative;display:grid;place-items:center;width:118px;aspect-ratio:1;border-radius:50%;background:conic-gradient(#05bf89 0 68%,#158bea 68% 88%,#f39a16 88% 100%)}
+.account-donut::before{content:"";position:absolute;inset:16px;border-radius:50%;background:var(--surface)}
+.account-donut-center{position:relative;text-align:center;color:var(--ink);font-size:.67rem}
+.account-donut-center strong{display:block;font-size:1.45rem;line-height:1.1}
+.account-status-legend{display:grid;gap:9px}
+.account-status-row{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.72rem}
+.account-status-row strong{margin-left:auto;color:var(--ink)}
+.account-status-dot{width:8px;height:8px;border-radius:3px;background:var(--dot)}
+.monthly-chart{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;gap:9px;height:142px;padding:7px 2px 0;border-bottom:1px solid var(--line)}
+.monthly-chart-month{display:grid;grid-template-rows:1fr auto;justify-items:center;height:100%;gap:6px;color:var(--muted);font-size:.64rem}
+.monthly-chart-bars{display:flex;align-items:end;justify-content:center;gap:4px;width:100%;height:100%;border-bottom:1px dashed #dfe7eb;background:repeating-linear-gradient(to top,transparent 0 calc(25% - 1px),rgba(120,145,160,.12) calc(25% - 1px) 25%)}
+.monthly-chart-bar{width:min(16px,32%);min-height:2px;border-radius:3px 3px 0 0;background:var(--bar);transition:height .3s ease}
+.monthly-chart-legend{display:flex;gap:13px;margin-top:9px;color:var(--muted);font-size:.68rem}
+.monthly-chart-legend span{display:flex;align-items:center;gap:5px}
+.monthly-chart-legend i{width:8px;height:8px;border-radius:2px;background:var(--bar)}
+.overview-link{display:inline-flex;margin-top:9px;color:var(--sea);font-size:.75rem;font-weight:700;text-decoration:none}
+.tracking-empty{display:grid;place-items:center;min-height:128px;padding:14px;border:1px dashed #b4c8d2;border-radius:8px;background:linear-gradient(135deg,rgba(31,111,139,.07),transparent),repeating-linear-gradient(0deg,transparent 0 27px,rgba(31,111,139,.06) 28px),repeating-linear-gradient(90deg,transparent 0 27px,rgba(31,111,139,.06) 28px);color:var(--muted);font-size:.76rem;text-align:center}
+.tracking-empty strong{display:block;margin-bottom:5px;color:var(--hull)}
+.overview-lower-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(250px,.8fr);gap:14px;margin:0 0 18px}
+.overview-panels.maritime-panels{grid-template-columns:minmax(220px,.82fr) minmax(0,1.45fr) minmax(250px,.9fr)}
+.fleet-donut{background:conic-gradient(#05bf89 0 61.5%,#168bea 61.5% 84.6%,#f39a16 84.6% 100%)}
+.fleet-donut-center strong{font-size:1.6rem}
+.safety-score{display:flex;align-items:center;gap:13px;margin:12px 0}
+.safety-ring{display:grid;place-items:center;width:92px;aspect-ratio:1;flex:0 0 auto;border-radius:50%;background:conic-gradient(#05bf89 0 0%,#dce5eb 0 100%);position:relative}
+.safety-ring::before{content:"";position:absolute;inset:10px;border-radius:50%;background:var(--surface)}
+.safety-ring strong{position:relative;color:var(--ink);font-size:1.35rem}
+.safety-metrics{display:grid;flex:1;gap:7px}.safety-metric{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:.7rem}.safety-metric strong{color:var(--ink)}
+.fleet-simulation{position:relative;min-height:220px;overflow:hidden;border:1px solid #b4c8d2;border-radius:8px;background:radial-gradient(ellipse at 48% 48%,rgba(20,143,173,.24),transparent 60%),linear-gradient(135deg,#082b46,#0a526d 55%,#0b334c);color:#fff}
+.fleet-simulation::before,.fleet-simulation::after{content:"";position:absolute;inset:-40%;background:repeating-radial-gradient(circle at 50% 50%,transparent 0 39px,rgba(100,220,236,.17) 40px 41px);pointer-events:none}
+.fleet-simulation::after{inset:0;background:repeating-linear-gradient(28deg,transparent 0 52px,rgba(100,220,236,.15) 53px 54px),repeating-linear-gradient(150deg,transparent 0 72px,rgba(100,220,236,.11) 73px 74px)}
+.simulation-label{position:absolute;z-index:2;left:10px;top:9px;padding:4px 7px;border-radius:4px;background:rgba(3,19,33,.8);color:#9fe6f1;font-size:.58rem;font-weight:700;letter-spacing:.08em}
+.simulation-route{position:absolute;z-index:1;left:17%;top:51%;width:67%;height:1px;border-top:1px dashed rgba(90,229,188,.8);transform:rotate(-19deg)}
+.simulation-vessel{position:absolute;z-index:2;display:grid;gap:2px;padding:6px 8px;border:1px solid var(--marker);border-radius:6px;background:rgba(3,21,37,.9);color:#fff;font-size:.64rem;box-shadow:0 0 14px color-mix(in srgb,var(--marker) 35%,transparent);animation:marker-float 3s ease-in-out infinite alternate}
+.simulation-vessel::before{content:"";position:absolute;left:-5px;top:10px;width:8px;height:8px;border-radius:50%;background:var(--marker);box-shadow:0 0 0 4px color-mix(in srgb,var(--marker) 25%,transparent)}
+.simulation-vessel small{color:var(--marker);font-size:.59rem}.sim-one{left:9%;top:25%;--marker:#00df8c}.sim-two{right:8%;top:26%;--marker:#26b7ff;animation-delay:.6s}.sim-three{left:17%;bottom:11%;--marker:#ffae18;animation-delay:1.1s}.sim-four{right:10%;bottom:12%;--marker:#ff4051;animation-delay:1.6s}
+@keyframes marker-float{to{transform:translateY(-4px)}}
+.recent-vessel-table{width:100%;border-collapse:collapse;min-width:420px}.recent-vessel-table th,.recent-vessel-table td{padding:9px 7px;border-bottom:1px solid var(--line);text-align:left;font-size:.68rem}.recent-vessel-table th{color:var(--muted);font-size:.62rem;text-transform:uppercase}.recent-vessel-table td{color:var(--ink)}.recent-vessel-table tbody tr{cursor:pointer}.recent-vessel-table tbody tr:hover{background:var(--soft)}.recent-vessel-table-wrap{overflow:auto}.vessel-status-pill{display:inline-block;padding:3px 7px;border-radius:12px;background:#e5f6ed;color:#167249;font-size:.59rem;font-weight:700;text-transform:uppercase;white-space:nowrap}
+.quick-action-panel{display:grid;grid-template-columns:auto repeat(5,minmax(0,1fr));align-items:center;gap:9px;padding:13px 16px;margin:0 0 18px;border-radius:9px;background:linear-gradient(110deg,#0b2540,#075080);color:#fff}
+.quick-action-panel>strong{font-size:.76rem;text-transform:uppercase;letter-spacing:.06em}.quick-action-panel .dashboard-action{min-height:38px;padding:7px 10px;font-size:.72rem}
+@media(max-width:760px){.quick-action-panel{grid-template-columns:repeat(2,minmax(0,1fr))}.quick-action-panel>strong{grid-column:1/-1}}
+.legacy-dashboard-content[hidden]{display:none!important}
+.overview-activity-list,.overview-alert-list{display:grid;gap:8px}
+.overview-activity-item,.overview-alert-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:var(--page);color:var(--ink);text-align:left;text-decoration:none}
+.overview-activity-item:hover,.overview-alert-item:hover{border-color:var(--sea);background:var(--soft)}
+.overview-activity-icon{display:grid;place-items:center;width:30px;height:30px;flex:0 0 auto;border-radius:8px;background:#dcecf3;color:var(--hull)}
+.overview-activity-item strong,.overview-alert-item strong{display:block;font-size:.76rem}
+.overview-activity-item small,.overview-alert-item small{display:block;margin-top:2px;color:var(--muted);font-size:.68rem}
+.overview-alert-dot{width:9px;height:9px;flex:0 0 auto;border-radius:50%;background:var(--alert,#e69a18)}
+.overview-empty{padding:20px;color:var(--muted);font-size:.8rem;text-align:center}
+.members-table-wrap{overflow:auto;margin-top:18px}
+.members-table{width:100%;border-collapse:collapse;min-width:680px}
+.members-table th,.members-table td{padding:13px 15px;border-bottom:1px solid var(--line);text-align:left;font-size:.83rem}
+.members-table th{background:var(--soft);color:var(--muted);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase}
+.members-table td{color:var(--ink)}
+.member-status{display:inline-flex;padding:4px 9px;border-radius:20px;background:#e8f1f4;color:#46616f;font-size:.68rem;font-weight:700;text-transform:capitalize}
+.member-status-approved{background:#e4f5ed;color:#18714f}.member-status-pending{background:#fff1d8;color:#875b12}.member-status-rejected{background:#ffebe8;color:#a12f24}
+.dashboard-top-overview{display:grid;grid-template-columns:minmax(310px,.95fr) minmax(460px,1.45fr);gap:14px;margin-bottom:20px}
+.dashboard-top-overview .dashboard-hero{min-height:100%;margin:0}
+.dashboard-top-overview .overview-kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin:0}
+.hero-logo-watermark{display:none}
+.hero-vessel{position:absolute;z-index:1;right:0;bottom:-10px;display:block;width:54%;height:74%;opacity:.85;pointer-events:none}
+.hero-vessel svg{width:100%;height:100%;overflow:visible}
+.dashboard-hero-copy{max-width:450px}
+.dashboard-hero h1{max-width:14ch;font-size:clamp(1.9rem,3vw,2.7rem)}
+.hero-overview-button{display:inline-flex;align-items:center;gap:8px;margin-top:17px;padding:9px 13px;border:1px solid rgba(255,255,255,.34);border-radius:7px;background:rgba(3,24,40,.24);color:white;font:600 .8rem var(--sans);text-decoration:none;cursor:pointer}
+.hero-overview-button:hover{background:rgba(255,255,255,.12)}
+.dashboard.sidebar-collapsed{grid-template-columns:82px minmax(0,1fr)}
+.dashboard.sidebar-collapsed .dashboard-sidebar{padding-right:10px;padding-left:10px}
+.dashboard.sidebar-collapsed .sidebar-brand div,.dashboard.sidebar-collapsed .sidebar-section-title,.dashboard.sidebar-collapsed .sidebar-user div{display:none}
+.dashboard.sidebar-collapsed .sidebar-link,.dashboard.sidebar-collapsed .theme-toggle,.dashboard.sidebar-collapsed .logout-button{justify-content:center;gap:0;padding:11px 5px;font-size:0}
+.dashboard.sidebar-collapsed .sidebar-icon{font-size:1.1rem}
+.sidebar-link.active{background:#114f83;box-shadow:inset 3px 0 #f18a24}
+@media(max-width:1120px){.dashboard-top-overview{grid-template-columns:1fr}.dashboard-top-overview .dashboard-hero{min-height:220px}.overview-panels{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-panels .overview-panel:last-child{grid-column:1/-1}}
+@media(max-width:760px){.dashboard-topbar{top:0;margin:-24px -14px 18px;padding:9px 12px;gap:8px}.profile-name,.topbar-clock{display:none}.topbar-system{font-size:0}.topbar-system-dot{width:10px;height:10px}.global-search{flex:1}.overview-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-top-overview{grid-template-columns:1fr}.dashboard-top-overview .overview-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-panels,.overview-lower-grid{grid-template-columns:1fr}.overview-panels .overview-panel:last-child{grid-column:auto}.dashboard.sidebar-collapsed{grid-template-columns:1fr}.dashboard.sidebar-collapsed .dashboard-sidebar{width:auto}.dashboard.sidebar-collapsed .sidebar-brand div,.dashboard.sidebar-collapsed .sidebar-section-title,.dashboard.sidebar-collapsed .sidebar-user div{display:block}.dashboard.sidebar-collapsed .sidebar-link,.dashboard.sidebar-collapsed .theme-toggle,.dashboard.sidebar-collapsed .logout-button{justify-content:flex-start;gap:12px;font-size:.86rem}}
+@media(max-width:430px){.overview-kpi{min-height:91px;gap:9px;padding:11px}.overview-kpi-icon{width:34px;height:34px;font-size:1rem}.overview-kpi-copy strong{font-size:1.3rem}.account-status-chart{grid-template-columns:105px 1fr;gap:8px}.account-donut{width:105px}.monthly-chart{gap:5px}.topbar-menu-button,.topbar-icon-button{width:35px;height:35px}.topbar-clock{display:none}.profile-menu summary{gap:0}.dashboard-topbar{margin-right:-14px;margin-left:-14px}}
 .dashboard-main::before{
   content:"";position:absolute;z-index:-1;top:170px;right:4%;width:clamp(240px,28vw,390px);aspect-ratio:1;
   background:url("seem-sam-logo.png") center/contain no-repeat;
@@ -306,6 +463,7 @@ body[data-theme="dark"] .fleet-watermark{opacity:.2;filter:brightness(1.14) cont
 .toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:14px;background:var(--hull);color:var(--white)}
 .toolbar input{flex:1;min-width:210px;background:#0f2f4e;border-color:#3b5d7d;color:var(--white)}
 .toolbar input::placeholder{color:#a9bdcc}
+.toolbar .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .filter-button[aria-pressed="true"]{background:var(--sand);color:var(--hull)}
 .inbox{display:grid;grid-template-columns:minmax(310px,.85fr) minmax(0,1.5fr);min-height:440px}
 .message-list{border-right:1px solid #d9e2e7;max-height:650px;overflow:auto}
@@ -433,6 +591,23 @@ body[data-theme="dark"] .recipient-warning{border-color:#ff8a78;background:#3d25
   </div>
 </header>
 <main class="shell">
+  <div class="login-atmosphere" aria-hidden="true">
+    <div class="login-chart-grid"></div>
+    <div class="login-radar">
+      <i class="radar-contact radar-contact-one"></i>
+      <i class="radar-contact radar-contact-two"></i>
+      <i class="radar-contact radar-contact-three"></i>
+    </div>
+    <div class="login-route login-route-one"></div>
+    <div class="login-route login-route-two"></div>
+    <span class="ais-marker ais-marker-one">AIS · 09° 41.2′ N</span>
+    <span class="ais-marker ais-marker-two">VESSEL · COURSE 084°</span>
+    <span class="ais-marker ais-marker-three">WAYPOINT · 04.8 NM</span>
+    <div class="ship-silhouette"><span class="ship-hull"></span><span class="ship-deck"></span><span class="ship-bridge"></span></div>
+  </div>
+  <div class="login-module-list" aria-hidden="true">
+    <span>VESSEL MANAGEMENT</span><span>CCTV MONITORING</span><span>SAFETY REPORTS</span><span>CREW MANAGEMENT</span>
+  </div>
   <div class="setup-note" id="setup-note" hidden>
     <strong>Admin inbox setup is not complete.</strong>
     Configure the Supabase Project URL and anon key in <code>SUPABASE-CONFIG.JS</code>,
@@ -443,16 +618,18 @@ body[data-theme="dark"] .recipient-warning{border-color:#ff8a78;background:#3d25
 
   <section class="card login-card" id="login-card" aria-labelledby="login-title">
     <div id="login-panel">
-      <h2 id="login-title">Administrator sign in</h2>
-      <p>Sign in with your administrator email and password to view website inquiries.</p>
+      <p class="login-kicker">Maritime Operations</p>
+      <h2 id="login-title">Admin Portal</h2>
+      <p>Vessel monitoring &amp; management system</p><p class="auth-hint">Sign in with your admin username and password. Confirm your email first.</p>
       <form id="login-form">
-        <label>Email address<input id="login-email" type="email" autocomplete="username" maxlength="254" required></label>
-        <label>Password<input id="login-password" type="password" autocomplete="current-password" required></label>
-        <button class="primary" type="submit">Sign in securely</button>
+        <label>Username<input id="login-username" type="text" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.-]+" placeholder="Enter admin username" required></label>
+        <label>Password<input id="login-password" type="password" autocomplete="current-password" placeholder="Enter secure password" required></label>
+        <button class="primary" type="submit"><span aria-hidden="true">⚓</span>Sign in</button>
       </form>
       <p class="forgot-password-row"><button class="text-button" id="forgot-password" type="button">Forgot password?</button></p>
       <p class="notice" id="login-notice" role="status" aria-live="polite"></p>
-      <p class="auth-toggle">Need an account? <button class="text-button" id="show-register" type="button">Register as admin</button></p>
+      <p class="auth-toggle">Need an account? <a class="text-button" id="show-register" href="#register-panel">Register as admin</a></p>
+      <div class="login-system-status"><span class="login-system-dot"></span>SYSTEM ONLINE</div>
     </div>
     <div id="reset-request-panel" hidden>
       <h2 id="reset-request-title">Forgot password?</h2>
@@ -476,32 +653,40 @@ body[data-theme="dark"] .recipient-warning{border-color:#ff8a78;background:#3d25
     </div>
     <div id="register-panel" hidden>
       <h2 id="register-title">Admin registration</h2>
-      <p>Register with your work email. The first account is approved automatically; verify your email before signing in.</p>
+      <p>Choose a username and add your work email for confirmation. The first admin is approved automatically; later accounts need owner approval.</p>
       <form id="register-form">
         <label>Username<input id="register-username" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.\-]+" aria-describedby="username-help" required></label>
         <small id="username-help">3–32 characters: letters, numbers, period, underscore or hyphen.</small>
         <label>Email address<input id="register-email" type="email" autocomplete="email" maxlength="254" required></label>
         <label>Password<input id="register-password" type="password" autocomplete="new-password" minlength="8" required></label>
-        <button class="primary" type="submit">Create admin account</button>
+        <label>Confirm password<input id="register-password-confirm" type="password" autocomplete="new-password" minlength="8" required></label>
+      <button class="primary" type="submit">Create admin account</button>
       </form>
       <p class="notice" id="register-notice" role="status" aria-live="polite"></p>
-      <p class="auth-toggle">Already registered? <button class="text-button" id="show-login" type="button">Sign in</button></p>
+      <button class="text-button" id="resend-admin-confirmation" type="button" hidden>Resend confirmation email</button>
+      <p class="auth-toggle">Already registered? <a class="text-button" id="show-login" href="./ADMIN.HTML">Sign in</a></p>
       <p class="security-warning"><strong>Access control:</strong> Only the first registration is auto-approved, and only when no admin account exists. Later accounts need owner approval.</p>
     </div>
   </section>
 
   <section class="dashboard" id="dashboard" aria-label="Inquiry dashboard">
-    <aside class="dashboard-sidebar" aria-label="Admin navigation">
+    <aside class="dashboard-sidebar" id="dashboard-sidebar" aria-label="Admin navigation">
       <div class="sidebar-brand">
         <img src="seem-sam-logo.png" alt="">
         <div><strong>Seem Sam Shipping</strong><span>Admin Dashboard</span></div>
       </div>
-      <div class="sidebar-section-title">Operations</div>
+      <div class="sidebar-section-title">Main Navigation</div>
       <nav class="sidebar-nav">
         <a class="sidebar-link active" href="#dashboard-view" id="nav-dashboard"><span class="sidebar-icon" aria-hidden="true">▦</span>Dashboard</a>
-        <a class="sidebar-link" href="#inquiries-view" id="nav-inbox"><span class="sidebar-icon" aria-hidden="true">✉</span>Inquiries <span class="unread-label" id="sidebar-unread" hidden>0</span></a>
+        <a class="sidebar-link" href="#vessels-view" id="nav-vessels"><span class="sidebar-icon" aria-hidden="true">⚓</span>Fleet Management</a>
         <a class="sidebar-link" href="#vessel-reports-view" id="nav-reports"><span class="sidebar-icon" aria-hidden="true">▤</span>Vessel Reports <span class="unread-label" id="pending-vessel-count" hidden>0</span></a>
-        <a class="sidebar-link" href="#vessels-view" id="nav-vessels"><span class="sidebar-icon" aria-hidden="true">⚓</span>Vessel Names</a>
+        <a class="sidebar-link" href="#members-view" id="nav-members"><span class="sidebar-icon" aria-hidden="true">&#128101;</span>Crew Management</a>
+        <a class="sidebar-link" href="#inquiries-view" id="nav-inbox"><span class="sidebar-icon" aria-hidden="true">✉</span>Inquiries <span class="unread-label" id="sidebar-unread" hidden>0</span></a>
+        <a class="sidebar-link" href="#operations-reports-view" data-operational-type="daily"><span class="sidebar-icon" aria-hidden="true">&#128221;</span>Daily Reports</a>
+        <a class="sidebar-link" href="#operations-reports-view" data-operational-type="safety"><span class="sidebar-icon" aria-hidden="true">&#128737;</span>Safety &amp; Compliance</a>
+        <a class="sidebar-link" href="#operations-reports-view" data-operational-type="maintenance"><span class="sidebar-icon" aria-hidden="true">&#128295;</span>Maintenance</a>
+        <a class="sidebar-link" href="#operations-reports-view" data-operational-type="cctv"><span class="sidebar-icon" aria-hidden="true">&#128249;</span>CCTV Issues</a>
+        <div class="sidebar-section-title sidebar-admin-title">Company</div>
         <a class="sidebar-link" href="#about-view" id="nav-about"><span class="sidebar-icon" aria-hidden="true">ⓘ</span>About</a>
       </nav>
       <div class="sidebar-spacer"></div>
@@ -513,18 +698,35 @@ body[data-theme="dark"] .recipient-warning{border-color:#ff8a78;background:#3d25
         <button class="logout-button" id="signout" type="button"><span class="sidebar-icon" aria-hidden="true">↪</span>Log out</button>
       </div>
       <div class="sidebar-user">
-        <div class="user-avatar" aria-hidden="true">S</div>
+        <div class="user-avatar" aria-hidden="true">RA</div>
         <div><strong id="sidebar-user-email">Admin</strong><span>Authorized administrator</span></div>
       </div>
     </aside>
     <div class="dashboard-main">
+      <header class="dashboard-topbar" aria-label="Admin toolbar">
+        <button class="topbar-menu-button" id="sidebar-toggle" type="button" aria-label="Toggle sidebar" aria-expanded="true" aria-controls="dashboard-sidebar">☰</button>
+        <form class="global-search" id="global-search-form" role="search">
+          <span aria-hidden="true">⌕</span>
+          <input id="global-search-input" type="search" placeholder="Search vessel, report, or crew…" aria-label="Search vessel, report, or crew">
+        </form>
+        <div class="topbar-system"><span class="topbar-system-dot"></span><span>SYSTEM ONLINE</span></div>
+        <time class="topbar-clock" id="dashboard-clock"></time>
+        <button class="topbar-icon-button" id="alerts-button" type="button" aria-label="Open notifications">
+          <span aria-hidden="true">&#128276;</span><span class="topbar-alert-count" id="global-alert-count" hidden>0</span>
+        </button>
+        <details class="profile-menu" id="profile-menu">
+          <summary><span class="profile-avatar">RA</span><span class="profile-name">Richard Andrade<small>Administrator</small></span></summary>
+          <div class="profile-popover"><strong id="profile-email">Admin account</strong><span>Authorized administrator</span></div>
+        </details>
+      </header>
       <section class="dashboard-view" id="dashboard-view" aria-labelledby="dashboard-title">
+        <div class="dashboard-top-overview">
         <div class="dashboard-hero">
           <div class="dashboard-hero-copy">
-            <p class="eyebrow">Seem Sam Shipping · Operations</p>
+            <p class="eyebrow">Welcome back, <span id="welcome-admin-name">Richard</span></p>
             <h1 id="dashboard-title" tabindex="-1">Maritime operations, at a glance.</h1>
-            <p class="subhead">A clear view of your inquiries, client communications and fleet activity.</p>
-            <span class="hero-status"><span class="hero-status-dot" aria-hidden="true"></span>Admin operations overview</span>
+            <p class="subhead">Monitor vessels, crew accounts, inquiries and fuel reports from one operations dashboard.</p>
+            <a class="hero-overview-button" href="#overview-kpis">Operations Overview <span aria-hidden="true">→</span></a>
           </div>
           <img class="hero-logo-watermark" src="seem-sam-logo.png" alt="" aria-hidden="true">
           <div class="hero-vessel" aria-hidden="true">
@@ -555,6 +757,63 @@ body[data-theme="dark"] .recipient-warning{border-color:#ff8a78;background:#3d25
           </div>
           <svg class="hero-waves" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 28c100-18 200-18 300 0s200 18 300 0 200-18 300 0 200 18 300 0v32H0z"/></svg>
         </div>
+        <div class="overview-kpis" id="overview-kpis" aria-label="Maritime operations key performance indicators">
+          <article class="overview-kpi kpi-blue"><span class="overview-kpi-icon" aria-hidden="true">⚓</span><div class="overview-kpi-copy"><span>Total vessels</span><strong id="kpi-total-vessels">13</strong><small>Registered fleet</small></div></article>
+          <article class="overview-kpi kpi-green"><span class="overview-kpi-icon" aria-hidden="true">➤</span><div class="overview-kpi-copy"><span>Underway</span><strong>—</strong><small>GPS/AIS not connected</small></div></article>
+          <article class="overview-kpi kpi-orange"><span class="overview-kpi-icon" aria-hidden="true">⚓</span><div class="overview-kpi-copy"><span>At port</span><strong>—</strong><small>Port status not tracked</small></div></article>
+          <article class="overview-kpi kpi-red"><span class="overview-kpi-icon" aria-hidden="true">🔧</span><div class="overview-kpi-copy"><span>Open maintenance</span><strong id="kpi-maintenance">—</strong><small>Requests not closed</small></div></article>
+          <article class="overview-kpi kpi-purple"><span class="overview-kpi-icon" aria-hidden="true">✓</span><div class="overview-kpi-copy"><span>Safety observations</span><strong id="kpi-safety">—</strong><small id="kpi-safety-pending">Database setup required</small></div></article>
+          <article class="overview-kpi kpi-cyan"><span class="overview-kpi-icon" aria-hidden="true">▣</span><div class="overview-kpi-copy"><span>CCTV issue reports</span><strong id="kpi-cctv">—</strong><small>Submitted by vessel crews</small></div></article>
+          <article class="overview-kpi kpi-slate"><span class="overview-kpi-icon" aria-hidden="true">♙</span><div class="overview-kpi-copy"><span>Open actions</span><strong id="kpi-open-actions">—</strong><small>Require follow-up</small></div></article>
+          <article class="overview-kpi kpi-navy"><span class="overview-kpi-icon" aria-hidden="true">▤</span><div class="overview-kpi-copy"><span>Reports this month</span><strong id="kpi-reports-month">—</strong><small>All report categories</small></div></article>
+        </div>
+        </div>
+        <div class="overview-panels maritime-panels">
+          <section class="overview-panel" aria-labelledby="account-status-title">
+            <h2 id="account-status-title">Fleet status</h2>
+            <p>Vessel accounts and approval status from the database.</p>
+            <div class="account-status-chart">
+              <div class="account-donut fleet-donut" id="account-donut"><div class="account-donut-center"><strong id="account-total">0</strong>Vessel accounts</div></div>
+              <div class="account-status-legend">
+                <div class="account-status-row"><i class="account-status-dot" style="--dot:#05bf89"></i>Approved <strong id="fleet-approved-count">0</strong></div>
+                <div class="account-status-row"><i class="account-status-dot" style="--dot:#158bea"></i>Pending <strong id="fleet-pending-count">0</strong></div>
+                <div class="account-status-row"><i class="account-status-dot" style="--dot:#f39a16"></i>Rejected <strong id="fleet-rejected-count">0</strong></div>
+              </div>
+            </div>
+            <a class="overview-link" href="#members-view" id="overview-members-link">Manage crew accounts →</a>
+          </section>
+          <section class="overview-panel" aria-labelledby="maritime-activity-title">
+            <h2 id="maritime-activity-title">Monthly maritime activities</h2>
+            <p>Monthly reports and follow-up actions from vessel submissions.</p>
+            <div class="monthly-chart" id="monthly-activity-chart" aria-live="polite"></div>
+            <div class="monthly-chart-legend"><span><i style="--bar:#168bea"></i>Fuel</span><span><i style="--bar:#f18a24"></i>Safety</span><span><i style="--bar:#05bf89"></i>CCTV</span><span><i style="--bar:#8548e8"></i>Open actions</span></div>
+          </section>
+          <section class="overview-panel" aria-labelledby="tracking-panel-title">
+            <h2 id="tracking-panel-title">Safety &amp; compliance</h2>
+            <p>Live counts from reports submitted by vessel crews.</p>
+            <div class="safety-score"><div class="safety-ring"><strong id="safety-observation-total">0</strong></div><div class="safety-metrics"><div class="safety-metric">Safety observations <strong id="safety-observation-count">0</strong></div><div class="safety-metric">Action required <strong id="safety-action-count">0</strong></div><div class="safety-metric">Maintenance requests <strong id="safety-maintenance-count">0</strong></div><div class="safety-metric">CCTV issues <strong id="safety-cctv-count">0</strong></div></div></div>
+            <a class="overview-link" href="#about-view" id="overview-safety-link">Data availability →</a>
+          </section>
+        </div>
+        <div class="overview-panels maritime-panels">
+          <section class="overview-panel" aria-labelledby="simulation-title">
+            <h2 id="simulation-title">Fleet map / live tracking</h2><p>Moving markers are a visual simulation; GPS/AIS is not connected.</p>
+            <div class="fleet-simulation" role="img" aria-label="Simulated fleet map with four vessel status markers"><span class="simulation-label">SIMULATION · GPS/AIS OFFLINE</span><span class="simulation-route" aria-hidden="true"></span><span class="simulation-vessel sim-one">LCT 1018<small>● Underway</small></span><span class="simulation-vessel sim-two">LCT 1078<small>● At port</small></span><span class="simulation-vessel sim-three">LCT 888<small>● Maintenance</small></span><span class="simulation-vessel sim-four">LCT 1020<small>● Alert</small></span></div>
+            <a class="overview-link" href="#vessels-view" id="overview-fleet-link">Open fleet management →</a>
+          </section>
+          <section class="overview-panel" aria-labelledby="recent-vessel-activity-title">
+            <h2 id="recent-vessel-activity-title">Recent vessel activity</h2>
+            <p>Latest fuel reports submitted by vessel accounts.</p>
+            <div class="recent-vessel-table-wrap"><table class="recent-vessel-table"><thead><tr><th>Vessel</th><th>Status</th><th>Location</th><th>Last update</th></tr></thead><tbody id="overview-vessel-activity"></tbody></table></div>
+            <a class="overview-link" href="#vessel-reports-view" id="overview-reports-link">View vessel reports →</a>
+          </section>
+          <section class="overview-panel" aria-labelledby="admin-alerts-title">
+            <h2 id="admin-alerts-title">Admin alerts</h2>
+            <p>Items that need an administrator's attention.</p>
+            <div class="overview-alert-list" id="overview-alert-list"></div>
+          </section>
+        </div>
+        <div class="legacy-dashboard-content" hidden aria-hidden="true">
         <div class="stats" aria-label="Inquiry and fleet summaries">
           <div class="stat"><span>Inquiries matching filters</span><strong id="analytics-total">0</strong></div>
           <div class="stat"><span>Unread inquiries</span><strong id="analytics-unread">0</strong></div>
@@ -562,12 +821,16 @@ body[data-theme="dark"] .recipient-warning{border-color:#ff8a78;background:#3d25
           <div class="stat"><span>Inquiries this month</span><strong id="analytics-month">0</strong></div>
           <div class="stat"><span>Vessels in fleet</span><strong id="vessel-count">13</strong></div>
         </div>
-        <div class="dashboard-actions" aria-label="Quick actions">
+        </div>
+        <div class="dashboard-actions quick-action-panel" aria-label="Quick actions">
           <span class="dashboard-actions-label">Quick actions</span>
           <button class="dashboard-action dashboard-action-primary" id="action-inquiries" type="button">Open inquiries <span aria-hidden="true">→</span></button>
+          <button class="dashboard-action" id="action-vessel-reports" type="button">Open vessel reports <span aria-hidden="true">▤</span></button>
+          <button class="dashboard-action" id="action-crew" type="button">Manage crew <span aria-hidden="true">♙</span></button>
           <button class="dashboard-action" id="action-vessels" type="button">View fleet <span aria-hidden="true">⚓</span></button>
           <button class="dashboard-action" id="action-refresh" type="button">Refresh dashboard <span aria-hidden="true">↻</span></button>
         </div>
+        <div class="legacy-dashboard-content" hidden aria-hidden="true">
         <form class="dashboard-filters" id="analytics-filters" aria-label="Dashboard filters">
           <label>Inquiry status
             <select id="analytics-status">
@@ -622,6 +885,7 @@ body[data-theme="dark"] .recipient-warning{border-color:#ff8a78;background:#3d25
             <p class="fleet-quick-total" id="fleet-quick-total"></p>
           </section>
         </div>
+        </div>
       </section>
       <section class="dashboard-view" id="inquiries-view" aria-labelledby="inquiries-title" hidden>
         <div class="page-heading">
@@ -656,12 +920,29 @@ body[data-theme="dark"] .recipient-warning{border-color:#ff8a78;background:#3d25
         </div>
         <div class="fleet-list" id="fleet-list" aria-label="Company vessel names"></div>
       </section>
+      <section class="dashboard-view" id="members-view" aria-labelledby="members-title" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Fleet · Crew accounts</p>
+            <h1 id="members-title" tabindex="-1">Crew Management</h1>
+            <p class="subhead">View vessel portal accounts and their approval status.</p>
+          </div>
+          <button class="secondary" id="refresh-members" type="button">Refresh crew</button>
+        </div>
+        <p class="notice" id="members-notice" role="status" aria-live="polite"></p>
+        <div class="members-table-wrap card">
+          <table class="members-table">
+            <thead><tr><th>Username</th><th>Vessel</th><th>Recovery email</th><th>Status</th><th>Created</th></tr></thead>
+            <tbody id="members-table-body"><tr><td colspan="5" class="empty-list">Open Crew Management to load vessel accounts.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
       <section class="dashboard-view" id="vessel-reports-view" aria-labelledby="vessel-reports-title" hidden>
         <div class="page-heading">
           <div>
             <p class="eyebrow">Fleet · Fuel Monitoring</p>
             <h1 id="vessel-reports-title" tabindex="-1">Vessel Reports</h1>
-            <p class="subhead">Approve vessel account requests and review submitted fuel reports and photos.</p>
+            <p class="subhead">Approve vessel account requests and review All report categories and photos.</p>
           </div>
           <button class="secondary" id="refresh-vessel-reports" type="button">Refresh reports</button>
         </div>
@@ -673,11 +954,45 @@ body[data-theme="dark"] .recipient-warning{border-color:#ff8a78;background:#3d25
           </section>
           <section class="vessel-review-panel" aria-labelledby="fuel-reports-list-title">
             <h2 id="fuel-reports-list-title">Fuel reports</h2>
+            <div class="toolbar" aria-label="Filter fuel reports by date"><label class="sr-only" for="fuel-report-date-filter">Filter fuel reports by date</label><input id="fuel-report-date-filter" type="date" aria-label="Filter fuel reports by date"><button class="secondary" id="clear-fuel-date-filter" type="button">All dates</button></div>
             <div class="fuel-report-list" id="fuel-report-list"></div>
             <article class="fuel-report-detail" id="fuel-report-detail" aria-live="polite">
               <p class="empty-list">Select a report to review its fuel details and photos.</p>
             </article>
           </section>
+        </div>
+      </section>
+      <section class="dashboard-view" id="operations-reports-view" aria-labelledby="operations-reports-title" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Vessel operations Â· Review queue</p>
+            <h1 id="operations-reports-title" tabindex="-1">Daily Vessel Reports</h1>
+            <p class="subhead" id="operations-reports-description">Review daily reports submitted by vessel crews.</p>
+          </div>
+          <button class="secondary" id="refresh-operational-reports" type="button">Refresh reports</button>
+        </div>
+        <div class="toolbar" aria-label="Filter operational reports">
+          <select id="operational-status-filter" aria-label="Filter by report status">
+            <option value="all">All statuses</option>
+            <option value="submitted">Submitted</option>
+            <option value="under_review">Under Review</option>
+            <option value="action_required">Action Required</option>
+            <option value="approved_closed">Approved / Closed</option>
+            <option value="rejected_correction_required">Rejected / Correction Required</option>
+          </select>
+          <label class="sr-only" for="operational-report-date-filter">Filter reports by date</label>
+          <input id="operational-report-date-filter" type="date" aria-label="Filter reports by report date">
+          <button class="secondary" id="clear-operational-date-filter" type="button">All dates</button>
+        </div>
+        <p class="notice" id="operational-reports-notice" role="status" aria-live="polite"></p>
+        <div class="vessel-review-layout">
+          <section class="vessel-review-panel" aria-labelledby="operational-report-list-title">
+            <h2 id="operational-report-list-title">Submitted records</h2>
+            <div class="fuel-report-list" id="operational-report-list"></div>
+          </section>
+          <article class="fuel-report-detail" id="operational-report-detail" aria-live="polite">
+            <p class="empty-list">Choose a record to review its details.</p>
+          </article>
         </div>
       </section>
       <section class="dashboard-view" id="about-view" aria-labelledby="about-title" hidden>
@@ -766,8 +1081,11 @@ const dashboardNav=document.getElementById('nav-dashboard');
 const inboxNav=document.getElementById('nav-inbox');
 const vesselsNav=document.getElementById('nav-vessels');
 const reportsNav=document.getElementById('nav-reports');
+const membersNav=document.getElementById('nav-members');
 const aboutNav=document.getElementById('nav-about');
-const dashboardNavLinks=[dashboardNav,inboxNav,reportsNav,vesselsNav,aboutNav];
+const dashboardNavLinks=[...document.querySelectorAll('.sidebar-link')];
+const operationalReportLinks=[...document.querySelectorAll('[data-operational-type]')];
+let operationalReportType='daily';
 const analyticsForm=document.getElementById('analytics-filters');
 const analyticsStatus=document.getElementById('analytics-status');
 const analyticsFrom=document.getElementById('analytics-from');
@@ -785,10 +1103,14 @@ let inquiries=[];
 let selectedId=null;
 let adminEmail='';
 let adminUserId='';
+let lastAdminSignupEmail='';
 let passwordRecoveryActive=new URLSearchParams(window.location.hash.slice(1)).get('type')==='recovery';
 let unreadOnly=false;
 let totalInquiryCount=0;
 let unreadInquiryCount=0;
+let pendingVesselAccountsCount=0;
+let pendingFuelReportsCount=0;
+let pendingOperationalReportsCount=0;
 let analyticsRequest=0;
 const savedTheme=localStorage.getItem('seem-sam-admin-theme');
 document.body.dataset.theme=savedTheme==='dark'?'dark':'light';
@@ -816,6 +1138,9 @@ function showLogin(message='',isError=false){
 
 function showAuthPanel(panel='login'){
   const registering=panel==='register';
+  if(!registering && window.location.hash==='#register-panel'){
+    history.replaceState(null,'',window.location.pathname+window.location.search);
+  }
   resetRequestPanel.hidden=true;
   recoveryPanel.hidden=true;
   loginPanel.hidden=registering;
@@ -823,6 +1148,8 @@ function showAuthPanel(panel='login'){
   setNotice(loginNotice,'');
   setNotice(registerNotice,'');
 }
+
+document.getElementById('show-register').addEventListener('click',()=>showAuthPanel('register'));
 
 function showResetRequest(){
   document.body.classList.remove('dashboard-active');
@@ -862,12 +1189,22 @@ function formattedDate(value){
   return new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(date);
 }
 
+function formattedReportDay(value){
+  const date=new Date(`${value}T00:00:00`);
+  if(Number.isNaN(date.getTime())) return 'Date unavailable';
+  return new Intl.DateTimeFormat(undefined,{dateStyle:'medium'}).format(date);
+}
+
 function updateStats(){
   const badge=document.getElementById('sidebar-unread');
   badge.hidden=unreadInquiryCount===0;
   badge.textContent=unreadInquiryCount>99?'99+':String(unreadInquiryCount);
+  const alerts=unreadInquiryCount+pendingVesselAccountsCount+pendingFuelReportsCount+pendingOperationalReportsCount;
+  const alertBadge=document.getElementById('global-alert-count');
+  alertBadge.hidden=alerts===0;
+  alertBadge.textContent=alerts>99?'99+':String(alerts);
+  renderOverviewAlerts();
 }
-
 function localDateInputValue(date){
   const year=date.getFullYear();
   const month=String(date.getMonth()+1).padStart(2,'0');
@@ -1115,16 +1452,121 @@ vesselNames.forEach((name,index)=>{
 });
 document.getElementById('fleet-quick-total').textContent=`${vesselNames.length} vessels registered in the fleet.`;
 
+function renderMonthlyActivity(reportDates,operationalRecords,firstMonth){
+  const chart=document.getElementById('monthly-activity-chart');
+  chart.replaceChildren();
+  const months=Array.from({length:6},(_,index)=>new Date(firstMonth.getFullYear(),firstMonth.getMonth()+index,1));
+  const countFor=(records,month,predicate=()=>true)=>records.filter(value=>{const date=new Date(value.created_at);return predicate(value)&&date.getFullYear()===month.getFullYear()&&date.getMonth()===month.getMonth();}).length;
+  const rows=months.map(month=>({month,reports:countFor(reportDates,month),safety:countFor(operationalRecords,month,row=>row.report_type==='safety'),cctv:countFor(operationalRecords,month,row=>row.report_type==='cctv'),actions:countFor(operationalRecords,month,row=>['action_required','rejected_correction_required'].includes(row.status))}));
+  const maximum=Math.max(1,...rows.flatMap(row=>[row.reports,row.safety,row.cctv,row.actions]));
+  rows.forEach(row=>{
+    const column=document.createElement('div');column.className='monthly-chart-month';
+    const bars=document.createElement('div');bars.className='monthly-chart-bars';
+    [[row.reports,'#168bea','Fuel reports'],[row.safety,'#f18a24','Safety observations'],[row.cctv,'#05bf89','CCTV issues'],[row.actions,'#8548e8','Open corrective actions']].forEach(([count,color,label])=>{
+      const bar=document.createElement('span');bar.className='monthly-chart-bar';bar.style.setProperty('--bar',color);bar.style.height=Math.max(count?5:2,count/maximum*100)+'%';bar.title=`${label}: ${count}`;bar.setAttribute('aria-label',`${label}: ${count}`);bars.append(bar);
+    });
+    const label=document.createElement('span');label.textContent=new Intl.DateTimeFormat(undefined,{month:'short'}).format(row.month);column.append(bars,label);chart.append(column);
+  });
+}
+function renderOverviewAlerts(){
+  const container=document.getElementById('overview-alert-list');
+  container.replaceChildren();
+  const alerts=[];
+  if(unreadInquiryCount) alerts.push({title:`${unreadInquiryCount} unread ${unreadInquiryCount===1?'inquiry':'inquiries'}`,detail:'Website messages need review.',color:'#d6452b',view:'inquiries-view'});
+  if(pendingFuelReportsCount) alerts.push({title:`${pendingFuelReportsCount} fuel ${pendingFuelReportsCount===1?'report':'reports'} to review`,detail:'New vessel reports are waiting.',color:'#e58a16',view:'vessel-reports-view'});
+  if(pendingOperationalReportsCount) alerts.push({title:`${pendingOperationalReportsCount} operational ${pendingOperationalReportsCount===1?'report':'reports'} to review`,detail:'Daily, safety, maintenance or CCTV submissions need attention.',color:'#8548e8',view:'operations-reports-view'});
+  if(pendingVesselAccountsCount) alerts.push({title:`${pendingVesselAccountsCount} crew account ${pendingVesselAccountsCount===1?'request':'requests'}`,detail:'Vessel access requests are pending.',color:'#168bea',view:'vessel-reports-view'});
+  if(!alerts.length){const empty=document.createElement('p');empty.className='overview-empty';empty.textContent='No pending admin alerts.';container.append(empty);return;}
+  alerts.forEach(alert=>{
+    const button=document.createElement('button');button.type='button';button.className='overview-alert-item';
+    const dot=document.createElement('i');dot.className='overview-alert-dot';dot.style.setProperty('--alert',alert.color);
+    const copy=document.createElement('span');const title=document.createElement('strong');title.textContent=alert.title;
+    const detail=document.createElement('small');detail.textContent=alert.detail;copy.append(title,detail);button.append(dot,copy);
+    button.addEventListener('click',()=>{showDashboardView(alert.view);if(alert.view==='vessel-reports-view')loadVesselAdminData();else if(alert.view==='operations-reports-view'){operationalReportType='daily';loadOperationalReports();}});
+    container.append(button);
+  });
+}
+
+async function loadMaritimeOverview(){
+  document.getElementById('kpi-total-vessels').textContent=String(vesselNames.length);
+  if(!client) return;
+  const now=new Date();
+  const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+  const nextMonth=new Date(now.getFullYear(),now.getMonth()+1,1);
+  const firstMonth=new Date(now.getFullYear(),now.getMonth()-5,1);
+  const [accountsResult,reportsMonthResult,operationalMonthResult,pendingReportsResult,recentReportsResult,reportActivityResult,operationalActivityResult]=await Promise.all([
+    client.from('vessel_accounts').select('status').limit(1000),
+    client.from('vessel_fuel_reports').select('id',{count:'exact',head:true}).gte('created_at',monthStart.toISOString()).lt('created_at',nextMonth.toISOString()),
+    client.from('vessel_operational_reports').select('id',{count:'exact',head:true}).gte('created_at',monthStart.toISOString()).lt('created_at',nextMonth.toISOString()),
+    client.from('vessel_fuel_reports').select('id',{count:'exact',head:true}).in('status',['submitted','under_review','action_required','rejected_correction_required']),
+    client.from('vessel_fuel_reports').select('id,vessel_name,location,status,report_date,created_at').order('created_at',{ascending:false}).limit(5),
+    client.from('vessel_fuel_reports').select('created_at').gte('created_at',firstMonth.toISOString()).lt('created_at',nextMonth.toISOString()).order('created_at',{ascending:false}).limit(1000),
+    client.from('vessel_operational_reports').select('report_type,status,created_at').order('created_at',{ascending:false}).limit(5000)
+  ]);
+  [accountsResult,reportsMonthResult,operationalMonthResult,pendingReportsResult,recentReportsResult,reportActivityResult,operationalActivityResult].forEach(result=>{if(result.error) console.error('Could not load maritime overview data:',result.error);});
+  const accountRows=accountsResult.data||[];
+  const counts={approved:0,pending:0,rejected:0};
+  accountRows.forEach(account=>{if(Object.hasOwn(counts,account.status)) counts[account.status]++;});
+  pendingVesselAccountsCount=accountsResult.error?0:counts.pending;
+  pendingFuelReportsCount=pendingReportsResult.error?0:(pendingReportsResult.count||0);
+  const operationalRows=operationalActivityResult.data||[];
+  const safetyRows=operationalRows.filter(row=>row.report_type==='safety');
+  const maintenanceRows=operationalRows.filter(row=>row.report_type==='maintenance'&&row.status!=='approved_closed');
+  const cctvRows=operationalRows.filter(row=>row.report_type==='cctv');
+  const openActions=operationalRows.filter(row=>['action_required','rejected_correction_required'].includes(row.status));
+  pendingOperationalReportsCount=operationalActivityResult.error?0:operationalRows.filter(row=>row.status!=='approved_closed').length;
+  document.getElementById('kpi-reports-month').textContent=reportsMonthResult.error||operationalMonthResult.error?'—':String((reportsMonthResult.count||0)+(operationalMonthResult.count||0));
+  document.getElementById('kpi-maintenance').textContent=operationalActivityResult.error?'—':String(maintenanceRows.length);
+  document.getElementById('kpi-safety').textContent=operationalActivityResult.error?'—':String(safetyRows.length);
+  document.getElementById('kpi-safety-pending').textContent=operationalActivityResult.error?'Database setup required':`${safetyRows.filter(row=>['action_required','rejected_correction_required'].includes(row.status)).length} need action`;
+  document.getElementById('kpi-cctv').textContent=operationalActivityResult.error?'—':String(cctvRows.length);
+  document.getElementById('kpi-open-actions').textContent=operationalActivityResult.error?'—':String(openActions.length);
+  document.getElementById('safety-observation-total').textContent=operationalActivityResult.error?'—':String(safetyRows.length);
+  const closedSafetyPct=safetyRows.length?safetyRows.filter(row=>row.status==='approved_closed').length/safetyRows.length*100:0;
+  document.querySelector('.safety-ring').style.background=`conic-gradient(#05bf89 0 ${closedSafetyPct}%,#dce5eb ${closedSafetyPct}% 100%)`;
+  document.getElementById('safety-observation-count').textContent=operationalActivityResult.error?'—':String(safetyRows.length);
+  document.getElementById('safety-action-count').textContent=operationalActivityResult.error?'—':String(safetyRows.filter(row=>['action_required','rejected_correction_required'].includes(row.status)).length);
+  document.getElementById('safety-maintenance-count').textContent=operationalActivityResult.error?'—':String(maintenanceRows.length);
+  document.getElementById('safety-cctv-count').textContent=operationalActivityResult.error?'—':String(cctvRows.length);
+  document.getElementById('fleet-approved-count').textContent=String(counts.approved);
+  document.getElementById('fleet-pending-count').textContent=String(counts.pending);
+  document.getElementById('fleet-rejected-count').textContent=String(counts.rejected);
+  document.getElementById('account-total').textContent=String(accountRows.length);
+  const accountTotal=Math.max(1,accountRows.length);
+  const approvedPct=counts.approved/accountTotal*100;
+  const pendingPct=(counts.approved+counts.pending)/accountTotal*100;
+  document.getElementById('account-donut').style.background=`conic-gradient(#05bf89 0 ${approvedPct}%,#168bea ${approvedPct}% ${pendingPct}%,#f39a16 ${pendingPct}% 100%)`;
+  document.getElementById('pending-vessel-count').hidden=counts.pending===0;
+  document.getElementById('pending-vessel-count').textContent=counts.pending>99?'99+':String(counts.pending);
+  updateStats();
+  renderOverviewAlerts();
+
+  const activity=document.getElementById('overview-vessel-activity');
+  activity.replaceChildren();
+  if(recentReportsResult.error||!recentReportsResult.data?.length){
+    const row=document.createElement('tr');const cell=document.createElement('td');cell.colSpan=4;cell.className='overview-empty';cell.textContent=recentReportsResult.error?'Vessel activity could not be loaded.':'No vessel reports submitted yet.';row.append(cell);activity.append(row);
+  }else recentReportsResult.data.forEach(report=>{
+    const row=document.createElement('tr');row.tabIndex=0;row.setAttribute('role','button');
+    const values=[report.vessel_name||'Unknown vessel',(report.status||'submitted').replaceAll('_',' '),report.location||'—',formattedDate(report.created_at)];
+    values.forEach((value,index)=>{const cell=document.createElement('td');cell.textContent=value;if(index===1){const pill=document.createElement('span');pill.className='vessel-status-pill';pill.textContent=value;cell.replaceChildren(pill);}row.append(cell);});
+    const openReport=async()=>{selectedFuelReportId=report.id;showDashboardView('vessel-reports-view');await loadVesselAdminData();};
+    row.addEventListener('click',openReport);row.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openReport();}});activity.append(row);
+  });
+  renderMonthlyActivity(reportActivityResult.data||[],operationalActivityResult.data||[],firstMonth);
+}
 function showDashboardView(viewId){
   document.body.classList.toggle('about-active',viewId==='about-view');
   document.body.classList.toggle('vessels-active',viewId==='vessels-view');
   dashboardViews.forEach(view=>{view.hidden=view.id!==viewId;});
   dashboardNavLinks.forEach(link=>{
-    link.classList.toggle('active',link.getAttribute('href')==='#'+viewId);
+    const type=link.dataset.operationalType;
+    link.classList.toggle('active',type?viewId==='operations-reports-view'&&type===operationalReportType:link.getAttribute('href')==='#'+viewId);
   });
   if(viewId==='inquiries-view') document.getElementById('inquiries-title').focus({preventScroll:true});
   else if(viewId==='vessel-reports-view') document.getElementById('vessel-reports-title').focus({preventScroll:true});
+  else if(viewId==='members-view') document.getElementById('members-title').focus({preventScroll:true});
   else if(viewId==='vessels-view') document.getElementById('vessels-title').focus({preventScroll:true});
+  else if(viewId==='operations-reports-view') document.getElementById('operations-reports-title').focus({preventScroll:true});
   else if(viewId==='about-view') document.getElementById('about-title').focus({preventScroll:true});
   else document.getElementById('dashboard-title').focus({preventScroll:true});
 }
@@ -1133,6 +1575,19 @@ const vesselRequestList=document.getElementById('vessel-request-list');
 const fuelReportList=document.getElementById('fuel-report-list');
 const fuelReportDetail=document.getElementById('fuel-report-detail');
 const vesselReportsNotice=document.getElementById('vessel-reports-notice');
+const operationalReportList=document.getElementById('operational-report-list');
+const operationalReportDetail=document.getElementById('operational-report-detail');
+const operationalReportsNotice=document.getElementById('operational-reports-notice');
+const operationalTypes={
+  daily:{title:'Daily Vessel Reports',description:'Review daily reports submitted by vessel crews.'},
+  safety:{title:'Safety & Compliance',description:'Review safety observations, evidence and corrective actions.'},
+  maintenance:{title:'Maintenance Requests',description:'Review vessel maintenance requests and track assigned actions.'},
+  cctv:{title:'CCTV Issue Reports',description:'Review camera outages and monitoring issues reported by crews.'}
+};
+let operationalReports=[];
+let selectedOperationalReportId=null;
+const membersTableBody=document.getElementById('members-table-body');
+const membersNotice=document.getElementById('members-notice');
 let fuelReports=[];
 let selectedFuelReportId=null;
 
@@ -1160,6 +1615,41 @@ async function reviewVesselAccount(account,button,nextStatus){
   await loadVesselAdminData();
 }
 
+async function loadMembers(){
+  const refresh=document.getElementById('refresh-members');
+  refresh.disabled=true;
+  setNotice(membersNotice,'Loading crew accounts…');
+  const {data,error}=await client.from('vessel_accounts')
+    .select('user_id,username,email,vessel_name,status,created_at')
+    .order('created_at',{ascending:false}).limit(500);
+  refresh.disabled=false;
+  if(error){
+    console.error('Could not load crew accounts:',error);
+    setNotice(membersNotice,'Crew accounts could not be loaded. Check the vessel account table and admin read policy.',true);
+    return;
+  }
+  membersTableBody.replaceChildren();
+  setNotice(membersNotice,'');
+  if(!data.length){
+    const row=document.createElement('tr');
+    const cell=document.createElement('td');
+    cell.colSpan=5;cell.className='empty-list';cell.textContent='No vessel accounts have registered yet.';
+    row.append(cell);membersTableBody.append(row);return;
+  }
+  data.forEach(account=>{
+    const row=document.createElement('tr');
+    [account.username,account.vessel_name,account.email||'No recovery email',formattedDate(account.created_at)].forEach(value=>{
+      const cell=document.createElement('td');cell.textContent=value;row.append(cell);
+    });
+    const statusCell=document.createElement('td');
+    const status=document.createElement('span');
+    status.className='member-status member-status-'+account.status;
+    status.textContent=account.status;
+    statusCell.append(status);row.insertBefore(statusCell,row.children[3]);
+    membersTableBody.append(row);
+  });
+}
+
 async function loadVesselRequests(){
   const {data,error}=await client.from('vessel_accounts')
     .select('user_id,email,username,vessel_name,status,created_at')
@@ -1179,7 +1669,7 @@ async function loadVesselRequests(){
     const title=document.createElement('strong');
     title.textContent=account.vessel_name;
     const email=document.createElement('p');
-    email.textContent=account.email;
+    email.textContent=account.email||'No recovery email provided';
     const username=document.createElement('p');
     username.textContent='Username: '+account.username;
     const date=document.createElement('p');
@@ -1201,11 +1691,12 @@ async function loadVesselRequests(){
 async function renderFuelReportDetail(report){
   fuelReportDetail.replaceChildren();
   const title=document.createElement('h3');
-  title.textContent=`${report.vessel_name} · ${formattedDate(report.report_date)}`;
+  title.textContent=`${report.vessel_name} · Fuel report`;
   const details=document.createElement('div');
   details.className='report-values';
   [
-    ['Submitted',formattedDate(report.created_at)],
+    ['Uploaded',formattedDate(report.created_at)],
+    ['Report date',formattedReportDay(report.report_date)],
     ['Location',report.location],
     ['Fuel remaining',`${report.fuel_remaining} L`],
     ['Fuel received',`${report.fuel_received} L`],
@@ -1225,6 +1716,7 @@ async function renderFuelReportDetail(report){
     remarks.textContent='Vessel remarks: '+report.remarks;
     fuelReportDetail.append(remarks);
   }
+  if(report.crew_response){const response=document.createElement('p');response.textContent='Crew response: '+report.crew_response;fuelReportDetail.append(response);}
   if(report.photo_paths.length){
     const photos=document.createElement('div');
     photos.className='fuel-report-photos';
@@ -1251,8 +1743,8 @@ async function renderFuelReportDetail(report){
   const statusLabel=document.createElement('label');
   statusLabel.textContent='Review outcome';
   const status=document.createElement('select');
-  status.innerHTML='<option value="reviewed">Reviewed</option><option value="needs_correction">Needs correction</option>';
-  status.value=report.status==='needs_correction'?'needs_correction':'reviewed';
+  status.innerHTML='<option value="submitted">Submitted</option><option value="under_review">Under Review</option><option value="action_required">Action Required</option><option value="approved_closed">Approved / Closed</option><option value="rejected_correction_required">Rejected / Correction Required</option>';
+  status.value=report.status;
   statusLabel.append(status);
   const noteLabel=document.createElement('label');
   noteLabel.textContent='Note to vessel (optional)';
@@ -1261,7 +1753,10 @@ async function renderFuelReportDetail(report){
   noteLabel.append(note);
   const save=document.createElement('button');
   save.type='submit';save.textContent='Save review';
-  form.append(statusLabel,noteLabel,save);
+  const remove=document.createElement('button');
+  remove.type='button';remove.className='danger-button';remove.textContent='Delete report';
+  remove.addEventListener('click',()=>deleteVesselReport('vessel_fuel_reports',report,remove,'fuel'));
+  form.append(statusLabel,noteLabel,save,remove);
   form.addEventListener('submit',async event=>{
     event.preventDefault();save.disabled=true;
     const {data,error}=await client.from('vessel_fuel_reports')
@@ -1282,10 +1777,42 @@ async function renderFuelReportDetail(report){
   fuelReportDetail.append(form);
 }
 
+async function deleteVesselReport(table,report,button,kind){
+  const reportLabel=kind==='fuel'?'fuel report':`${operationalTypes[report.report_type]?.title||'crew report'}`;
+  if(!window.confirm(`Permanently delete this ${reportLabel} from ${report.vessel_name}? This cannot be undone.`))return;
+  button.disabled=true;button.textContent='Deleting report…';
+  let cleanupWarning='';
+  try{
+    const {data,error}=await client.from(table).delete().eq('id',report.id).select('id');
+    if(error)throw error;
+    if(!data?.length)throw new Error('The report was not deleted. Check that your admin account is authorized.');
+    if(report.photo_paths?.length){
+      const {error:photoError}=await client.storage.from('vessel-report-photos').remove(report.photo_paths);
+      if(photoError){console.error('Report deleted, but its photos could not be removed:',photoError);cleanupWarning=' The attached photos could not be removed; ask the project owner to clean them up.';}
+    }
+    if(kind==='fuel'){
+      selectedFuelReportId=null;
+      await loadVesselAdminData();
+      setNotice(vesselReportsNotice,'Report deleted.'+cleanupWarning,Boolean(cleanupWarning));
+    }else{
+      selectedOperationalReportId=null;
+      await loadOperationalReports();
+      setNotice(operationalReportsNotice,'Report deleted.'+cleanupWarning,Boolean(cleanupWarning));
+    }
+  }catch(error){
+    console.error('Could not delete vessel report:',error);
+    button.disabled=false;button.textContent='Delete report';
+    const noticeElement=kind==='fuel'?vesselReportsNotice:operationalReportsNotice;
+    setNotice(noticeElement,`Could not delete the report: ${error?.message||'check admin permissions and try again.'}`,true);
+  }
+}
+
 async function loadFuelReports(){
-  const {data,error}=await client.from('vessel_fuel_reports')
-    .select('id,vessel_user_id,vessel_name,report_date,location,fuel_remaining,fuel_received,fuel_consumed,engine_hours,remarks,photo_paths,status,review_note,created_at')
-    .order('created_at',{ascending:false}).limit(500);
+  let query=client.from('vessel_fuel_reports')
+    .select('id,vessel_user_id,vessel_name,report_date,location,fuel_remaining,fuel_received,fuel_consumed,engine_hours,remarks,photo_paths,status,review_note,crew_response,created_at')
+  const reportDate=document.getElementById('fuel-report-date-filter').value;
+  if(reportDate)query=query.eq('report_date',reportDate);
+  const {data,error}=await query.order('created_at',{ascending:false}).limit(500);
   if(error) throw error;
   fuelReports=data;
   fuelReportList.replaceChildren();
@@ -1301,9 +1828,9 @@ async function loadFuelReports(){
     button.type='button';button.className='fuel-report-button';
     button.setAttribute('aria-pressed',String(report.id===selectedFuelReportId));
     const title=document.createElement('strong');
-    title.textContent=`${report.vessel_name} · ${formattedDate(report.report_date)}`;
+    title.textContent=`${report.vessel_name} · Uploaded ${formattedDate(report.created_at)}`;
     const description=document.createElement('p');
-    description.textContent=`${report.location} · ${report.fuel_remaining} L remaining · ${report.status.replace('_',' ')}`;
+    description.textContent=`Report date ${formattedReportDay(report.report_date)} · ${report.location} · ${report.fuel_remaining} L remaining · ${report.status.replace('_',' ')}`;
     button.append(title,description);
     button.addEventListener('click',async()=>{
       selectedFuelReportId=report.id;
@@ -1328,6 +1855,86 @@ async function loadVesselAdminData(){
   }finally{
     refresh.disabled=false;
   }
+}
+
+function operationalStatusText(status){
+  return ({submitted:'Submitted',under_review:'Under Review',action_required:'Action Required',approved_closed:'Approved / Closed',rejected_correction_required:'Rejected / Correction Required'})[status]||status;
+}
+
+async function renderOperationalReport(report){
+  operationalReportDetail.replaceChildren();
+  const title=document.createElement('h3');
+  title.textContent=`${report.vessel_name} · ${report.title}`;
+  const meta=document.createElement('p');
+  meta.textContent=`${formattedDate(report.report_date)} · ${report.location||'Location not provided'} · ${operationalStatusText(report.status)}`;
+  const details=document.createElement('p');
+  details.textContent=report.details;
+  operationalReportDetail.append(title,meta,details);
+  if(report.crew_response){const response=document.createElement('p');response.textContent='Crew response: '+report.crew_response;operationalReportDetail.append(response);}
+  if(report.assigned_to){const assignee=document.createElement('p');assignee.textContent='Assigned to: '+report.assigned_to;operationalReportDetail.append(assignee);}
+  if(report.photo_paths?.length){
+    const photos=document.createElement('div');photos.className='fuel-report-photos';
+    for(const path of report.photo_paths){
+      const {data,error}=await client.storage.from('vessel-report-photos').createSignedUrl(path,300);
+      if(error){console.error('Could not load operational report attachment:',error);continue;}
+      const link=document.createElement('a');link.href=data.signedUrl;link.target='_blank';link.rel='noopener noreferrer';
+      const image=document.createElement('img');image.src=data.signedUrl;image.alt='Vessel report attachment';link.append(image);photos.append(link);
+    }
+    operationalReportDetail.append(photos);
+  }
+  const form=document.createElement('form');form.className='review-form';
+  const statusLabel=document.createElement('label');statusLabel.textContent='Review status';
+  const status=document.createElement('select');
+  [['submitted','Submitted'],['under_review','Under Review'],['action_required','Action Required'],['approved_closed','Approved / Closed'],['rejected_correction_required','Rejected / Correction Required']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;status.append(option);});
+  status.value=report.status;statusLabel.append(status);
+  const noteLabel=document.createElement('label');noteLabel.textContent='Admin feedback';
+  const note=document.createElement('textarea');note.maxLength=2000;note.value=report.review_note||'';noteLabel.append(note);
+  const actionLabel=document.createElement('label');actionLabel.textContent='Corrective action (if required)';
+  const action=document.createElement('textarea');action.maxLength=2000;action.value=report.corrective_action||'';actionLabel.append(action);
+  const assignLabel=document.createElement('label');assignLabel.textContent='Assign / monitor (optional)';
+  const assignee=document.createElement('input');assignee.maxLength=120;assignee.value=report.assigned_to||'';assignee.placeholder='Responsible crew member or team';assignLabel.append(assignee);
+  const save=document.createElement('button');save.type='submit';save.textContent='Save review';
+  const remove=document.createElement('button');remove.type='button';remove.className='danger-button';remove.textContent='Delete report';
+  remove.addEventListener('click',()=>deleteVesselReport('vessel_operational_reports',report,remove,'operational'));
+  form.append(statusLabel,noteLabel,actionLabel,assignLabel,save,remove);
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();save.disabled=true;
+    const {data,error}=await client.from('vessel_operational_reports').update({
+      status:status.value,review_note:note.value.trim(),corrective_action:action.value.trim(),assigned_to:assignee.value.trim(),reviewed_at:new Date().toISOString(),reviewed_by:adminUserId
+    }).eq('id',report.id).select('id');
+    if(error||!data?.length){console.error('Could not save operational review:',error);save.disabled=false;setNotice(operationalReportsNotice,'Could not save the review. Confirm the latest SUPABASE-SETUP.SQL was run.',true);return;}
+    setNotice(operationalReportsNotice,'Review saved. The vessel can see the status and your feedback.');
+    await loadOperationalReports();
+  });
+  operationalReportDetail.append(form);
+}
+
+async function loadOperationalReports(){
+  const typeInfo=operationalTypes[operationalReportType];
+  if(!typeInfo)return;
+  document.getElementById('operations-reports-title').textContent=typeInfo.title;
+  document.getElementById('operations-reports-description').textContent=typeInfo.description;
+  const refresh=document.getElementById('refresh-operational-reports');refresh.disabled=true;
+  setNotice(operationalReportsNotice,'Loading reports…');
+  let query=client.from('vessel_operational_reports').select('*').eq('report_type',operationalReportType).order('created_at',{ascending:false}).limit(500);
+  const statusFilter=document.getElementById('operational-status-filter').value;
+  if(statusFilter!=='all')query=query.eq('status',statusFilter);
+  const reportDate=document.getElementById('operational-report-date-filter').value;
+  if(reportDate)query=query.eq('report_date',reportDate);
+  const {data,error}=await query;
+  refresh.disabled=false;
+  if(error){console.error('Could not load operational reports:',error);setNotice(operationalReportsNotice,'Reports database is not set up yet. Run the updated SUPABASE-SETUP.SQL in Supabase SQL Editor, then refresh.',true);return;}
+  operationalReports=data||[];operationalReportList.replaceChildren();
+  if(!operationalReports.length){setListMessage(operationalReportList,'No reports in this category yet. New crew submissions will appear here.');operationalReportDetail.innerHTML='<p class="empty-list">No report selected.</p>';selectedOperationalReportId=null;setNotice(operationalReportsNotice,'');return;}
+  if(!operationalReports.some(report=>report.id===selectedOperationalReportId))selectedOperationalReportId=operationalReports[0].id;
+  operationalReports.forEach(report=>{
+    const button=document.createElement('button');button.type='button';button.className='fuel-report-button';button.setAttribute('aria-pressed',String(report.id===selectedOperationalReportId));
+    const heading=document.createElement('strong');heading.textContent=`${report.vessel_name} · ${report.title}`;
+    const summary=document.createElement('p');summary.textContent=`${operationalStatusText(report.status)} · ${report.location||'No location'} · ${formattedDate(report.created_at)}`;
+    button.append(heading,summary);button.addEventListener('click',()=>{selectedOperationalReportId=report.id;operationalReportList.querySelectorAll('button').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));renderOperationalReport(report);});operationalReportList.append(button);
+  });
+  setNotice(operationalReportsNotice,'');
+  await renderOperationalReport(operationalReports.find(report=>report.id===selectedOperationalReportId));
 }
 
 function renderDetail(item){
@@ -1604,14 +2211,23 @@ async function checkAdminAndLoad(){
   setNotice(loginNotice,'');
   setNotice(registerNotice,'');
   showDashboard();
-  await Promise.all([loadInquiries(),loadDashboardAnalytics()]);
+  document.getElementById('profile-email').textContent=userResult.user.email||'Authorized administrator';
+  await Promise.all([loadInquiries(),loadDashboardAnalytics(),loadMaritimeOverview()]);
 }
 
 if(!configured){
   setupNote.hidden=false;
-  loginButton.disabled=true;
-  registerButton.disabled=true;
+  loginButton.disabled=false;
+  registerButton.disabled=false;
   setNotice(loginNotice,'Add the Supabase project settings before signing in.',true);
+  loginForm.addEventListener('submit',event=>{
+    event.preventDefault();
+    setNotice(loginNotice,'Admin sign-in is unavailable because the Supabase client or project settings did not load. Check SUPABASE-CONFIG.JS and your internet connection, then refresh.',true);
+  });
+  registerForm.addEventListener('submit',event=>{
+    event.preventDefault();
+    setNotice(registerNotice,'Admin registration is unavailable because the Supabase client or project settings did not load. Check SUPABASE-CONFIG.JS and your internet connection, then refresh.',true);
+  });
 }else{
   client=window.supabase.createClient(config.url,config.anonKey);
   client.auth.onAuthStateChange(event=>{
@@ -1624,21 +2240,33 @@ if(!configured){
     event.preventDefault();
     loginButton.disabled=true;
     setNotice(loginNotice,'Signing in…');
-    const email=document.getElementById('login-email').value.trim();
-    const {error}=await client.auth.signInWithPassword({
-      email,
-      password:document.getElementById('login-password').value
-    });
-    loginButton.disabled=false;
-    if(error){
-      console.error('Administrator sign-in failed:',error);
-      setNotice(loginNotice,'Sign-in failed. Check your email, password and email confirmation, then try again.',true);
-      return;
+    const username=document.getElementById('login-username').value.trim().toLowerCase();
+    try{
+      const {data,error}=await client.functions.invoke('vessel-auth',{
+        body:{action:'admin-login',username,password:document.getElementById('login-password').value}
+      });
+      if(error){
+        let message=error.message;
+        try{const body=await error.context?.json();if(body?.error) message=body.error;}catch{}
+        console.error('Administrator sign-in failed:',error);
+        setNotice(loginNotice,`Sign-in failed: ${message}`,true);
+        return;
+      }
+      if(!data?.session){
+        setNotice(loginNotice,'Sign-in failed: Supabase did not return a login session.',true);
+        return;
+      }
+      const {error:sessionError}=await client.auth.setSession(data.session);
+      if(sessionError) throw sessionError;
+      await checkAdminAndLoad();
+    }catch(error){
+      console.error('Administrator sign-in request failed:',error);
+      setNotice(loginNotice,`Could not sign in: ${error?.message||'Check the deployed vessel-auth function and Supabase connection.'}`,true);
+    }finally{
+      loginButton.disabled=false;
     }
-    await checkAdminAndLoad();
-  });
-  document.getElementById('forgot-password').addEventListener('click',()=>{
-    document.getElementById('reset-email').value=document.getElementById('login-email').value.trim();
+  });  document.getElementById('forgot-password').addEventListener('click',()=>{
+    document.getElementById('reset-email').value='';
     showResetRequest();
     document.getElementById('reset-email').focus();
   });
@@ -1653,7 +2281,7 @@ if(!configured){
     const button=resetRequestForm.querySelector('button[type="submit"]');
     button.disabled=true;
     setNotice(resetRequestNotice,'Sending password reset email…');
-    const redirectTo='https://andraderichard784-spec.github.io/seen-sam-shipping/ADMIN.HTML';
+    const redirectTo=new URL('./ADMIN.HTML',window.location.href).toString();
     const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo});
     button.disabled=false;
     if(error){
@@ -1684,6 +2312,11 @@ if(!configured){
       return;
     }
     recoveryForm.reset();
+    // Leave recovery mode before signing out. Otherwise the next successful
+    // login is ignored by checkAdminAndLoad() because it still sees the old
+    // recovery token in memory or in the URL hash.
+    passwordRecoveryActive=false;
+    history.replaceState(null,'',window.location.pathname+window.location.search);
     const {error:signOutError}=await client.auth.signOut();
     if(signOutError) console.error('Password changed, but could not end recovery session:',signOutError);
     showLogin('Your password has been changed. Sign in with your new password.');
@@ -1697,24 +2330,63 @@ if(!configured){
     setNotice(registerNotice,'Creating your account…');
     const username=document.getElementById('register-username').value.trim().toLowerCase();
     const email=document.getElementById('register-email').value.trim();
+    lastAdminSignupEmail=email;
+    document.getElementById('resend-admin-confirmation').hidden=true;
     const password=document.getElementById('register-password').value;
-    const {data,error}=await client.auth.signUp({
-      email,
-      password,
-      options:{data:{admin_username:username}}
-    });
-    registerButton.disabled=false;
-    if(error){
-      console.error('Admin registration failed:',error);
-      setNotice(registerNotice,'Registration failed. Check the details; the username or email may already be registered.',true);
+    const confirmation=document.getElementById('register-password-confirm').value;
+    if(password!==confirmation){
+      registerButton.disabled=false;
+      setNotice(registerNotice,'The passwords do not match. Please check and try again.',true);
       return;
     }
-    registerForm.reset();
-    if(data.session){
-      await checkAdminAndLoad();
+    try{
+      const {data,error}=await client.auth.signUp({
+        email,
+        password,
+        options:{data:{admin_username:username}}
+      });
+      if(error){
+        console.error('Admin registration failed:',error);
+        setNotice(registerNotice,`Registration failed: ${error.message}`,true);
+        return;
+      }
+      registerForm.reset();
+      if(data.session){
+        await checkAdminAndLoad();
+        return;
+      }
+      document.getElementById('register-email').value=email;
+      document.getElementById('resend-admin-confirmation').hidden=false;
+      setNotice(registerNotice,'Account created. Check your inbox and Spam/Junk folder for the confirmation email. You can request another email below. Only the first admin is auto-approved.');
+    }catch(error){
+      console.error('Admin registration request failed:',error);
+      setNotice(registerNotice,`Could not reach Supabase: ${error?.message||'Check your internet connection and project URL.'}`,true);
+    }finally{
+      registerButton.disabled=false;
+    }
+  });
+  document.getElementById('resend-admin-confirmation').addEventListener('click',async event=>{
+    const button=event.currentTarget;
+    if(!lastAdminSignupEmail){
+      setNotice(registerNotice,'Enter the email address you registered with, then submit the registration form again.',true);
       return;
     }
-    setNotice(registerNotice,'Registration submitted. Confirm your email, then sign in. If this is not the first admin account, the project owner must approve it.');
+    button.disabled=true;
+    setNotice(registerNotice,'Requesting another confirmation email…');
+    try{
+      const {error}=await client.auth.resend({type:'signup',email:lastAdminSignupEmail});
+      if(error){
+        console.error('Could not resend admin confirmation email:',error);
+        setNotice(registerNotice,`Could not resend confirmation: ${error.message}`,true);
+        return;
+      }
+      setNotice(registerNotice,'Confirmation email requested. Check your inbox and Spam/Junk folder. Supabase may limit repeated email requests.');
+    }catch(error){
+      console.error('Confirmation email resend request failed:',error);
+      setNotice(registerNotice,`Could not reach Supabase: ${error?.message||'Check your connection and Auth email settings.'}`,true);
+    }finally{
+      button.disabled=false;
+    }
   });
   client.auth.getSession().then(async({data,error})=>{
     if(error){
@@ -1734,7 +2406,6 @@ if(!configured){
   });
 }
 
-document.getElementById('show-register').addEventListener('click',()=>showAuthPanel('register'));
 document.getElementById('show-login').addEventListener('click',()=>showAuthPanel('login'));
 themeToggle.addEventListener('click',()=>{
   document.body.dataset.theme=document.body.dataset.theme==='dark'?'light':'dark';
@@ -1744,7 +2415,7 @@ themeToggle.addEventListener('click',()=>{
 dashboardNav.addEventListener('click',event=>{
   event.preventDefault();
   showDashboardView('dashboard-view');
-  loadDashboardAnalytics();
+  Promise.all([loadDashboardAnalytics(),loadMaritimeOverview()]);
 });
 inboxNav.addEventListener('click',event=>{
   event.preventDefault();
@@ -1759,6 +2430,13 @@ reportsNav.addEventListener('click',event=>{
   showDashboardView('vessel-reports-view');
   loadVesselAdminData();
 });
+operationalReportLinks.forEach(link=>link.addEventListener('click',event=>{
+  event.preventDefault();
+  operationalReportType=link.dataset.operationalType;
+  document.getElementById('operational-status-filter').value='all';
+  showDashboardView('operations-reports-view');
+  loadOperationalReports();
+}));
 aboutNav.addEventListener('click',event=>{
   event.preventDefault();
   showDashboardView('about-view');
@@ -1782,11 +2460,25 @@ document.getElementById('signout').addEventListener('click',async()=>{
 });
 document.getElementById('refresh').addEventListener('click',loadInquiries);
 document.getElementById('refresh-vessel-reports').addEventListener('click',loadVesselAdminData);
+document.getElementById('fuel-report-date-filter').addEventListener('change',loadFuelReports);
+document.getElementById('clear-fuel-date-filter').addEventListener('click',()=>{document.getElementById('fuel-report-date-filter').value='';loadFuelReports();});
+document.getElementById('refresh-operational-reports').addEventListener('click',loadOperationalReports);
+document.getElementById('operational-status-filter').addEventListener('change',loadOperationalReports);
+document.getElementById('operational-report-date-filter').addEventListener('change',loadOperationalReports);
+document.getElementById('clear-operational-date-filter').addEventListener('click',()=>{document.getElementById('operational-report-date-filter').value='';loadOperationalReports();});
 document.getElementById('action-inquiries').addEventListener('click',()=>{
   showDashboardView('inquiries-view');
 });
 document.getElementById('action-vessels').addEventListener('click',()=>{
   showDashboardView('vessels-view');
+});
+document.getElementById('action-vessel-reports').addEventListener('click',()=>{
+  showDashboardView('vessel-reports-view');
+  loadVesselAdminData();
+});
+document.getElementById('action-crew').addEventListener('click',()=>{
+  showDashboardView('members-view');
+  loadMembers();
 });
 document.getElementById('recent-view-all').addEventListener('click',event=>{
   event.preventDefault();
@@ -1796,10 +2488,70 @@ document.getElementById('fleet-view-all').addEventListener('click',event=>{
   event.preventDefault();
   showDashboardView('vessels-view');
 });
+membersNav.addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('members-view');
+  loadMembers();
+});
+document.getElementById('overview-members-link').addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('members-view');
+  loadMembers();
+});
+document.getElementById('overview-safety-link').addEventListener('click',event=>{
+  event.preventDefault();
+  operationalReportType='safety';
+  showDashboardView('operations-reports-view');
+  loadOperationalReports();
+});
+document.getElementById('overview-fleet-link').addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('vessels-view');
+});
+document.getElementById('overview-reports-link').addEventListener('click',event=>{
+  event.preventDefault();
+  showDashboardView('vessel-reports-view');
+  loadVesselAdminData();
+});
+document.getElementById('refresh-members').addEventListener('click',loadMembers);
+document.getElementById('sidebar-toggle').addEventListener('click',event=>{
+  const collapsed=dashboard.classList.toggle('sidebar-collapsed');
+  event.currentTarget.setAttribute('aria-expanded',String(!collapsed));
+});
+document.getElementById('global-search-form').addEventListener('submit',event=>{
+  event.preventDefault();
+  const query=document.getElementById('global-search-input').value.trim();
+  if(!query) return;
+  const normalized=query.toLowerCase();
+  const vessel=vesselNames.find(name=>name.toLowerCase().includes(normalized));
+  if(vessel){
+    showDashboardView('vessels-view');
+    const target=[...fleetList.querySelectorAll('.fleet-name')].find(item=>item.textContent.toLowerCase().includes(vessel.toLowerCase()));
+    target?.scrollIntoView({behavior:'smooth',block:'center'});
+  }else if(/crew|member|account/.test(normalized)){
+    showDashboardView('members-view');loadMembers();
+  }else if(/report|fuel/.test(normalized)){
+    showDashboardView('vessel-reports-view');loadVesselAdminData();
+  }else{
+    showDashboardView('inquiries-view');searchInput.value=query;renderList();
+  }
+});
+document.getElementById('alerts-button').addEventListener('click',()=>{
+  if(unreadInquiryCount){showDashboardView('inquiries-view');return;}
+  showDashboardView('vessel-reports-view');loadVesselAdminData();
+});
+function updateDashboardClock(){
+  const now=new Date();
+  const clock=document.getElementById('dashboard-clock');
+  clock.dateTime=now.toISOString();
+  clock.textContent=new Intl.DateTimeFormat(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(now);
+}
+updateDashboardClock();
+window.setInterval(updateDashboardClock,30000);
 document.getElementById('action-refresh').addEventListener('click',async event=>{
   const button=event.currentTarget;
   button.disabled=true;
-  await Promise.all([loadInquiries(),loadDashboardAnalytics()]);
+  await Promise.all([loadInquiries(),loadDashboardAnalytics(),loadMaritimeOverview()]);
   button.disabled=false;
 });
 analyticsForm.addEventListener('submit',event=>{
