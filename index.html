@@ -170,7 +170,13 @@ textarea{min-height:120px;resize:vertical}
 .chat-attach-button:hover{background:#1b3c5b}
 .chat-file-input{display:none}
 .chat-file-name{min-height:1.2em;color:#cbd9e3;font-size:.83rem;overflow-wrap:anywhere}
-.chat-message-attachment{display:inline-flex;align-items:center;gap:8px;margin-top:8px;color:inherit;font-weight:600;text-decoration:underline;overflow-wrap:anywhere}
+.chat-file-card{display:flex;align-items:center;gap:10px;width:min(100%,330px);margin-top:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.24);border-radius:10px;background:rgba(4,20,36,.25);color:inherit;text-decoration:none;overflow:hidden}
+.chat-file-badge{flex:0 0 40px;height:42px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.13);font-size:.65rem;font-weight:800;letter-spacing:.04em}
+.chat-file-details{display:grid;gap:3px;min-width:0}.chat-file-details strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.86rem}.chat-file-details small{font-size:.72rem;opacity:.78}
+.chat-file-download{margin-left:auto;padding:5px 7px;border:1px solid rgba(255,255,255,.25);border-radius:6px;font-size:.62rem;font-weight:800;letter-spacing:.04em;opacity:.9}
+.chat-image-card{display:inline-grid;gap:7px;max-width:min(100%,320px);margin-top:10px;padding:7px;border:1px solid rgba(255,255,255,.24);border-radius:11px;background:rgba(4,20,36,.22);color:inherit;text-decoration:none}
+.chat-message-image{display:block;width:100%;max-height:280px;object-fit:contain;border-radius:7px;cursor:zoom-in}
+.chat-image-caption{display:flex;justify-content:space-between;gap:12px;padding:0 3px;font-size:.75rem}.chat-image-caption span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chat-image-caption span:last-child{opacity:.75;white-space:nowrap}
 .public-chat-status{min-height:1.4em;color:#cbd9e3;font-size:.9rem}
 .chat-secondary{padding:7px 10px;border:1px solid #7894ad;border-radius:5px;background:transparent;color:#fff;cursor:pointer;font:600 .82rem var(--sans)}
 
@@ -394,6 +400,7 @@ const publicChatMessages=document.getElementById('public-chat-messages');
 const publicChatStatus=document.getElementById('public-chat-status');
 const restoreChatButton=document.getElementById('restore-chat');
 const publicChatStorageKey='seem-sam-public-inquiry';
+const publicAttachmentUrlCache=new Map();
 let publicConversation=null;
 let publicChatPoll=null;
 let lastAdminMessageId=null;
@@ -430,19 +437,42 @@ async function loadPublicConversation(){
   messages.forEach(message=>{
     const bubble=document.createElement('article');bubble.className='public-chat-message '+(message.sender==='visitor'?'visitor':'admin');
     const sender=document.createElement('small');sender.textContent=message.sender==='visitor'?'You':'Seem Sam Shipping team';
+    const isImage=String(message.attachment_mime||'').startsWith('image/');
     const body=document.createElement('div');body.textContent=message.body;
     const sent=document.createElement('small');sent.textContent=new Date(message.created_at).toLocaleString('en-PH',{timeZone:'Asia/Manila'});
-    bubble.append(sender,body,sent);
+    bubble.append(sender,...(isImage&&message.body===`Attachment: ${message.attachment_name}`?[]:[body]),sent);
     if(message.attachment_name){
-      const attachment=document.createElement('a');attachment.className='chat-message-attachment';attachment.href='#';attachment.textContent='File: '+message.attachment_name;
-      attachment.addEventListener('click',async event=>{
-        event.preventDefault();attachment.setAttribute('aria-busy','true');
-        const request=new FormData();request.append('action','download');request.append('inquiry_id',publicConversation.id);request.append('message_id',message.id);request.append('access_token',publicConversation.token);
-        const {data,error:downloadError}=await publicChatClient().functions.invoke('inquiry-attachments',{body:request});
-        attachment.removeAttribute('aria-busy');
-        if(downloadError||!data?.signed_url){publicChatStatus.textContent='Could not download this attachment.';return;}
-        const link=document.createElement('a');link.href=data.signed_url;link.download=message.attachment_name;link.target='_blank';link.rel='noopener';link.click();
-      });bubble.append(attachment);
+      const request=new FormData();request.append('action','download');request.append('inquiry_id',publicConversation.id);request.append('message_id',message.id);request.append('access_token',publicConversation.token);
+      if(isImage){
+        const card=document.createElement('a');card.className='chat-image-card';card.href='#';card.target='_blank';card.rel='noopener';
+        const image=document.createElement('img');image.className='chat-message-image';image.alt=message.attachment_name;image.loading='lazy';
+        const caption=document.createElement('div');caption.className='chat-image-caption';
+        const filename=document.createElement('span');filename.textContent=message.attachment_name;
+        const hint=document.createElement('span');hint.textContent='View image';caption.append(filename,hint);card.append(image,caption);
+        card.addEventListener('click',event=>{if(!image.src)event.preventDefault();});
+        bubble.insertBefore(card,sent);
+        const cached=publicAttachmentUrlCache.get(message.id);
+        if(cached?.expiresAt>Date.now()){image.src=cached.url;card.href=cached.url;}
+        else publicChatClient().functions.invoke('inquiry-attachments',{body:request}).then(({data,error})=>{
+          if(error||!data?.signed_url){publicChatStatus.textContent='Could not display this picture.';return;}
+          publicAttachmentUrlCache.set(message.id,{url:data.signed_url,expiresAt:Date.now()+50000});image.src=data.signed_url;card.href=data.signed_url;
+        });
+      }else{
+        const card=document.createElement('a');card.className='chat-file-card';card.href='#';
+        const badge=document.createElement('span');badge.className='chat-file-badge';badge.textContent=(message.attachment_name.split('.').pop()||'FILE').slice(0,5).toUpperCase();
+        const details=document.createElement('span');details.className='chat-file-details';
+        const filename=document.createElement('strong');filename.textContent=message.attachment_name;
+        const action=document.createElement('small');action.textContent='Download attachment';details.append(filename,action);
+        const download=document.createElement('span');download.className='chat-file-download';download.setAttribute('aria-hidden','true');download.textContent='GET';card.append(badge,details,download);
+        card.addEventListener('click',async event=>{
+          event.preventDefault();card.setAttribute('aria-busy','true');
+          const {data,error}=await publicChatClient().functions.invoke('inquiry-attachments',{body:request});
+          card.removeAttribute('aria-busy');
+          if(error||!data?.signed_url){publicChatStatus.textContent='Could not download this file.';return;}
+          const link=document.createElement('a');link.href=data.signed_url;link.download=message.attachment_name;link.target='_blank';link.rel='noopener';link.click();
+        });
+        bubble.insertBefore(card,sent);
+      }
     }
     if(message.sender==='visitor'){
       const actions=document.createElement('div');actions.className='public-chat-message-actions';
