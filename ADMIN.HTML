@@ -1114,6 +1114,10 @@ const dashboardNotice=document.getElementById('dashboard-notice');
 const dashboardViews=[...document.querySelectorAll('.dashboard-view')];
 const configured=Boolean(window.supabase && config && config.url && config.anonKey &&
   !config.url.includes('YOUR-PROJECT') && !config.anonKey.includes('YOUR_SUPABASE'));
+async function attachmentErrorMessage(error,fallback){
+  try{const response=error?.context;if(response instanceof Response){const payload=await response.clone().json();if(payload?.error)return payload.error;}}catch{}
+  return fallback;
+}
 const themeToggle=document.getElementById('theme-toggle');
 const themeLabel=document.getElementById('theme-label');
 const themeIcon=document.getElementById('theme-icon');
@@ -2140,7 +2144,7 @@ async function renderInquiryConversation(item,thread,emailReply,emailReplyHint){
     if(selectedFile){
       const request=new FormData();request.append('action','upload');request.append('sender','admin');request.append('inquiry_id',item.id);request.append('body',replyText);request.append('file',selectedFile);
       const {data:uploadData,error:uploadError}=await client.functions.invoke('inquiry-attachments',{body:request});
-      if(uploadError){console.error('Could not send inquiry attachment:',uploadError);send.disabled=false;attach.disabled=false;setNotice(inboxNotice,'Could not send the file. Check the file size/type or try again.',true);return;}
+      if(uploadError){console.error('Could not send inquiry attachment:',uploadError);send.disabled=false;attach.disabled=false;setNotice(inboxNotice,await attachmentErrorMessage(uploadError,'Could not send the file. Check the file size/type or try again.'),true);return;}
       await client.from('inquiries').update({is_read:true}).eq('id',item.id);
       entries.push(uploadData.message);input.value='';file.value='';fileName.textContent='';render();send.disabled=false;attach.disabled=false;setNotice(inboxNotice,'Reply and attachment sent.');return;
     }

@@ -402,6 +402,10 @@ let publicChatEditing=false;
 function publicChatClient(){
   return window.supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.anonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 }
+async function publicAttachmentErrorMessage(error,fallback){
+  try{const response=error?.context;if(response instanceof Response){const payload=await response.clone().json();if(payload?.error)return payload.error;}}catch{}
+  return fallback;
+}
 function newAccessToken(){
   if(crypto.randomUUID)return crypto.randomUUID();
   const bytes=crypto.getRandomValues(new Uint8Array(16));bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;
@@ -535,7 +539,7 @@ publicChatForm.addEventListener('submit',async event=>{
     const request=new FormData();request.append('action','upload');request.append('sender','visitor');request.append('inquiry_id',publicConversation.id);request.append('access_token',publicConversation.token);request.append('body',input.value.trim());request.append('file',selectedFile);
     const {error:uploadError}=await publicChatClient().functions.invoke('inquiry-attachments',{body:request});
     button.disabled=false;
-    if(uploadError){console.error('Could not send inquiry attachment:',uploadError);publicChatStatus.textContent='Could not send the file. Check the file size/type or try again.';return;}
+    if(uploadError){console.error('Could not send inquiry attachment:',uploadError);publicChatStatus.textContent=await publicAttachmentErrorMessage(uploadError,'Could not send the file. Check the file size/type or try again.');return;}
     input.value='';publicChatFile.value='';document.getElementById('public-chat-file-name').textContent='';publicChatStatus.textContent='Message sent.';await loadPublicConversation();return;
   }
   const {error}=await publicChatClient().rpc('reply_to_public_inquiry',{p_inquiry_id:publicConversation.id,p_access_token:publicConversation.token,p_message:input.value.trim()});
