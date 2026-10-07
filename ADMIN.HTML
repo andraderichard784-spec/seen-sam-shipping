@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Secure inquiry inbox for Seem Sam Shipping Inc.">
-<title>Admin Inbox | Seem Sam Shipping Inc.</title>
+<title>Seem Sam Shipping | Admin</title>
+<link rel="icon" type="image/png" href="seem-sam-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -523,6 +524,13 @@ body[data-theme="dark"] .vessel-request,body[data-theme="dark"] .fuel-report-but
 .detail-meta{display:grid;gap:4px;color:#526878;font-size:.92rem}
 .detail-meta a{color:var(--sea);font-weight:600}
 .message-body{white-space:pre-wrap;overflow-wrap:anywhere;margin:24px 0;line-height:1.7}
+.inquiry-conversation{display:grid;gap:12px;margin:20px 0}
+.inquiry-thread{display:grid;gap:10px;max-height:440px;overflow:auto;padding:12px;border:1px solid var(--line);border-radius:7px;background:var(--page)}
+.inquiry-bubble{max-width:88%;padding:11px 13px;border-radius:10px;background:var(--soft);white-space:pre-wrap;overflow-wrap:anywhere}
+.inquiry-bubble.visitor{justify-self:start}.inquiry-bubble.admin{justify-self:end;background:#dcecf5}
+.inquiry-bubble small{display:block;margin-bottom:4px;color:var(--muted);font-size:.74rem}
+.inquiry-reply-form{display:grid;gap:8px}.inquiry-reply-form textarea{min-height:95px}
+.inquiry-conversation-hint{color:var(--muted);font-size:.88rem}
 .detail-actions{display:flex;flex-wrap:wrap;gap:10px}
 .detail-actions a{display:inline-block;text-decoration:none}
 .reply-hint{align-self:center;color:var(--muted);font-size:.82rem}
@@ -1969,9 +1977,9 @@ function renderDetail(item){
   email.textContent=item.email;
   meta.append(sender,email);
   head.append(date,status,subject,meta);
-  const body=document.createElement('p');
-  body.className='message-body';
-  body.textContent=item.message;
+  const conversation=document.createElement('section');conversation.className='inquiry-conversation';
+  const conversationTitle=document.createElement('h3');conversationTitle.textContent='Conversation';conversation.append(conversationTitle);
+  const thread=document.createElement('div');thread.className='inquiry-thread';thread.setAttribute('aria-live','polite');conversation.append(thread);
   const actions=document.createElement('div');
   actions.className='detail-actions';
   const reply=document.createElement('a');
@@ -2021,15 +2029,64 @@ function renderDetail(item){
   remove.type='button';
   remove.textContent='Delete inquiry';
   remove.addEventListener('click',()=>deleteInquiry(item,remove));
-  actions.append(reply,replyHint,mark,remove);
-  detail.append(head,body,actions);
-  if(recipientMatchesAdmin){
+  actions.append(mark,remove);
+  detail.append(head,conversation,actions);
+  renderInquiryConversation(item,thread,reply,replyHint);
+  if(recipientMatchesAdmin&&!item.conversation_token_hash){
     const warning=document.createElement('p');
     warning.className='recipient-warning';
     warning.setAttribute('role','alert');
     warning.textContent='This inquiry was submitted using the administrator email address. It may have been autofilled; confirm the client’s actual address before replying.';
     detail.append(warning);
   }
+}
+
+async function renderInquiryConversation(item,thread,emailReply,emailReplyHint){
+  const {data,error}=await client.from('inquiry_messages').select('id,sender,sender_name,body,created_at')
+    .eq('inquiry_id',item.id).order('created_at',{ascending:true});
+  if(error){
+    console.error('Could not load inquiry conversation:',error);
+    const failure=document.createElement('p');failure.className='error-text';failure.textContent='Conversation unavailable. Run the latest SUPABASE-SETUP.SQL and refresh.';thread.append(failure);return;
+  }
+  const entries=data?.length?data:[{sender:'visitor',sender_name:item.name,body:item.message,created_at:item.created_at}];
+  const render=()=>{
+    thread.replaceChildren();
+    entries.forEach(message=>{
+      const bubble=document.createElement('article');bubble.className='inquiry-bubble '+(message.sender==='admin'?'admin':'visitor');
+      const who=document.createElement('small');who.textContent=message.sender==='admin'?'Seem Sam Shipping · '+message.sender_name:message.sender_name;
+      const body=document.createElement('div');body.textContent=message.body;
+      const when=document.createElement('small');when.textContent=formattedDate(message.created_at);
+      bubble.append(who,body,when);thread.append(bubble);
+    });thread.scrollTop=thread.scrollHeight;
+  };
+  render();
+  if(!item.conversation_token_hash){
+    const hint=document.createElement('p');hint.className='inquiry-conversation-hint';
+    hint.textContent='This is an older inquiry without a website chat link. Reply by email instead.';
+    thread.after(hint,emailReply,emailReplyHint);return;
+  }
+  const form=document.createElement('form');form.className='inquiry-reply-form';
+  const label=document.createElement('label');label.textContent='Reply in this conversation';
+  const input=document.createElement('textarea');input.maxLength=5000;input.required=true;input.placeholder='Write a reply to '+item.name+'…';label.append(input);
+  const send=document.createElement('button');send.type='submit';send.className='primary';send.textContent='Send reply';form.append(label,send);
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();send.disabled=true;
+    const replyBody=input.value.trim();
+    const {error:sendError}=await client.from('inquiry_messages').insert({inquiry_id:item.id,sender:'admin',sender_name:'Operations team',body:replyBody});
+    if(sendError){console.error('Could not send inquiry reply:',sendError);send.disabled=false;setNotice(inboxNotice,'Could not send the reply. Check the inquiry_messages policy and try again.',true);return;}
+    await client.from('inquiries').update({is_read:true}).eq('id',item.id);
+    entries.push({sender:'admin',sender_name:'Operations team',body:replyBody,created_at:new Date().toISOString()});
+    input.value='';render();send.disabled=false;setNotice(inboxNotice,'Reply sent. It will appear in the visitor’s conversation on their website.');
+  });
+  thread.after(form);
+  const refreshThread=async()=>{
+    if(!document.body.contains(thread))return;
+    const {data:latest,error:latestError}=await client.from('inquiry_messages').select('id,sender,sender_name,body,created_at').eq('inquiry_id',item.id).order('created_at',{ascending:true});
+    if(!latestError&&latest){entries.splice(0,entries.length,...latest);render();}
+  };
+  const poll=setInterval(refreshThread,10000);
+  const cleanup=new MutationObserver(()=>{if(!document.body.contains(thread)){clearInterval(poll);cleanup.disconnect();}});
+  cleanup.observe(document.body,{childList:true,subtree:true});
 }
 
 function renderList(){
@@ -2088,7 +2145,7 @@ async function loadInquiries(){
   document.getElementById('refresh').disabled=true;
   const [messagesResult,unreadResult]=await Promise.all([
     client.from('inquiries')
-      .select('id,created_at,name,email,subject,message,is_read',{count:'exact'})
+      .select('id,created_at,name,email,subject,message,is_read,conversation_token_hash',{count:'exact'})
       .order('created_at',{ascending:false})
       .limit(1000),
     client.from('inquiries')

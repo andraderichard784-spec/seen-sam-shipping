@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Seem Sam Shipping Inc.</title>
+<link rel="icon" type="image/png" href="seem-sam-logo.png">
 <meta name="description" content="Seem Sam Shipping Inc. - dependable maritime and shipping services.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -138,11 +139,25 @@ h2{font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:18px;color:var(--hull)}
 .info p{margin-bottom:14px}
 .info b{display:block;color:var(--sand);font-size:.9rem;font-weight:600}
 form{display:grid;gap:14px}
+#cf[hidden]{display:none}
 label{font-size:.9rem;color:var(--sand);display:grid;gap:6px}
 input,textarea{padding:12px;border-radius:4px;border:1px solid #3B5D7D;background:#0F2F4E;color:var(--white);font:inherit}
 input::placeholder,textarea::placeholder{color:#7F9AB1}
 textarea{min-height:120px;resize:vertical}
 .form-status{min-height:1.5em;color:#CBD9E3}
+.public-chat{display:grid;gap:12px;min-width:0;padding:16px;border:1px solid #315574;border-radius:8px;background:#102c49}
+.public-chat[hidden]{display:none}
+.public-chat-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.public-chat-head h3{font:700 1.15rem var(--serif)}
+.public-chat-messages{display:grid;align-content:start;gap:10px;max-height:340px;overflow:auto;padding:8px}
+.public-chat-message{max-width:88%;padding:10px 12px;border-radius:10px;background:#1b3c5b;white-space:pre-wrap;overflow-wrap:anywhere}
+.public-chat-message.visitor{justify-self:end;background:#d6452b;color:#fff}
+.public-chat-message.admin{justify-self:start;background:#1b3c5b;color:#fff}
+.public-chat-message small{display:block;margin-bottom:4px;opacity:.75;font-size:.72rem}
+.public-chat-compose{display:grid;gap:8px}
+.public-chat-compose textarea{min-height:82px}
+.public-chat-status{min-height:1.4em;color:#cbd9e3;font-size:.9rem}
+.chat-secondary{padding:7px 10px;border:1px solid #7894ad;border-radius:5px;background:transparent;color:#fff;cursor:pointer;font:600 .82rem var(--sans)}
 
 footer{background:#071A2E;color:#9FB6C6;font-size:.9rem;padding:22px 0;text-align:center}
 
@@ -314,6 +329,16 @@ footer{background:#071A2E;color:#9FB6C6;font-size:.9rem;padding:22px 0;text-alig
         <button class="btn" type="submit">Send message</button>
         <p class="form-status" id="contact-status" role="status" aria-live="polite"></p>
       </form>
+      <section class="public-chat" id="public-chat" aria-label="Inquiry conversation" hidden>
+        <div class="public-chat-head"><h3>Conversation with our team</h3><button class="chat-secondary" id="new-inquiry" type="button">New inquiry</button></div>
+        <div class="public-chat-messages" id="public-chat-messages" aria-live="polite"></div>
+        <form class="public-chat-compose" id="public-chat-form">
+          <label for="public-chat-reply">Your message</label>
+          <textarea id="public-chat-reply" maxlength="5000" required placeholder="Write a reply..."></textarea>
+          <button class="btn" type="submit">Send reply</button>
+        </form>
+        <p class="public-chat-status" id="public-chat-status" role="status" aria-live="polite"></p>
+      </section>
     </div>
   </div>
 </section>
@@ -346,6 +371,41 @@ btn.addEventListener('click',()=>{const o=menu.classList.toggle('open');btn.setA
 menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menu.classList.remove('open');btn.setAttribute('aria-expanded','false')}));
 const contactForm=document.getElementById('cf');
 const contactStatus=document.getElementById('contact-status');
+const publicChat=document.getElementById('public-chat');
+const publicChatMessages=document.getElementById('public-chat-messages');
+const publicChatStatus=document.getElementById('public-chat-status');
+const publicChatStorageKey='seem-sam-public-inquiry';
+let publicConversation=null;
+let publicChatPoll=null;
+function publicChatClient(){
+  return window.supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.anonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+}
+function newAccessToken(){
+  if(crypto.randomUUID)return crypto.randomUUID();
+  const bytes=crypto.getRandomValues(new Uint8Array(16));bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;
+  return [...bytes].map((value,index)=>`${[4,6,8,10].includes(index)?'-':''}${value.toString(16).padStart(2,'0')}`).join('');
+}
+function showPublicConversation(conversation){
+  publicConversation=conversation;try{localStorage.setItem(publicChatStorageKey,JSON.stringify(conversation));}catch{}
+  contactForm.hidden=true;publicChat.hidden=false;publicChatStatus.textContent='Only this browser has the private conversation link saved. Keep using this device and browser to continue.';
+  loadPublicConversation();
+  clearInterval(publicChatPoll);publicChatPoll=setInterval(loadPublicConversation,10000);
+}
+async function loadPublicConversation(){
+  if(!publicConversation)return;
+  const {data,error}=await publicChatClient().rpc('get_public_inquiry_messages',{p_inquiry_id:publicConversation.id,p_access_token:publicConversation.token});
+  if(error){console.error('Could not load public inquiry conversation:',error);publicChatStatus.textContent='Could not load this conversation. Refresh the page and try again.';return;}
+  publicChatMessages.replaceChildren();
+  (data||[]).forEach(message=>{
+    const bubble=document.createElement('article');bubble.className='public-chat-message '+(message.sender==='visitor'?'visitor':'admin');
+    const sender=document.createElement('small');sender.textContent=message.sender==='visitor'?'You':'Seem Sam Shipping team';
+    const body=document.createElement('div');body.textContent=message.body;
+    const sent=document.createElement('small');sent.textContent=new Date(message.created_at).toLocaleString('en-PH',{timeZone:'Asia/Manila'});
+    bubble.append(sender,body,sent);publicChatMessages.append(bubble);
+  });
+  publicChatMessages.scrollTop=publicChatMessages.scrollHeight;
+}
+try{const saved=JSON.parse(localStorage.getItem(publicChatStorageKey)||'null');if(saved?.id&&saved?.token)showPublicConversation(saved);}catch{localStorage.removeItem(publicChatStorageKey);}
 contactForm.addEventListener('submit',async e=>{
   e.preventDefault();
   const submitButton=contactForm.querySelector('button[type="submit"]');
@@ -360,22 +420,19 @@ contactForm.addEventListener('submit',async e=>{
   submitButton.disabled=true;
   contactStatus.textContent='Sending your message…';
   try {
-    const client=window.supabase.createClient(
-      window.SUPABASE_CONFIG.url,
-      window.SUPABASE_CONFIG.anonKey,
-      {auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}
-    );
-    const {error}=await client.from('inquiries').insert({
-      name:formData.get('name').trim(),
-      email:formData.get('email').trim(),
-      subject:formData.get('subject').trim(),
-      message:formData.get('msg').trim()
+    const token=newAccessToken();
+    const {data,error}=await publicChatClient().rpc('create_public_inquiry',{
+      p_name:formData.get('name').trim(),p_email:formData.get('email').trim(),
+      p_subject:formData.get('subject').trim(),p_message:formData.get('msg').trim(),p_access_token:token
     });
     if (error) {
       console.error('Could not submit contact inquiry:',error);
       contactStatus.textContent='We could not send your message. '+error.message;
       return;
     }
+    const inquiryId=typeof data==='string'?data:data?.[0]?.create_public_inquiry;
+    if(!inquiryId){contactStatus.textContent='The message was sent, but we could not open its conversation. Please contact us by email.';return;}
+    showPublicConversation({id:inquiryId,token});
   } catch (error) {
     console.error('Contact inquiry request failed:',error);
     contactStatus.textContent='We could not reach the message service. '+(error.message || 'Check your connection and try again.');
@@ -385,6 +442,19 @@ contactForm.addEventListener('submit',async e=>{
   }
   contactForm.reset();
   contactStatus.textContent='Thank you. Your message has been sent to our maritime team.';
+});
+document.getElementById('public-chat-form').addEventListener('submit',async event=>{
+  event.preventDefault();if(!publicConversation)return;
+  const input=document.getElementById('public-chat-reply');const button=event.currentTarget.querySelector('button[type="submit"]');
+  button.disabled=true;publicChatStatus.textContent='Sending reply…';
+  const {error}=await publicChatClient().rpc('reply_to_public_inquiry',{p_inquiry_id:publicConversation.id,p_access_token:publicConversation.token,p_message:input.value.trim()});
+  button.disabled=false;
+  if(error){console.error('Could not send public inquiry reply:',error);publicChatStatus.textContent='Could not send your reply. Please try again.';return;}
+  input.value='';publicChatStatus.textContent='Reply sent.';await loadPublicConversation();
+});
+document.getElementById('new-inquiry').addEventListener('click',()=>{
+  clearInterval(publicChatPoll);publicConversation=null;localStorage.removeItem(publicChatStorageKey);
+  publicChat.hidden=true;contactForm.hidden=false;contactStatus.textContent='';
 });
 
 // 3D tilt + glow on service cards (desktop only, respects reduced motion)
