@@ -529,7 +529,18 @@ body[data-theme="dark"] .vessel-request,body[data-theme="dark"] .fuel-report-but
 .inquiry-bubble{max-width:88%;padding:11px 13px;border-radius:10px;background:var(--soft);white-space:pre-wrap;overflow-wrap:anywhere}
 .inquiry-bubble.visitor{justify-self:start}.inquiry-bubble.admin{justify-self:end;background:#dcecf5}
 .inquiry-bubble small{display:block;margin-bottom:4px;color:var(--muted);font-size:.74rem}
+.inquiry-message-actions{display:flex;gap:10px;margin-top:7px}
+.inquiry-message-actions button{padding:0;border:0;background:none;color:var(--sea);font:600 .78rem var(--sans);text-decoration:underline;cursor:pointer}
+.inquiry-inline-editor{display:grid;gap:7px;margin-top:8px}
+.inquiry-inline-editor textarea{width:100%;min-height:76px;padding:8px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--ink);font:inherit}
+.inquiry-inline-editor-actions{display:flex;gap:8px}
 .inquiry-reply-form{display:grid;gap:8px}.inquiry-reply-form textarea{min-height:95px}
+.inquiry-chat-compose-row{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:end}
+.inquiry-attach-button{width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font:600 1.6rem var(--sans);line-height:1;cursor:pointer}
+.inquiry-attach-button:hover{background:var(--soft)}
+.inquiry-file-input{display:none}
+.inquiry-file-name{min-height:1.2em;color:var(--muted);font-size:.82rem;overflow-wrap:anywhere}
+.inquiry-attachment-link{display:inline-block;margin-top:8px;color:var(--sea);font-weight:600;text-decoration:underline;overflow-wrap:anywhere}
 .inquiry-conversation-hint{color:var(--muted);font-size:.88rem}
 .detail-actions{display:flex;flex-wrap:wrap;gap:10px}
 .detail-actions a{display:inline-block;text-decoration:none}
@@ -2042,13 +2053,14 @@ function renderDetail(item){
 }
 
 async function renderInquiryConversation(item,thread,emailReply,emailReplyHint){
-  const {data,error}=await client.from('inquiry_messages').select('id,sender,sender_name,body,created_at')
+  const {data,error}=await client.from('inquiry_messages').select('id,sender,sender_name,body,created_at,attachment_path,attachment_name,attachment_mime,attachment_size')
     .eq('inquiry_id',item.id).order('created_at',{ascending:true});
   if(error){
     console.error('Could not load inquiry conversation:',error);
     const failure=document.createElement('p');failure.className='error-text';failure.textContent='Conversation unavailable. Run the latest SUPABASE-SETUP.SQL and refresh.';thread.append(failure);return;
   }
   const entries=data?.length?data:[{sender:'visitor',sender_name:item.name,body:item.message,created_at:item.created_at}];
+  let editingMessage=false;
   const render=()=>{
     thread.replaceChildren();
     entries.forEach(message=>{
@@ -2056,7 +2068,50 @@ async function renderInquiryConversation(item,thread,emailReply,emailReplyHint){
       const who=document.createElement('small');who.textContent=message.sender==='admin'?'Seem Sam Shipping · '+message.sender_name:message.sender_name;
       const body=document.createElement('div');body.textContent=message.body;
       const when=document.createElement('small');when.textContent=formattedDate(message.created_at);
-      bubble.append(who,body,when);thread.append(bubble);
+      bubble.append(who,body,when);
+      if(message.attachment_name){
+        const attachment=document.createElement('a');attachment.className='inquiry-attachment-link';attachment.href='#';attachment.textContent='File: '+message.attachment_name;
+        attachment.addEventListener('click',async event=>{
+          event.preventDefault();
+          const request=new FormData();request.append('action','download');request.append('inquiry_id',item.id);request.append('message_id',message.id);
+          const {data,error:downloadError}=await client.functions.invoke('inquiry-attachments',{body:request});
+          if(downloadError||!data?.signed_url){setNotice(inboxNotice,'Could not download this attachment.',true);return;}
+          const link=document.createElement('a');link.href=data.signed_url;link.download=message.attachment_name;link.target='_blank';link.rel='noopener';link.click();
+        });bubble.append(attachment);
+      }
+      if(message.id){
+        const controls=document.createElement('div');controls.className='inquiry-message-actions';
+        const edit=document.createElement('button');edit.type='button';edit.textContent='Edit';
+        edit.addEventListener('click',()=>{
+          editingMessage=true;const editor=document.createElement('div');editor.className='inquiry-inline-editor';
+          const input=document.createElement('textarea');input.maxLength=5000;input.value=message.body;input.setAttribute('aria-label','Edit message text');
+          const editorActions=document.createElement('div');editorActions.className='inquiry-inline-editor-actions';
+          const save=document.createElement('button');save.type='button';save.className='primary';save.textContent='Save';
+          const cancel=document.createElement('button');cancel.type='button';cancel.className='secondary';cancel.textContent='Cancel';
+          cancel.addEventListener('click',()=>{editingMessage=false;render();});
+          save.addEventListener('click',async()=>{
+            const bodyText=input.value.trim();if(!bodyText){setNotice(inboxNotice,'Message cannot be empty.',true);input.focus();return;}
+            save.disabled=true;cancel.disabled=true;
+            const {error:editError}=await client.from('inquiry_messages').update({body:bodyText}).eq('id',message.id).eq('inquiry_id',item.id);
+            if(editError){console.error('Could not edit inquiry message:',editError);save.disabled=false;cancel.disabled=false;setNotice(inboxNotice,'Could not edit the message. Apply the latest INQUIRY-CHAT-MIGRATION.SQL and try again.',true);return;}
+            message.body=bodyText;editingMessage=false;setNotice(inboxNotice,'Message updated.');render();
+          });
+          editorActions.append(save,cancel);editor.append(input,editorActions);body.replaceWith(editor);input.focus();
+        });
+        const remove=document.createElement('button');remove.type='button';remove.textContent='Delete';
+        remove.addEventListener('click',async()=>{
+          if(!window.confirm('Delete this message from the conversation?'))return;
+          remove.disabled=true;
+          const request=new FormData();request.append('action','delete');request.append('inquiry_id',item.id);request.append('message_id',message.id);
+          const {error:deleteError}=await client.functions.invoke('inquiry-attachments',{body:request});
+          remove.disabled=false;
+          if(deleteError){console.error('Could not delete inquiry message:',deleteError);setNotice(inboxNotice,'Could not delete the message. Run the latest INQUIRY-CHAT-MIGRATION.SQL and deploy the inquiry-attachments function.',true);return;}
+          const index=entries.findIndex(entry=>entry.id===message.id);if(index!==-1)entries.splice(index,1);
+          setNotice(inboxNotice,'Message deleted.');render();
+        });
+        controls.append(edit,remove);bubble.append(controls);
+      }
+      thread.append(bubble);
     });thread.scrollTop=thread.scrollHeight;
   };
   render();
@@ -2067,25 +2122,45 @@ async function renderInquiryConversation(item,thread,emailReply,emailReplyHint){
   }
   const form=document.createElement('form');form.className='inquiry-reply-form';
   const label=document.createElement('label');label.textContent='Reply in this conversation';
-  const input=document.createElement('textarea');input.maxLength=5000;input.required=true;input.placeholder='Write a reply to '+item.name+'…';label.append(input);
-  const send=document.createElement('button');send.type='submit';send.className='primary';send.textContent='Send reply';form.append(label,send);
+  const composeRow=document.createElement('div');composeRow.className='inquiry-chat-compose-row';
+  const attach=document.createElement('button');attach.type='button';attach.className='inquiry-attach-button';attach.textContent='+';attach.setAttribute('aria-label','Attach a file');
+  const input=document.createElement('textarea');input.maxLength=5000;input.placeholder='Write a reply to '+item.name+'…';
+  const file=document.createElement('input');file.type='file';file.className='inquiry-file-input';file.accept='image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv';
+  const fileName=document.createElement('p');fileName.className='inquiry-file-name';fileName.setAttribute('aria-live','polite');
+  attach.addEventListener('click',()=>file.click());file.addEventListener('change',()=>{fileName.textContent=file.files[0]?.name||'';});
+  composeRow.append(attach,input);label.append(composeRow);
+  input.addEventListener('keydown',event=>{
+    if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();form.requestSubmit();}
+  });
+  const send=document.createElement('button');send.type='submit';send.className='primary';send.textContent='Send reply';form.append(label,file,fileName,send);
   form.addEventListener('submit',async event=>{
-    event.preventDefault();send.disabled=true;
+    event.preventDefault();const selectedFile=file.files[0];const replyText=input.value.trim();
+    if(!replyText&&!selectedFile){setNotice(inboxNotice,'Write a reply or choose a file first.',true);return;}
+    send.disabled=true;attach.disabled=true;
+    if(selectedFile){
+      const request=new FormData();request.append('action','upload');request.append('sender','admin');request.append('inquiry_id',item.id);request.append('body',replyText);request.append('file',selectedFile);
+      const {data:uploadData,error:uploadError}=await client.functions.invoke('inquiry-attachments',{body:request});
+      if(uploadError){console.error('Could not send inquiry attachment:',uploadError);send.disabled=false;attach.disabled=false;setNotice(inboxNotice,'Could not send the file. Check the file size/type or try again.',true);return;}
+      await client.from('inquiries').update({is_read:true}).eq('id',item.id);
+      entries.push(uploadData.message);input.value='';file.value='';fileName.textContent='';render();send.disabled=false;attach.disabled=false;setNotice(inboxNotice,'Reply and attachment sent.');return;
+    }
     const replyBody=input.value.trim();
     const {error:sendError}=await client.from('inquiry_messages').insert({inquiry_id:item.id,sender:'admin',sender_name:'Operations team',body:replyBody});
-    if(sendError){console.error('Could not send inquiry reply:',sendError);send.disabled=false;setNotice(inboxNotice,'Could not send the reply. Check the inquiry_messages policy and try again.',true);return;}
+    if(sendError){console.error('Could not send inquiry reply:',sendError);send.disabled=false;attach.disabled=false;setNotice(inboxNotice,'Could not send the reply. Check the inquiry_messages policy and try again.',true);return;}
     await client.from('inquiries').update({is_read:true}).eq('id',item.id);
     entries.push({sender:'admin',sender_name:'Operations team',body:replyBody,created_at:new Date().toISOString()});
-    input.value='';render();send.disabled=false;setNotice(inboxNotice,'Reply sent. It will appear in the visitor’s conversation on their website.');
+    input.value='';render();send.disabled=false;attach.disabled=false;setNotice(inboxNotice,'Reply sent. It will appear in the visitor’s conversation on their website.');
   });
   thread.after(form);
   const refreshThread=async()=>{
-    if(!document.body.contains(thread))return;
-    const {data:latest,error:latestError}=await client.from('inquiry_messages').select('id,sender,sender_name,body,created_at').eq('inquiry_id',item.id).order('created_at',{ascending:true});
+    if(!document.body.contains(thread)||editingMessage)return;
+    const {data:latest,error:latestError}=await client.from('inquiry_messages').select('id,sender,sender_name,body,created_at,attachment_path,attachment_name,attachment_mime,attachment_size').eq('inquiry_id',item.id).order('created_at',{ascending:true});
     if(!latestError&&latest){entries.splice(0,entries.length,...latest);render();}
   };
-  const poll=setInterval(refreshThread,10000);
-  const cleanup=new MutationObserver(()=>{if(!document.body.contains(thread)){clearInterval(poll);cleanup.disconnect();}});
+  const poll=setInterval(refreshThread,2500);
+  const refreshWhenVisible=()=>{if(!document.hidden)refreshThread();};
+  document.addEventListener('visibilitychange',refreshWhenVisible);
+  const cleanup=new MutationObserver(()=>{if(!document.body.contains(thread)){clearInterval(poll);document.removeEventListener('visibilitychange',refreshWhenVisible);cleanup.disconnect();}});
   cleanup.observe(document.body,{childList:true,subtree:true});
 }
 
@@ -2220,8 +2295,9 @@ async function deleteInquiry(item,button){
   if(!window.confirm(`Delete this inquiry from ${item.name}?\n\n"${item.subject}"\n\nThis cannot be undone.`)) return;
   button.disabled=true;
   button.textContent='Deleting…';
-  const {data,error}=await client.from('inquiries').delete().eq('id',item.id).select('id');
-  if(error || !data || data.length!==1){
+  const request=new FormData();request.append('action','delete_inquiry');request.append('inquiry_id',item.id);
+  const {error}=await client.functions.invoke('inquiry-attachments',{body:request});
+  if(error){
     console.error('Could not delete inquiry:',error);
     button.disabled=false;
     button.textContent='Delete inquiry';

@@ -147,6 +147,10 @@ textarea{min-height:120px;resize:vertical}
 .form-status{min-height:1.5em;color:#CBD9E3}
 .public-chat{display:grid;gap:12px;min-width:0;padding:16px;border:1px solid #315574;border-radius:8px;background:#102c49}
 .public-chat[hidden]{display:none}
+.public-chat.is-floating{position:fixed;right:24px;bottom:24px;z-index:30;width:min(533px,calc(100vw - 32px));max-height:min(82vh,700px);box-shadow:0 12px 36px rgba(0,0,0,.35)}
+.public-chat.is-floating .public-chat-messages{max-height:min(340px,38vh)}
+.public-chat-restore{position:fixed;right:24px;bottom:24px;z-index:30;display:none;padding:13px 18px;border:0;border-radius:24px;background:var(--signal);color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.3);font:600 1rem var(--sans);cursor:pointer}
+.public-chat-restore.is-visible{display:block}
 .public-chat-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .public-chat-head h3{font:700 1.15rem var(--serif)}
 .public-chat-messages{display:grid;align-content:start;gap:10px;max-height:340px;overflow:auto;padding:8px}
@@ -154,8 +158,19 @@ textarea{min-height:120px;resize:vertical}
 .public-chat-message.visitor{justify-self:end;background:#d6452b;color:#fff}
 .public-chat-message.admin{justify-self:start;background:#1b3c5b;color:#fff}
 .public-chat-message small{display:block;margin-bottom:4px;opacity:.75;font-size:.72rem}
+.public-chat-message-actions{display:flex;gap:10px;margin-top:7px}
+.public-chat-message-actions button{padding:0;border:0;background:none;color:inherit;text-decoration:underline;font:500 .78rem var(--sans);cursor:pointer}
+.public-chat-inline-editor{display:grid;gap:7px;margin-top:7px}
+.public-chat-inline-editor textarea{min-height:72px;padding:8px;border-color:#7894ad;background:#102c49;color:#fff;font:inherit}
+.public-chat-inline-editor-actions{display:flex;gap:8px}
 .public-chat-compose{display:grid;gap:8px}
 .public-chat-compose textarea{min-height:82px}
+.chat-compose-row{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:end}
+.chat-attach-button{width:44px;height:44px;border:1px solid #7894ad;border-radius:50%;background:transparent;color:#fff;font:600 1.7rem var(--sans);line-height:1;cursor:pointer}
+.chat-attach-button:hover{background:#1b3c5b}
+.chat-file-input{display:none}
+.chat-file-name{min-height:1.2em;color:#cbd9e3;font-size:.83rem;overflow-wrap:anywhere}
+.chat-message-attachment{display:inline-flex;align-items:center;gap:8px;margin-top:8px;color:inherit;font-weight:600;text-decoration:underline;overflow-wrap:anywhere}
 .public-chat-status{min-height:1.4em;color:#cbd9e3;font-size:.9rem}
 .chat-secondary{padding:7px 10px;border:1px solid #7894ad;border-radius:5px;background:transparent;color:#fff;cursor:pointer;font:600 .82rem var(--sans)}
 
@@ -330,11 +345,13 @@ footer{background:#071A2E;color:#9FB6C6;font-size:.9rem;padding:22px 0;text-alig
         <p class="form-status" id="contact-status" role="status" aria-live="polite"></p>
       </form>
       <section class="public-chat" id="public-chat" aria-label="Inquiry conversation" hidden>
-        <div class="public-chat-head"><h3>Conversation with our team</h3><button class="chat-secondary" id="new-inquiry" type="button">New inquiry</button></div>
+        <div class="public-chat-head"><h3>Conversation with our team</h3><div style="display:flex;gap:8px"><button class="chat-secondary" id="minimize-chat" type="button" aria-label="Minimize conversation">Minimize</button><button class="chat-secondary" id="new-inquiry" type="button">New inquiry</button></div></div>
         <div class="public-chat-messages" id="public-chat-messages" aria-live="polite"></div>
         <form class="public-chat-compose" id="public-chat-form">
           <label for="public-chat-reply">Your message</label>
-          <textarea id="public-chat-reply" maxlength="5000" required placeholder="Write a reply..."></textarea>
+          <div class="chat-compose-row"><button class="chat-attach-button" id="public-chat-attach" type="button" aria-label="Attach a file">+</button><textarea id="public-chat-reply" maxlength="5000" placeholder="Write a reply..."></textarea></div>
+          <input class="chat-file-input" id="public-chat-file" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv">
+          <p class="chat-file-name" id="public-chat-file-name" aria-live="polite"></p>
           <button class="btn" type="submit">Send reply</button>
         </form>
         <p class="public-chat-status" id="public-chat-status" role="status" aria-live="polite"></p>
@@ -342,6 +359,7 @@ footer{background:#071A2E;color:#9FB6C6;font-size:.9rem;padding:22px 0;text-alig
     </div>
   </div>
 </section>
+<button class="public-chat-restore" id="restore-chat" type="button" aria-label="Restore conversation">Conversation with our team</button>
 </main>
 
 <!-- Fleet window -->
@@ -374,9 +392,13 @@ const contactStatus=document.getElementById('contact-status');
 const publicChat=document.getElementById('public-chat');
 const publicChatMessages=document.getElementById('public-chat-messages');
 const publicChatStatus=document.getElementById('public-chat-status');
+const restoreChatButton=document.getElementById('restore-chat');
 const publicChatStorageKey='seem-sam-public-inquiry';
 let publicConversation=null;
 let publicChatPoll=null;
+let lastAdminMessageId=null;
+let chatMinimized=false;
+let publicChatEditing=false;
 function publicChatClient(){
   return window.supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.anonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 }
@@ -387,25 +409,77 @@ function newAccessToken(){
 }
 function showPublicConversation(conversation){
   publicConversation=conversation;try{localStorage.setItem(publicChatStorageKey,JSON.stringify(conversation));}catch{}
-  contactForm.hidden=true;publicChat.hidden=false;publicChatStatus.textContent='Only this browser has the private conversation link saved. Keep using this device and browser to continue.';
+  contactForm.hidden=true;publicChat.hidden=false;publicChat.classList.add('is-floating');chatMinimized=false;publicChat.classList.remove('is-minimized');restoreChatButton.classList.remove('is-visible');publicChatStatus.textContent='Only this browser has the private conversation link saved. Keep using this device and browser to continue.';
   loadPublicConversation();
-  clearInterval(publicChatPoll);publicChatPoll=setInterval(loadPublicConversation,10000);
+  clearInterval(publicChatPoll);publicChatPoll=setInterval(loadPublicConversation,2500);
 }
 async function loadPublicConversation(){
   if(!publicConversation)return;
   const {data,error}=await publicChatClient().rpc('get_public_inquiry_messages',{p_inquiry_id:publicConversation.id,p_access_token:publicConversation.token});
   if(error){console.error('Could not load public inquiry conversation:',error);publicChatStatus.textContent='Could not load this conversation. Refresh the page and try again.';return;}
+  if(publicChatEditing)return;
+  const messages=data||[];
+  const latestAdmin=[...messages].reverse().find(message=>message.sender==='admin');
+  if(lastAdminMessageId&&latestAdmin&&latestAdmin.id!==lastAdminMessageId&&chatMinimized)restorePublicChat();
+  if(latestAdmin)lastAdminMessageId=latestAdmin.id;
   publicChatMessages.replaceChildren();
-  (data||[]).forEach(message=>{
+  messages.forEach(message=>{
     const bubble=document.createElement('article');bubble.className='public-chat-message '+(message.sender==='visitor'?'visitor':'admin');
     const sender=document.createElement('small');sender.textContent=message.sender==='visitor'?'You':'Seem Sam Shipping team';
     const body=document.createElement('div');body.textContent=message.body;
     const sent=document.createElement('small');sent.textContent=new Date(message.created_at).toLocaleString('en-PH',{timeZone:'Asia/Manila'});
-    bubble.append(sender,body,sent);publicChatMessages.append(bubble);
+    bubble.append(sender,body,sent);
+    if(message.attachment_name){
+      const attachment=document.createElement('a');attachment.className='chat-message-attachment';attachment.href='#';attachment.textContent='File: '+message.attachment_name;
+      attachment.addEventListener('click',async event=>{
+        event.preventDefault();attachment.setAttribute('aria-busy','true');
+        const request=new FormData();request.append('action','download');request.append('inquiry_id',publicConversation.id);request.append('message_id',message.id);request.append('access_token',publicConversation.token);
+        const {data,error:downloadError}=await publicChatClient().functions.invoke('inquiry-attachments',{body:request});
+        attachment.removeAttribute('aria-busy');
+        if(downloadError||!data?.signed_url){publicChatStatus.textContent='Could not download this attachment.';return;}
+        const link=document.createElement('a');link.href=data.signed_url;link.download=message.attachment_name;link.target='_blank';link.rel='noopener';link.click();
+      });bubble.append(attachment);
+    }
+    if(message.sender==='visitor'){
+      const actions=document.createElement('div');actions.className='public-chat-message-actions';
+      const edit=document.createElement('button');edit.type='button';edit.textContent='Edit';edit.setAttribute('aria-label','Edit your message');
+      edit.addEventListener('click',()=>{
+        publicChatEditing=true;const editor=document.createElement('div');editor.className='public-chat-inline-editor';
+        const input=document.createElement('textarea');input.maxLength=5000;input.value=message.body;input.setAttribute('aria-label','Edit message text');
+        const editorActions=document.createElement('div');editorActions.className='public-chat-inline-editor-actions';
+        const save=document.createElement('button');save.type='button';save.className='chat-secondary';save.textContent='Save';
+        const cancel=document.createElement('button');cancel.type='button';cancel.className='chat-secondary';cancel.textContent='Cancel';
+        cancel.addEventListener('click',()=>{publicChatEditing=false;loadPublicConversation();});
+        save.addEventListener('click',async()=>{
+          const revised=input.value.trim();if(!revised){publicChatStatus.textContent='Message cannot be empty.';input.focus();return;}
+          save.disabled=true;cancel.disabled=true;
+          const {error:editError}=await publicChatClient().rpc('edit_public_inquiry_message',{p_inquiry_id:publicConversation.id,p_access_token:publicConversation.token,p_message_id:message.id,p_message:revised});
+          if(editError){console.error('Could not edit public inquiry message:',editError);save.disabled=false;cancel.disabled=false;publicChatStatus.textContent='Could not edit your message. Please try again.';return;}
+          publicChatEditing=false;publicChatStatus.textContent='Message updated.';await loadPublicConversation();
+        });
+        editorActions.append(save,cancel);editor.append(input,editorActions);body.replaceWith(editor);input.focus();
+      });
+      const remove=document.createElement('button');remove.type='button';remove.textContent='Delete';remove.setAttribute('aria-label','Delete your message');
+      remove.addEventListener('click',async()=>{
+        if(!window.confirm('Delete this message from the conversation?'))return;
+        const request=new FormData();request.append('action','delete');request.append('inquiry_id',publicConversation.id);request.append('message_id',message.id);request.append('access_token',publicConversation.token);
+        const {error:deleteError}=await publicChatClient().functions.invoke('inquiry-attachments',{body:request});
+        if(deleteError){console.error('Could not delete public inquiry message:',deleteError);publicChatStatus.textContent='Could not delete your message. Please try again.';return;}
+        publicChatStatus.textContent='Message deleted.';await loadPublicConversation();
+      });
+      actions.append(edit,remove);bubble.append(actions);
+    }
+    publicChatMessages.append(bubble);
   });
   publicChatMessages.scrollTop=publicChatMessages.scrollHeight;
 }
+function minimizePublicChat(){chatMinimized=true;publicChat.hidden=true;restoreChatButton.classList.add('is-visible');}
+function restorePublicChat(){chatMinimized=false;publicChat.hidden=false;restoreChatButton.classList.remove('is-visible');}
+document.getElementById('minimize-chat').addEventListener('click',minimizePublicChat);
+restoreChatButton.addEventListener('click',restorePublicChat);
 try{const saved=JSON.parse(localStorage.getItem(publicChatStorageKey)||'null');if(saved?.id&&saved?.token)showPublicConversation(saved);}catch{localStorage.removeItem(publicChatStorageKey);}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&publicConversation)loadPublicConversation();});
+window.addEventListener('focus',()=>{if(publicConversation)loadPublicConversation();});
 contactForm.addEventListener('submit',async e=>{
   e.preventDefault();
   const submitButton=contactForm.querySelector('button[type="submit"]');
@@ -443,10 +517,27 @@ contactForm.addEventListener('submit',async e=>{
   contactForm.reset();
   contactStatus.textContent='Thank you. Your message has been sent to our maritime team.';
 });
-document.getElementById('public-chat-form').addEventListener('submit',async event=>{
+const publicChatForm=document.getElementById('public-chat-form');
+const publicChatReply=document.getElementById('public-chat-reply');
+const publicChatFile=document.getElementById('public-chat-file');
+document.getElementById('public-chat-attach').addEventListener('click',()=>publicChatFile.click());
+publicChatFile.addEventListener('change',()=>{document.getElementById('public-chat-file-name').textContent=publicChatFile.files[0]?.name||'';});
+publicChatReply.addEventListener('keydown',event=>{
+  if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();publicChatForm.requestSubmit();}
+});
+publicChatForm.addEventListener('submit',async event=>{
   event.preventDefault();if(!publicConversation)return;
   const input=document.getElementById('public-chat-reply');const button=event.currentTarget.querySelector('button[type="submit"]');
+  const selectedFile=publicChatFile.files[0];
+  if(!input.value.trim()&&!selectedFile){publicChatStatus.textContent='Write a reply or choose a file first.';return;}
   button.disabled=true;publicChatStatus.textContent='Sending reply…';
+  if(selectedFile){
+    const request=new FormData();request.append('action','upload');request.append('sender','visitor');request.append('inquiry_id',publicConversation.id);request.append('access_token',publicConversation.token);request.append('body',input.value.trim());request.append('file',selectedFile);
+    const {error:uploadError}=await publicChatClient().functions.invoke('inquiry-attachments',{body:request});
+    button.disabled=false;
+    if(uploadError){console.error('Could not send inquiry attachment:',uploadError);publicChatStatus.textContent='Could not send the file. Check the file size/type or try again.';return;}
+    input.value='';publicChatFile.value='';document.getElementById('public-chat-file-name').textContent='';publicChatStatus.textContent='Message sent.';await loadPublicConversation();return;
+  }
   const {error}=await publicChatClient().rpc('reply_to_public_inquiry',{p_inquiry_id:publicConversation.id,p_access_token:publicConversation.token,p_message:input.value.trim()});
   button.disabled=false;
   if(error){console.error('Could not send public inquiry reply:',error);publicChatStatus.textContent='Could not send your reply. Please try again.';return;}
@@ -454,7 +545,7 @@ document.getElementById('public-chat-form').addEventListener('submit',async even
 });
 document.getElementById('new-inquiry').addEventListener('click',()=>{
   clearInterval(publicChatPoll);publicConversation=null;localStorage.removeItem(publicChatStorageKey);
-  publicChat.hidden=true;contactForm.hidden=false;contactStatus.textContent='';
+  publicChat.hidden=true;publicChat.classList.remove('is-floating');restoreChatButton.classList.remove('is-visible');lastAdminMessageId=null;contactForm.hidden=false;contactStatus.textContent='';
 });
 
 // 3D tilt + glow on service cards (desktop only, respects reduced motion)
