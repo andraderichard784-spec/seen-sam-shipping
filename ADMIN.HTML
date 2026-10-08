@@ -525,7 +525,7 @@ body[data-theme="dark"] .vessel-request,body[data-theme="dark"] .fuel-report-but
 .detail-meta a{color:var(--sea);font-weight:600}
 .message-body{white-space:pre-wrap;overflow-wrap:anywhere;margin:24px 0;line-height:1.7}
 .inquiry-conversation{display:grid;gap:12px;margin:20px 0}
-.inquiry-thread{display:grid;gap:10px;max-height:440px;overflow:auto;padding:12px;border:1px solid var(--line);border-radius:7px;background:var(--page)}
+.inquiry-thread{display:grid;gap:10px;max-height:360px;overflow:auto;padding:12px;border:1px solid var(--line);border-radius:7px;background:var(--page)}
 .inquiry-bubble{max-width:88%;padding:11px 13px;border-radius:10px;background:var(--soft);white-space:pre-wrap;overflow-wrap:anywhere}
 .inquiry-bubble.visitor{justify-self:start}.inquiry-bubble.admin{justify-self:end;background:#dcecf5}
 .inquiry-bubble small{display:block;margin-bottom:4px;color:var(--muted);font-size:.74rem}
@@ -545,9 +545,9 @@ body[data-theme="dark"] .vessel-request,body[data-theme="dark"] .fuel-report-but
 .inquiry-file-badge{flex:0 0 42px;height:44px;display:grid;place-items:center;border-radius:8px;background:var(--soft);color:var(--sea);font-size:.65rem;font-weight:800;letter-spacing:.04em}
 .inquiry-file-details{display:grid;gap:3px;min-width:0}.inquiry-file-details strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.87rem}.inquiry-file-details small{color:var(--muted);font-size:.73rem}
 .inquiry-file-download{margin-left:auto;padding:5px 7px;border:1px solid var(--line);border-radius:6px;color:var(--sea);font-size:.62rem;font-weight:800;letter-spacing:.04em}
-.inquiry-image-card{display:inline-grid;gap:7px;max-width:min(100%,340px);margin-top:10px;padding:7px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--ink);text-decoration:none}
-.inquiry-message-image{display:block;width:100%;max-height:300px;object-fit:contain;border-radius:7px;cursor:zoom-in}
-.inquiry-image-caption{display:flex;justify-content:space-between;gap:12px;padding:0 3px;font-size:.75rem}.inquiry-image-caption span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.inquiry-image-caption span:last-child{color:var(--muted);white-space:nowrap}
+.inquiry-image-card{display:inline-grid;gap:6px;width:min(100%,190px);margin-top:8px;padding:6px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);text-decoration:none;vertical-align:top}
+.inquiry-message-image{display:block;width:178px;height:128px;object-fit:contain;border-radius:6px;cursor:zoom-in}
+.inquiry-image-caption{display:flex;justify-content:space-between;gap:8px;padding:0 2px;font-size:.68rem}.inquiry-image-caption span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.inquiry-image-caption span:last-child{color:var(--muted);white-space:nowrap}
 .inquiry-conversation-hint{color:var(--muted);font-size:.88rem}
 .detail-actions{display:flex;flex-wrap:wrap;gap:10px}
 .detail-actions a{display:inline-block;text-decoration:none}
@@ -2741,6 +2741,112 @@ unreadFilter.addEventListener('click',()=>{
   unreadFilter.setAttribute('aria-pressed','true');
   renderList();
 });
+/* ============================================================
+   AUTO-REFRESH — live report synchronisation
+   Detects new crew reports and admin review changes without
+   logout / manual refresh. Runs lightweight queries every 5
+   seconds while the dashboard tab is visible; full lists
+   reload only when data actually changed. Edits in progress
+   (review forms with focus or unsaved changes) pause reloads.
+   ============================================================ */
+let adminSyncLast=null;
+let adminSyncBusy=false;
+const ADMIN_OPEN_FUEL_STATUSES=['submitted','under_review','action_required','rejected_correction_required'];
+function adminFuelFingerprint(rows){
+  return JSON.stringify((rows||[]).map(row=>[row.id,row.status,row.review_note||'',row.crew_response||'',row.reviewed_at||'',row.created_at]));
+}
+function adminOpsFingerprint(rows){
+  return JSON.stringify((rows||[]).map(row=>[row.id,row.status,row.review_note||'',row.corrective_action||'',row.assigned_to||'',row.crew_responded_at||'',row.reviewed_at||'',row.created_at]));
+}
+function adminActiveView(){
+  return dashboardViews.find(view=>!view.hidden)||null;
+}
+function adminViewHasFocusedField(view){
+  const active=document.activeElement;
+  return Boolean(active&&view&&view.contains(active)&&['INPUT','TEXTAREA','SELECT'].includes(active.tagName));
+}
+function fuelReviewDirty(){
+  const view=document.getElementById('vessel-reports-view');
+  if(!view||view.hidden)return false;
+  if(adminViewHasFocusedField(view))return true;
+  const form=fuelReportDetail.querySelector('.review-form');
+  if(!form||!selectedFuelReportId)return false;
+  const report=fuelReports.find(item=>item.id===selectedFuelReportId);
+  if(!report)return false;
+  const status=form.querySelector('select');
+  const note=form.querySelector('textarea');
+  return Boolean(status&&status.value!==report.status)||Boolean(note&&note.value!==(report.review_note||''));
+}
+function operationalReviewDirty(){
+  const view=document.getElementById('operations-reports-view');
+  if(!view||view.hidden)return false;
+  if(adminViewHasFocusedField(view))return true;
+  const form=operationalReportDetail.querySelector('.review-form');
+  if(!form||!selectedOperationalReportId)return false;
+  const report=operationalReports.find(item=>item.id===selectedOperationalReportId);
+  if(!report)return false;
+  const status=form.querySelector('select');
+  const areas=form.querySelectorAll('textarea');
+  const assignee=form.querySelector('input');
+  if(status&&status.value!==report.status)return true;
+  if(areas[0]&&areas[0].value!==(report.review_note||''))return true;
+  if(areas[1]&&areas[1].value!==(report.corrective_action||''))return true;
+  if(assignee&&assignee.value!==(report.assigned_to||''))return true;
+  return false;
+}
+async function adminRunWithNotice(element,task){
+  const keep=element.textContent;
+  await task();
+  if(keep&&!element.textContent)element.textContent=keep;
+}
+async function adminSyncTick(){
+  if(adminSyncBusy||document.hidden||!document.body.classList.contains('dashboard-active')||!client)return;
+  adminSyncBusy=true;
+  try{
+    const [fuelResult,opsResult,pendingResult,unreadResult]=await Promise.all([
+      client.from('vessel_fuel_reports').select('id,status,review_note,crew_response,reviewed_at,created_at').order('created_at',{ascending:false}).limit(500),
+      client.from('vessel_operational_reports').select('id,status,review_note,corrective_action,assigned_to,crew_responded_at,reviewed_at,created_at').order('created_at',{ascending:false}).limit(2000),
+      client.from('vessel_accounts').select('user_id',{count:'exact',head:true}).eq('status','pending'),
+      client.from('inquiries').select('id',{count:'exact',head:true}).eq('is_read',false)
+    ]);
+    if(fuelResult.error||opsResult.error||pendingResult.error||unreadResult.error){
+      console.error('Auto-refresh query failed:',fuelResult.error||opsResult.error||pendingResult.error||unreadResult.error);
+      return;
+    }
+    const fresh=JSON.stringify([adminFuelFingerprint(fuelResult.data),adminOpsFingerprint(opsResult.data),pendingResult.count||0,unreadResult.count||0]);
+    if(fresh===adminSyncLast)return;
+    unreadInquiryCount=unreadResult.count||0;
+    pendingVesselAccountsCount=pendingResult.count||0;
+    pendingFuelReportsCount=(fuelResult.data||[]).filter(row=>ADMIN_OPEN_FUEL_STATUSES.includes(row.status)).length;
+    pendingOperationalReportsCount=(opsResult.data||[]).filter(row=>row.status!=='approved_closed').length;
+    updateStats();
+    const pendingBadge=document.getElementById('pending-vessel-count');
+    pendingBadge.hidden=pendingVesselAccountsCount===0;
+    pendingBadge.textContent=pendingVesselAccountsCount>99?'99+':String(pendingVesselAccountsCount);
+    const view=adminActiveView();
+    const viewId=view?view.id:'';
+    if(viewId==='vessel-reports-view'){
+      if(fuelReviewDirty())return;
+      adminSyncLast=fresh;
+      await adminRunWithNotice(vesselReportsNotice,loadVesselAdminData);
+      return;
+    }
+    if(viewId==='operations-reports-view'){
+      if(operationalReviewDirty())return;
+      adminSyncLast=fresh;
+      await adminRunWithNotice(operationalReportsNotice,loadOperationalReports);
+      return;
+    }
+    adminSyncLast=fresh;
+    if(viewId==='dashboard-view')await loadMaritimeOverview();
+  }catch(error){
+    console.error('Automatic dashboard refresh failed:',error);
+  }finally{
+    adminSyncBusy=false;
+  }
+}
+window.setInterval(adminSyncTick,5000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)adminSyncTick();});
 </script>
 </body>
 </html>

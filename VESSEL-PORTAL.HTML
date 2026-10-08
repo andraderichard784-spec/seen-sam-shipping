@@ -99,6 +99,67 @@ input[type="file"]{padding:10px;background:#f5f8f9}
 .history-toolbar label{min-width:190px}
 @media(max-width:760px){.fuel-grid{grid-template-columns:1fr}}
 @media(max-width:760px){.shell{margin-top:23px}.dashboard.visible{grid-template-columns:1fr}.vessel-sidebar{position:static;height:auto;gap:14px}.vessel-sidebar-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.vessel-sidebar-spacer{display:none}.vessel-sidebar-user{margin-top:3px}.vessel-main{padding:24px 16px 36px}.dashboard-head{align-items:flex-start;flex-direction:column}.dashboard-grid{grid-template-columns:1fr}.auth-card{padding:23px 19px}.panel{padding:17px}}
+/* ===== Vessel Operations Center (Home / Fuel Dashboard / Report Center) ===== */
+.ops-hero{display:grid;gap:16px}
+.ops-hero-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;align-items:center}
+.ops-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:#e8f1f4;color:var(--hull);font-weight:700;font-size:.92rem;letter-spacing:.05em}
+.ops-actions{display:flex;flex-wrap:wrap;gap:12px}
+.ops-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px}
+.status-tile{border:1px solid var(--line);border-left:4px solid var(--sea);border-radius:8px;background:var(--surface);padding:14px 15px}
+.status-tile span{display:block;color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.08em}
+.status-tile strong{display:block;margin-top:6px;font:700 1.02rem var(--serif);color:var(--hull);word-break:break-word}
+.status-tile.ok{border-left-color:#05bf89}
+.status-tile.warn{border-left-color:#f39a16}
+.status-tile.alert{border-left-color:var(--signal)}
+.ops-grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px}
+.fuel-sub{color:var(--muted);font-size:.9rem}
+.trend-bars{display:flex;align-items:flex-end;gap:8px;height:150px;padding-top:6px;margin-top:10px}
+.trend-bar{flex:1;min-width:14px;background:linear-gradient(180deg,var(--sea),#12395c);border-radius:4px 4px 0 0;position:relative;min-height:8px}
+.trend-bar b{position:absolute;bottom:-19px;left:50%;transform:translateX(-50%);font-size:.6rem;color:var(--muted);font-weight:600;white-space:nowrap}
+.flow-steps{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.flow-step{flex:1;min-width:130px;background:#f4f8f9;border:1px solid var(--line);border-radius:8px;padding:11px 13px}
+.flow-step span{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.flow-step strong{display:block;margin-top:4px;font:700 1.08rem var(--serif);color:var(--hull)}
+.activity-row{display:flex;justify-content:space-between;gap:12px;padding:10px 2px;border-bottom:1px dashed var(--line);font-size:.93rem;align-items:center}
+.activity-row:last-child{border-bottom:0}
+.activity-row time{color:var(--muted);font-size:.78rem;white-space:nowrap}
+.rc-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.rc-tab{border:1px solid var(--line);background:var(--surface);color:var(--hull);border-radius:999px;padding:8px 15px;font-weight:700;font-size:.85rem;cursor:pointer}
+.rc-tab[aria-pressed="true"]{background:var(--hull);color:#fff;border-color:var(--hull)}
+.rc-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.rc-toolbar label{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
+.rc-toolbar select{padding:8px 11px;border:1px solid #bdccd5;border-radius:6px;background:#fff;font-size:.88rem}
+.rc-chip{border:1px solid var(--line);background:#f4f8f9;color:var(--hull);border-radius:999px;padding:7px 14px;font-size:.82rem;font-weight:700;cursor:pointer}
+.rc-chip[aria-pressed="true"]{background:var(--signal);color:#fff;border-color:var(--signal)}
+.rc-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.rc-layout{grid-template-columns:1fr}}
+.rc-list{display:grid;gap:10px;align-content:start}
+.rc-card{width:100%;text-align:left;border:1px solid var(--line);border-left:4px solid var(--sea);background:var(--surface);border-radius:8px;padding:12px 14px;cursor:pointer;display:grid;gap:6px;font:inherit;color:inherit}
+.rc-card:hover{box-shadow:0 8px 18px rgba(11,37,64,.10)}
+.rc-card[aria-pressed="true"]{border-left-color:var(--signal);box-shadow:0 8px 18px rgba(11,37,64,.12)}
+.rc-card-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.rc-card-top strong{color:var(--hull)}
+.rc-card-meta{color:var(--muted);font-size:.8rem}
+.rc-no{font-size:.7rem;letter-spacing:.09em;color:var(--sea);font-weight:700}
+.rc-pill{padding:4px 10px;border-radius:999px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.rc-pill.submitted{background:#e8f1f4;color:#245a92}
+.rc-pill.under_review{background:#e8f1ff;color:#245a92}
+.rc-pill.action_required,.rc-pill.rejected_correction_required{background:#fff0ed;color:#8d2d1d}
+.rc-pill.approved_closed{background:#e7f5ed;color:#216642}
+.rc-empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:8px}
+.timeline{display:grid;margin:14px 0}
+.timeline-row{display:flex;gap:12px;align-items:flex-start;position:relative;padding-bottom:14px}
+.timeline-row:not(:last-child)::before{content:"";position:absolute;left:9px;top:22px;bottom:0;width:2px;background:var(--line)}
+.timeline-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);background:#fff;flex:0 0 auto;display:grid;place-items:center;font-size:.62rem;font-weight:700;z-index:1;color:transparent}
+.timeline-row.done .timeline-dot{background:#05bf89;border-color:#05bf89;color:#fff}
+.timeline-row.active .timeline-dot{background:var(--signal);border-color:var(--signal);color:#fff}
+.timeline-row strong{color:var(--hull);font-size:.92rem}
+.timeline-row small{display:block;color:var(--muted);font-size:.78rem}
+.timeline-row.active strong{color:var(--signal)}
+.rc-detail h3{margin-bottom:4px}
+.detail-section{border-top:1px solid var(--line);margin-top:14px;padding-top:12px;display:grid;gap:8px}
+.quick-link-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
 </style>
 </head>
 <body>
@@ -159,8 +220,11 @@ input[type="file"]{padding:10px;background:#f5f8f9}
       </div>
       <p class="vessel-sidebar-title">Operations</p>
       <nav class="vessel-sidebar-nav">
-        <a class="vessel-sidebar-link active" href="#fuel-portal-section" data-portal-section="fuel"><span class="vessel-sidebar-icon" aria-hidden="true">▦</span>Fuel Monitoring</a>
+        <a class="vessel-sidebar-link active" href="#home-portal-section" data-portal-section="home"><span class="vessel-sidebar-icon" aria-hidden="true">&#8962;</span>Operations Home</a>
+        <a class="vessel-sidebar-link" href="#monitoring-portal-section" data-portal-section="monitoring"><span class="vessel-sidebar-icon" aria-hidden="true">&#9981;</span>Fuel Dashboard</a>
+        <a class="vessel-sidebar-link" href="#fuel-portal-section" data-portal-section="fuel"><span class="vessel-sidebar-icon" aria-hidden="true">▦</span>Fuel Report Form</a>
         <a class="vessel-sidebar-link" href="#history-heading" data-portal-section="fuel-history"><span class="vessel-sidebar-icon" aria-hidden="true">▤</span>Fuel Report History</a>
+        <a class="vessel-sidebar-link" href="#report-center-section" data-portal-section="center"><span class="vessel-sidebar-icon" aria-hidden="true">&#9776;</span>Report Center</a>
         <a class="vessel-sidebar-link" href="#operational-history-heading" data-portal-section="crew-history"><span class="vessel-sidebar-icon" aria-hidden="true">▤</span>Crew Report History</a>
         <a class="vessel-sidebar-link" href="#operational-form-heading" data-portal-section="crew" data-report-type="daily"><span class="vessel-sidebar-icon" aria-hidden="true">&#128221;</span>Daily Vessel Report</a>
         <a class="vessel-sidebar-link" href="#operational-form-heading" data-portal-section="crew" data-report-type="safety"><span class="vessel-sidebar-icon" aria-hidden="true">&#128737;</span>Safety Observation</a>
@@ -186,7 +250,109 @@ input[type="file"]{padding:10px;background:#f5f8f9}
         </div>
       </div>
       <p class="notice" id="dashboard-notice" role="status" aria-live="polite"></p>
-      <div id="fuel-portal-section">
+      <div id="home-portal-section">
+        <section class="panel" aria-labelledby="ops-home-heading">
+          <p class="eyebrow">Vessel operations</p>
+          <h2 id="ops-home-heading">Operations Home</h2>
+          <div class="ops-hero-top">
+            <div>
+              <span class="ops-badge" id="home-vessel-name">—</span>
+              <p class="fuel-sub" id="home-last-report" style="margin-top:8px">No reports submitted yet.</p>
+            </div>
+            <div class="ops-actions">
+              <button class="button" type="button" id="home-submit-report">Submit report</button>
+              <button class="button secondary" type="button" id="home-view-activities">View activities</button>
+            </div>
+          </div>
+          <div class="ops-status-grid">
+            <div class="status-tile" id="tile-fuel"><span>Fuel</span><strong>—</strong></div>
+            <div class="status-tile" id="tile-daily"><span>Daily report</span><strong>—</strong></div>
+            <div class="status-tile" id="tile-safety"><span>Safety open</span><strong>—</strong></div>
+            <div class="status-tile" id="tile-maintenance"><span>Maintenance</span><strong>—</strong></div>
+            <div class="status-tile" id="tile-cctv"><span>CCTV issues</span><strong>—</strong></div>
+            <div class="status-tile" id="tile-actions"><span>Needs your response</span><strong>—</strong></div>
+          </div>
+        </section>
+        <div class="ops-grid-2">
+          <section class="panel" aria-labelledby="home-activity-title">
+            <h3 id="home-activity-title">Recent activity</h3>
+            <div id="home-activity-list"><p class="rc-empty">Loading activity…</p></div>
+          </section>
+          <section class="panel" aria-labelledby="home-shortcuts-title">
+            <h3 id="home-shortcuts-title">Quick actions</h3>
+            <p class="fuel-sub">Jump straight to any report type.</p>
+            <div class="quick-link-row">
+              <button class="rc-chip" type="button" data-goto="fuel">&#9981; Fuel report</button>
+              <button class="rc-chip" type="button" data-goto="crew" data-type="daily">&#128203; Daily report</button>
+              <button class="rc-chip" type="button" data-goto="crew" data-type="safety">&#129667; Safety observation</button>
+              <button class="rc-chip" type="button" data-goto="crew" data-type="maintenance">&#128295; Maintenance</button>
+              <button class="rc-chip" type="button" data-goto="crew" data-type="cctv">&#128249; CCTV issue</button>
+              <button class="rc-chip" type="button" data-goto="center">&#9776; Report center</button>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div id="monitoring-portal-section" hidden>
+        <section class="panel" aria-labelledby="monitoring-heading">
+          <p class="eyebrow">Fuel monitoring</p>
+          <h2 id="monitoring-heading">Fuel dashboard</h2>
+          <div class="ops-status-grid">
+            <div class="status-tile"><span>Current fuel</span><strong id="mon-current">—</strong></div>
+            <div class="status-tile"><span>Last reading</span><strong id="mon-date">—</strong></div>
+            <div class="status-tile"><span>Last consumption</span><strong id="mon-consumed">—</strong></div>
+            <div class="status-tile"><span>Last received</span><strong id="mon-received">—</strong></div>
+            <div class="status-tile" id="mon-status-tile"><span>Status</span><strong id="mon-status">—</strong></div>
+          </div>
+          <div class="detail-section">
+            <h3>Fuel activity — latest report</h3>
+            <div class="flow-steps" id="mon-flow"><p class="rc-empty">No fuel readings yet.</p></div>
+          </div>
+          <div class="detail-section">
+            <h3>Consumption trend (last 8 reports)</h3>
+            <div class="trend-bars" id="mon-trend"></div>
+            <p class="fuel-sub" id="mon-trend-caption"></p>
+          </div>
+          <div class="quick-link-row">
+            <button class="button" type="button" data-goto="fuel">New fuel report</button>
+            <button class="rc-chip" type="button" data-goto="fuel-history">Full fuel history</button>
+          </div>
+        </section>
+      </div>
+      <div id="report-center-section" hidden>
+        <section class="panel" aria-labelledby="report-center-heading">
+          <p class="eyebrow">Report center</p>
+          <h2 id="report-center-heading">All crew reports</h2>
+          <div class="rc-tabs" id="rc-tabs" role="group" aria-label="Report type filter">
+            <button class="rc-tab" type="button" data-rc-tab="all" aria-pressed="true">All reports</button>
+            <button class="rc-tab" type="button" data-rc-tab="fuel" aria-pressed="false">&#9981; Fuel</button>
+            <button class="rc-tab" type="button" data-rc-tab="daily" aria-pressed="false">&#128203; Daily</button>
+            <button class="rc-tab" type="button" data-rc-tab="safety" aria-pressed="false">&#129667; Safety</button>
+            <button class="rc-tab" type="button" data-rc-tab="maintenance" aria-pressed="false">&#128295; Maintenance</button>
+            <button class="rc-tab" type="button" data-rc-tab="cctv" aria-pressed="false">&#128249; CCTV</button>
+          </div>
+          <div class="rc-toolbar">
+            <label for="rc-status-filter">Status
+              <select id="rc-status-filter">
+                <option value="all">All statuses</option>
+                <option value="submitted">Submitted</option>
+                <option value="under_review">Under Review</option>
+                <option value="action_required">Action Required</option>
+                <option value="rejected_correction_required">Correction Required</option>
+                <option value="approved_closed">Approved / Closed</option>
+              </select>
+            </label>
+            <button class="rc-chip" type="button" data-rc-range="today" aria-pressed="false">Today</button>
+            <button class="rc-chip" type="button" data-rc-range="7" aria-pressed="false">7 days</button>
+            <button class="rc-chip" type="button" data-rc-range="30" aria-pressed="false">30 days</button>
+            <button class="rc-chip" type="button" data-rc-range="all" aria-pressed="true">All time</button>
+          </div>
+          <div class="rc-layout">
+            <div class="rc-list" id="rc-list" aria-live="polite"><p class="rc-empty">Loading reports…</p></div>
+            <article class="rc-detail" id="rc-detail" aria-live="polite"><p class="rc-empty">Select a report to view its full details and timeline.</p></article>
+          </div>
+        </section>
+      </div>
+      <div id="fuel-portal-section" hidden>
       <div class="dashboard-grid fuel-grid">
         <section class="panel" aria-labelledby="new-report-heading">
           <h2 id="new-report-heading">Submit fuel report</h2>
@@ -305,6 +471,8 @@ function showDashboard(account){
   document.getElementById('report-date').value=localDateInputValue();
   document.getElementById('operational-report-date').value=localDateInputValue();
   loadReports();loadOperationalReports();
+  const homeLink=document.querySelector('.vessel-sidebar-link[data-portal-section="home"]');
+  if(homeLink)homeLink.click();
 }
 function showAuth(message='',isError=false){
   vesselAccount=null;
@@ -622,8 +790,8 @@ async function submitReport(event){
     document.getElementById('report-date').value=localDateInputValue();
     document.getElementById('fuel-received').value='0';
     document.getElementById('fuel-consumed').value='0';
-    notice(dashboardNotice,'Fuel report submitted to the admin team.'+photoWarning);
     await loadReports();
+    notice(dashboardNotice,'Fuel report submitted to the admin team.'+photoWarning);
   }catch(error){
     console.error('Could not submit vessel fuel report:',error);
     if(uploadedPaths.length){
@@ -771,14 +939,20 @@ document.querySelector('.vessel-sidebar-nav').addEventListener('click',event=>{
   document.querySelectorAll('.vessel-sidebar-link').forEach(item=>item.classList.remove('active'));
   link.classList.add('active');
   const section=link.dataset.portalSection||'crew';
+  document.getElementById('home-portal-section').hidden=section!=='home';
+  document.getElementById('monitoring-portal-section').hidden=section!=='monitoring';
+  document.getElementById('report-center-section').hidden=section!=='center';
   document.getElementById('fuel-portal-section').hidden=section!=='fuel';
   document.getElementById('fuel-history-section').hidden=section!=='fuel-history';
   document.getElementById('crew-portal-section').hidden=section!=='crew';
   document.getElementById('crew-history-section').hidden=section!=='crew-history';
-  const pageTitle={fuel:'Fuel reports','fuel-history':'Fuel report history',crew:'Crew report submission','crew-history':'Crew report history'}[section];
-  const pageEyebrow={fuel:'Vessel fuel monitoring','fuel-history':'Fuel report archive',crew:'Crew report submission','crew-history':'Crew report history'}[section];
+  const pageTitle={home:'Operations Home',monitoring:'Fuel Dashboard',center:'Report Center',fuel:'Fuel reports','fuel-history':'Fuel report history',crew:'Crew report submission','crew-history':'Crew report history'}[section]||'Operations Home';
+  const pageEyebrow={home:'Vessel operations',monitoring:'Fuel monitoring',center:'All crew reports',fuel:'Vessel fuel monitoring','fuel-history':'Fuel report archive',crew:'Crew report submission','crew-history':'Crew report history'}[section]||'Vessel operations';
   document.getElementById('vessel-heading').textContent=pageTitle;
   document.querySelector('.dashboard-head .eyebrow').textContent=pageEyebrow;
+  if(section==='home')refreshHome();
+  else if(section==='monitoring')refreshMonitoring();
+  else if(section==='center')refreshCenter();
   if(link.getAttribute('href')==='#history-heading'||link.getAttribute('href')==='#operational-history-heading'){
     event.preventDefault();document.querySelector(link.getAttribute('href')).scrollIntoView({behavior:'smooth',block:'start'});
   }else if(link.dataset.reportType){
@@ -816,6 +990,355 @@ if(!ready){
   });
   checkVesselSession();
 }
+/* ============================================================
+   AUTO-REFRESH — live report synchronisation (crew side)
+   Detects admin review decisions and new submissions without
+   logout / manual refresh. Lightweight checks every 5 seconds
+   while the portal is visible; lists reload only when data
+   changed, never while the crew member is typing.
+   ============================================================ */
+let portalSyncLast=null;
+let portalSyncBusy=false;
+function portalSyncFingerprint(rows){
+  return JSON.stringify((rows||[]).map(row=>[row.id,row.status,row.review_note||'',row.corrective_action||'',row.assigned_to||'',row.crew_response||'',row.created_at]));
+}
+function portalTypingInProgress(){
+  const active=document.activeElement;
+  if(active&&['INPUT','TEXTAREA','SELECT'].includes(active.tagName)&&vesselDashboard.contains(active))return true;
+  const fields=[...reportList.querySelectorAll('input,textarea'),...operationalHistoryList.querySelectorAll('input,textarea'),...document.getElementById('report-center-section').querySelectorAll('input,textarea')];
+  return fields.some(field=>field.value.trim());
+}
+async function portalSyncTick(){
+  if(portalSyncBusy||document.hidden||!vesselAccount||vesselDashboard.hidden||!client)return;
+  portalSyncBusy=true;
+  try{
+    const [fuelResult,opsResult]=await Promise.all([
+      client.from('vessel_fuel_reports').select('id,status,review_note,crew_response,created_at').eq('vessel_user_id',vesselAccount.user_id).order('created_at',{ascending:false}).limit(100),
+      client.from('vessel_operational_reports').select('id,status,review_note,corrective_action,assigned_to,crew_response,created_at').eq('vessel_user_id',vesselAccount.user_id).order('created_at',{ascending:false}).limit(100)
+    ]);
+    if(fuelResult.error||opsResult.error){
+      console.error('Auto-refresh query failed:',fuelResult.error||opsResult.error);
+      return;
+    }
+    const fresh=JSON.stringify([portalSyncFingerprint(fuelResult.data),portalSyncFingerprint(opsResult.data)]);
+    if(fresh===portalSyncLast)return;
+    if(portalTypingInProgress())return;
+    portalSyncLast=fresh;
+    const keep=dashboardNotice.textContent;
+    await Promise.all([loadReports(),loadOperationalReports()]);
+    const activeLink=document.querySelector('.vessel-sidebar-link.active');
+    const activeSection=activeLink?(activeLink.dataset.portalSection||''):'';
+    if(activeSection==='home')await refreshHome();
+    else if(activeSection==='monitoring')await refreshMonitoring();
+    else if(activeSection==='center')await refreshCenter();
+    if(keep&&!dashboardNotice.textContent)dashboardNotice.textContent=keep;
+  }catch(error){
+    console.error('Automatic report refresh failed:',error);
+  }finally{
+    portalSyncBusy=false;
+  }
+}
+window.setInterval(portalSyncTick,5000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)portalSyncTick();});
+/* ===== Vessel Operations Center: Home / Fuel Dashboard / Report Center ===== */
+const OPS_TYPE_LABELS={daily:'Daily Vessel Report',safety:'Safety Observation',maintenance:'Maintenance Request',cctv:'CCTV Issue'};
+const centerState={tab:'all',status:'all',range:'all',selectedId:null,rows:[]};
+function timeAgo(iso){
+  const seconds=Math.max(0,Math.floor((Date.now()-new Date(iso).getTime())/1000));
+  if(seconds<60)return 'just now';
+  const minutes=Math.floor(seconds/60);
+  if(minutes<60)return minutes+' min ago';
+  const hours=Math.floor(minutes/60);
+  if(hours<24)return hours+' hr ago';
+  const days=Math.floor(hours/24);
+  return days+' day'+(days>1?'s':'')+' ago';
+}
+function setTile(id,label,tone){
+  const tile=document.getElementById(id);
+  tile.querySelector('strong').textContent=label;
+  tile.classList.remove('ok','warn','alert');
+  if(tone)tile.classList.add(tone);
+}
+async function fetchMyReports(){
+  const [fuelResult,opsResult]=await Promise.all([
+    client.from('vessel_fuel_reports').select('*').eq('vessel_user_id',vesselAccount.user_id).order('created_at',{ascending:false}).limit(100),
+    client.from('vessel_operational_reports').select('*').eq('vessel_user_id',vesselAccount.user_id).order('created_at',{ascending:false}).limit(100)
+  ]);
+  if(fuelResult.error||opsResult.error)throw fuelResult.error||opsResult.error;
+  return {fuel:fuelResult.data||[],ops:opsResult.data||[]};
+}
+function fuelAlertLevel(fuel){
+  const recent=fuel.slice(0,3).map(r=>Number(r.fuel_consumed)||0).filter(v=>v>0);
+  if(!recent.length)return Infinity;
+  return recent.reduce((a,b)=>a+b,0)/recent.length*2;
+}
+async function refreshHome(){
+  if(!vesselAccount)return;
+  try{
+    const {fuel,ops}=await fetchMyReports();
+    document.getElementById('home-vessel-name').textContent=vesselAccount.vessel_name;
+    const latestAll=[...fuel.map(r=>Object.assign({},r,{kind:'fuel'})),...ops.map(r=>Object.assign({},r,{kind:'ops'}))].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    document.getElementById('home-last-report').textContent=latestAll.length?('Last report: '+(latestAll[0].kind==='fuel'?'Fuel Report':OPS_TYPE_LABELS[latestAll[0].report_type])+' — '+formatDate(latestAll[0].created_at)):'No reports submitted yet.';
+    const latestFuel=fuel[0];
+    if(latestFuel){
+      const low=Number(latestFuel.fuel_remaining)<=fuelAlertLevel(fuel);
+      setTile('tile-fuel',latestFuel.fuel_remaining+' L'+(low?' (low)':''),low?'warn':'ok');
+    }else setTile('tile-fuel','No reading',null);
+    const today=localDateInputValue();
+    const dailyToday=ops.some(r=>r.report_type==='daily'&&r.report_date===today);
+    setTile('tile-daily',dailyToday?'Submitted':'Not yet today',dailyToday?'ok':'warn');
+    const openCount=type=>ops.filter(r=>r.report_type===type&&r.status!=='approved_closed').length;
+    const safetyOpen=openCount('safety');
+    setTile('tile-safety',safetyOpen?String(safetyOpen)+' open':'Clear',safetyOpen?(safetyOpen>1?'alert':'warn'):'ok');
+    const maintOpen=openCount('maintenance');
+    setTile('tile-maintenance',maintOpen?String(maintOpen)+' pending':'Clear',maintOpen?'warn':'ok');
+    const cctvOpen=openCount('cctv');
+    setTile('tile-cctv',cctvOpen?String(cctvOpen)+' open':'Clear',cctvOpen?'alert':'ok');
+    const needResponse=[...fuel,...ops].filter(r=>['action_required','rejected_correction_required'].includes(r.status)).length;
+    setTile('tile-actions',needResponse?String(needResponse)+' to respond':'None',needResponse?'alert':'ok');
+    const activity=document.getElementById('home-activity-list');
+    activity.replaceChildren();
+    if(!latestAll.length){
+      const empty=document.createElement('p');empty.className='rc-empty';empty.textContent='No activity yet. Your submitted reports will appear here.';activity.append(empty);
+    }else{
+      latestAll.slice(0,7).forEach(row=>{
+        const line=document.createElement('div');line.className='activity-row';
+        const text=document.createElement('span');
+        text.textContent=(row.kind==='fuel'?'Fuel Report':OPS_TYPE_LABELS[row.report_type])+' — '+statusLabel(row.status);
+        const time=document.createElement('time');time.dateTime=row.created_at;time.textContent=timeAgo(row.created_at);
+        line.append(text,time);activity.append(line);
+      });
+    }
+  }catch(error){console.error('Could not load operations home:',error);}
+}
+async function refreshMonitoring(){
+  if(!vesselAccount)return;
+  try{
+    const {fuel}=await fetchMyReports();
+    const latest=fuel[0];
+    document.getElementById('mon-current').textContent=latest?(latest.fuel_remaining+' L'):'—';
+    document.getElementById('mon-date').textContent=latest?formatReportDay(latest.report_date):'—';
+    document.getElementById('mon-consumed').textContent=latest?(latest.fuel_consumed+' L'):'—';
+    document.getElementById('mon-received').textContent=latest?(latest.fuel_received+' L'):'—';
+    const warn=latest?Number(latest.fuel_remaining)<=fuelAlertLevel(fuel):false;
+    document.getElementById('mon-status').textContent=!latest?'NO DATA':(warn?'LOW — plan refuelling':'NORMAL');
+    const statusTile=document.getElementById('mon-status-tile');
+    statusTile.classList.toggle('ok',Boolean(latest&&!warn));
+    statusTile.classList.toggle('warn',Boolean(latest&&warn));
+    const flow=document.getElementById('mon-flow');
+    flow.replaceChildren();
+    if(!latest){
+      const empty=document.createElement('p');empty.className='rc-empty';empty.textContent='No fuel readings yet. Submit your first fuel report.';flow.append(empty);
+    }else{
+      const previous=fuel[1];
+      const opening=previous?Number(previous.fuel_remaining):(Number(latest.fuel_remaining)+Number(latest.fuel_consumed)-Number(latest.fuel_received));
+      [['Opening',opening],['Received',Number(latest.fuel_received)],['Consumed',Number(latest.fuel_consumed)],['Remaining',Number(latest.fuel_remaining)]].forEach(pair=>{
+        const step=document.createElement('div');step.className='flow-step';
+        const label=document.createElement('span');label.textContent=pair[0];
+        const value=document.createElement('strong');value.textContent=pair[1]+' L';
+        step.append(label,value);flow.append(step);
+      });
+    }
+    const trend=document.getElementById('mon-trend');
+    trend.replaceChildren();
+    const last8=fuel.slice(0,8).reverse();
+    const maxConsumed=Math.max(1,...last8.map(r=>Number(r.fuel_consumed)||0));
+    last8.forEach(r=>{
+      const bar=document.createElement('div');bar.className='trend-bar';
+      bar.style.height=Math.max(6,Math.round((Number(r.fuel_consumed)||0)/maxConsumed*100))+'%';
+      const caption=document.createElement('b');caption.textContent=formatReportDay(r.report_date).replace(/,.*/,'');
+      bar.append(caption);trend.append(bar);
+    });
+    document.getElementById('mon-trend-caption').textContent=last8.length?'Fuel consumed per report — newest on the right.':'No consumption data yet.';
+  }catch(error){console.error('Could not load fuel dashboard:',error);}
+}
+function centerRows(fuel,ops){
+  const rows=[
+    ...fuel.map(r=>Object.assign({},r,{kind:'fuel',report_type:'fuel'})),
+    ...ops.map(r=>Object.assign({},r,{kind:'ops'}))
+  ];
+  rows.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  const counters={FR:0,CR:0};
+  rows.slice().reverse().forEach(row=>{
+    const prefix=row.kind==='fuel'?'FR':'CR';
+    counters[prefix]+=1;
+    row.number=prefix+'-'+String(counters[prefix]).padStart(5,'0');
+  });
+  return rows;
+}
+function centerMatches(row){
+  if(centerState.tab!=='all'&&row.report_type!==centerState.tab)return false;
+  if(centerState.status!=='all'&&row.status!==centerState.status)return false;
+  if(centerState.range!=='all'){
+    const created=new Date(row.created_at);
+    if(centerState.range==='today'){const midnight=new Date();midnight.setHours(0,0,0,0);if(created<midnight)return false;}
+    else{const cutoff=Date.now()-Number(centerState.range)*86400000;if(created.getTime()<cutoff)return false;}
+  }
+  return true;
+}
+async function refreshCenter(){
+  if(!vesselAccount)return;
+  try{
+    const {fuel,ops}=await fetchMyReports();
+    centerState.rows=centerRows(fuel,ops);
+    const list=document.getElementById('rc-list');
+    list.replaceChildren();
+    const visible=centerState.rows.filter(centerMatches);
+    if(!visible.length){
+      const empty=document.createElement('p');empty.className='rc-empty';empty.textContent='No reports match this filter.';list.append(empty);
+      document.getElementById('rc-detail').innerHTML='<p class="rc-empty">Select a report to view its full details and timeline.</p>';
+      centerState.selectedId=null;
+      return;
+    }
+    if(!visible.some(r=>r.id===centerState.selectedId))centerState.selectedId=visible[0].id;
+    visible.forEach(row=>{
+      const card=document.createElement('button');
+      card.type='button';card.className='rc-card';
+      card.setAttribute('aria-pressed',String(row.id===centerState.selectedId));
+      const top=document.createElement('div');top.className='rc-card-top';
+      const title=document.createElement('strong');
+      title.textContent=row.kind==='fuel'?'Fuel Report':OPS_TYPE_LABELS[row.report_type];
+      const pill=document.createElement('span');pill.className='rc-pill '+row.status;pill.textContent=statusLabel(row.status);
+      top.append(title,pill);
+      const number=document.createElement('span');number.className='rc-no';number.textContent=row.number;
+      const meta=document.createElement('span');meta.className='rc-card-meta';
+      meta.textContent=formatDate(row.created_at)+(row.kind==='ops'&&row.location?' · '+row.location:'');
+      card.append(top,number,meta);
+      card.addEventListener('click',()=>{
+        centerState.selectedId=row.id;
+        list.querySelectorAll('.rc-card').forEach(item=>item.setAttribute('aria-pressed',String(item===card)));
+        renderCenterDetail(row);
+      });
+      list.append(card);
+    });
+    await renderCenterDetail(visible.find(r=>r.id===centerState.selectedId));
+  }catch(error){
+    console.error('Could not load report center:',error);
+    document.getElementById('rc-list').innerHTML='<p class="rc-empty">Reports could not be loaded. Check your connection and try again.</p>';
+  }
+}
+function timelineRow(state,label,note){
+  const row=document.createElement('div');row.className='timeline-row'+(state?' '+state:'');
+  const dot=document.createElement('span');dot.className='timeline-dot';dot.textContent=state==='done'?'✓':(state==='active'?'!':'·');
+  const copy=document.createElement('div');
+  const strong=document.createElement('strong');strong.textContent=label;
+  copy.append(strong);
+  if(note){const small=document.createElement('small');small.textContent=note;copy.append(small);}
+  row.append(dot,copy);return row;
+}
+function buildTimeline(status){
+  const wrap=document.createElement('div');wrap.className='timeline';
+  const needsAction=status==='action_required'||status==='rejected_correction_required';
+  const steps=[
+    ['Submitted','Report received by the system'],
+    ['Under Review','Operations team is reviewing your report'],
+    [status==='rejected_correction_required'?'Correction Required':'Action Required','A correction or response is needed from the crew'],
+    ['Approved / Closed','Review completed']
+  ];
+  let doneCount=1;
+  if(status==='under_review')doneCount=2;
+  else if(needsAction)doneCount=2;
+  else if(status==='approved_closed')doneCount=4;
+  steps.forEach((step,index)=>{
+    let state='';
+    const isActionStep=index===2&&needsAction;
+    if(isActionStep)state='active';
+    else if(index<doneCount)state='done';
+    else if(index===doneCount&&status!=='approved_closed')state='active';
+    wrap.append(timelineRow(state,step[0],step[1]));
+  });
+  return wrap;
+}
+async function renderCenterDetail(row){
+  const detail=document.getElementById('rc-detail');
+  detail.replaceChildren();
+  if(!row){detail.innerHTML='<p class="rc-empty">Select a report to view its full details and timeline.</p>';return;}
+  const heading=document.createElement('h3');
+  heading.textContent=(row.kind==='fuel'?'Fuel Report':OPS_TYPE_LABELS[row.report_type])+' '+row.number;
+  const meta=document.createElement('p');meta.className='rc-card-meta';
+  meta.textContent='Submitted '+formatDate(row.created_at)+' · Report date '+formatReportDay(row.report_date);
+  const pill=document.createElement('span');pill.className='rc-pill '+row.status;pill.textContent=statusLabel(row.status);
+  detail.append(heading,meta,pill,buildTimeline(row.status));
+  const values=document.createElement('div');values.className='report-values';
+  const entries=row.kind==='fuel'
+    ?[['Location',row.location],['Fuel remaining',row.fuel_remaining+' L'],['Fuel received',row.fuel_received+' L'],['Fuel consumed',row.fuel_consumed+' L'],['Engine hours',String(row.engine_hours)]]
+    :[['Location',row.location||'Not provided'],['Subject',row.title],['Details',row.details]];
+  entries.forEach(pair=>{
+    const entry=document.createElement('div');entry.className='report-value';
+    const strong=document.createElement('strong');strong.textContent=pair[0];
+    entry.append(strong,document.createTextNode(String(pair[1])));
+    values.append(entry);
+  });
+  detail.append(values);
+  if(row.remarks||row.review_note||row.crew_response){
+    const box=document.createElement('div');box.className='detail-section';
+    if(row.remarks){const p=document.createElement('p');p.textContent='Remarks: '+row.remarks;box.append(p);}
+    if(row.review_note){const p=document.createElement('p');p.textContent='Admin note: '+row.review_note;box.append(p);}
+    if(row.crew_response){const p=document.createElement('p');p.textContent='Your response: '+row.crew_response;box.append(p);}
+    detail.append(box);
+  }
+  if(Array.isArray(row.photo_paths)&&row.photo_paths.length){
+    const photos=document.createElement('div');photos.className='report-photos';
+    for(const path of row.photo_paths){
+      const {data,error}=await client.storage.from('vessel-report-photos').createSignedUrl(path,300);
+      if(error){console.error('Could not load report photo:',error);continue;}
+      const link=document.createElement('a');link.href=data.signedUrl;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label','Open attached report photo');
+      const image=document.createElement('img');image.src=data.signedUrl;image.alt='Report attachment';
+      link.append(image);photos.append(link);
+    }
+    detail.append(photos);
+  }
+  if(['action_required','rejected_correction_required'].includes(row.status)){
+    const form=document.createElement('form');
+    const label=document.createElement('label');label.textContent='Your response';
+    const input=document.createElement('textarea');input.maxLength=2000;input.required=true;input.placeholder='Describe the correction or action taken';
+    label.append(input);
+    const button=document.createElement('button');button.className='button secondary';button.type='submit';button.textContent='Send response for review';
+    form.append(label,button);
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();button.disabled=true;
+      const rpcName=row.kind==='fuel'?'respond_to_fuel_report':'respond_to_vessel_report';
+      const {error}=await client.rpc(rpcName,{p_report_id:row.id,p_response:input.value.trim()});
+      button.disabled=false;
+      if(error){console.error('Could not send report response:',error);notice(dashboardNotice,'Could not send your response. Please try again.',true);return;}
+      notice(dashboardNotice,'Your response was sent. The report is back under review.');
+      await refreshCenter();
+    });
+    detail.append(form);
+  }
+}
+document.querySelectorAll('[data-goto]').forEach(button=>button.addEventListener('click',()=>{
+  const goto=button.dataset.goto;
+  const selector=button.dataset.type
+    ?'.vessel-sidebar-link[data-portal-section="'+goto+'"][data-report-type="'+button.dataset.type+'"]'
+    :'.vessel-sidebar-link[data-portal-section="'+goto+'"]';
+  const link=document.querySelector(selector);
+  if(link)link.click();
+}));
+document.getElementById('rc-tabs').addEventListener('click',event=>{
+  const tab=event.target.closest('.rc-tab');
+  if(!tab)return;
+  centerState.tab=tab.dataset.rcTab;
+  document.querySelectorAll('.rc-tab').forEach(item=>item.setAttribute('aria-pressed',String(item===tab)));
+  refreshCenter();
+});
+document.getElementById('rc-status-filter').addEventListener('change',event=>{
+  centerState.status=event.target.value;
+  refreshCenter();
+});
+document.querySelectorAll('[data-rc-range]').forEach(button=>button.addEventListener('click',()=>{
+  centerState.range=button.dataset.rcRange;
+  document.querySelectorAll('[data-rc-range]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));
+  refreshCenter();
+}));
+document.getElementById('home-submit-report').addEventListener('click',()=>{
+  const link=document.querySelector('.vessel-sidebar-link[data-portal-section="fuel"]');
+  if(link)link.click();
+});
+document.getElementById('home-view-activities').addEventListener('click',()=>{
+  const link=document.querySelector('.vessel-sidebar-link[data-portal-section="center"]');
+  if(link)link.click();
+});
 </script>
 </body>
 </html>
